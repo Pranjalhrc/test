@@ -1,0 +1,691 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Mock Test · TCS iON style (90 Maths + 30 GK)</title>
+  <style>
+    :root {
+      --primary: #113f67;
+      --accent: #f39c12;
+      --success: #27ae60;
+      --danger: #e74c3c;
+      --marked: #8e44ad;
+      --bg-light: #f4f6f9;
+      --border: #d2d6de;
+      --card: #ffffff;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', Roboto, Arial, sans-serif; }
+    body { background: var(--bg-light); height: 100vh; display: flex; flex-direction: column; overflow: hidden; }
+
+    .header {
+      background: var(--primary); color: white; display: flex; justify-content: space-between;
+      align-items: center; padding: 12px 28px; box-shadow: 0 4px 10px rgba(0,0,0,0.15);
+      z-index: 20; flex-wrap: wrap; gap: 10px;
+    }
+    .header h1 { font-size: 1.4rem; font-weight: 600; letter-spacing: 0.5px; }
+    .timer-container {
+      background: rgba(255,255,255,0.12); padding: 6px 20px; border-radius: 30px;
+      font-weight: 700; font-size: 1.2rem; border: 1px solid rgba(255,255,255,0.25);
+    }
+
+    .main-container { display: flex; flex: 1; overflow: hidden; }
+
+    .left-pane { flex: 1; display: flex; flex-direction: column; background: var(--card); min-width: 0; }
+    .question-scroll-area { flex: 1; overflow-y: auto; padding: 24px 28px 10px; }
+    .question-header {
+      display: flex; justify-content: space-between; border-bottom: 2px solid var(--primary);
+      padding-bottom: 10px; margin-bottom: 22px; font-weight: 600; font-size: 1rem; color: #1e2b3a;
+    }
+    .question-text { font-size: 1.1rem; line-height: 1.7; margin-bottom: 28px; color: #1e2b3a; word-break: break-word; white-space: pre-line; }
+    .options-container { display: flex; flex-direction: column; gap: 14px; padding-bottom: 18px; }
+    .option {
+      display: flex; align-items: flex-start; padding: 12px 18px; border: 1.5px solid var(--border);
+      border-radius: 10px; background: #fafbfc; cursor: pointer; transition: 0.15s;
+      font-size: 1rem; line-height: 1.5; word-break: break-word;
+    }
+    .option:hover { background: #eef4fa; border-color: #a0b8d0; }
+    .option.selected { background: #e2f0fb; border-color: #2e86de; box-shadow: 0 0 0 2px rgba(46,134,222,0.2); }
+    .option-radio { margin-right: 16px; margin-top: 4px; width: 18px; height: 18px; pointer-events: none; accent-color: var(--primary); flex-shrink: 0; }
+
+    .action-bar {
+      padding: 14px 28px; border-top: 1px solid var(--border); background: #fdfdfd;
+      display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center;
+      gap: 12px; box-shadow: 0 -4px 12px rgba(0,0,0,0.03);
+    }
+    .btn {
+      padding: 10px 22px; border: none; border-radius: 30px; cursor: pointer;
+      font-weight: 600; font-size: 0.9rem; color: white; transition: 0.15s;
+      margin: 0 4px; letter-spacing: 0.3px; box-shadow: 0 2px 6px rgba(0,0,0,0.08);
+    }
+    .btn:hover { opacity: 0.85; transform: translateY(-1px); }
+    .btn-prev { background: #5d6d7e; }
+    .btn-clear { background: white; color: #2c3e50; border: 1.5px solid #b0bec5; }
+    .btn-clear:hover { background: #f1f5f9; }
+    .btn-mark { background: var(--accent); color: #1e2b3a; }
+    .btn-next { background: var(--success); }
+    .btn-submit { background: #2e86de; }
+
+    .right-pane {
+      width: 340px; background: #fdfdfd; border-left: 1px solid var(--border);
+      display: flex; flex-direction: column; flex-shrink: 0;
+    }
+    .palette-top { padding: 18px 16px 12px; border-bottom: 1px solid #e9ecef; background: #fdfdfd; }
+    .palette-header { font-size: 1.1rem; font-weight: 700; margin-bottom: 16px; text-align: center; color: var(--primary); letter-spacing: 0.3px; }
+    .legend { display: flex; flex-wrap: wrap; gap: 8px; font-size: 0.7rem; color: #2c3e50; }
+    .legend-item { display: flex; align-items: center; width: 48%; font-weight: 500; }
+    .legend-item-full { width: 100%; }
+    .legend-bubble { width: 20px; height: 20px; border-radius: 6px; margin-right: 7px; flex-shrink: 0; }
+    .palette-grid {
+      flex: 1; padding: 16px; display: grid; grid-template-columns: repeat(5, 1fr);
+      gap: 10px; overflow-y: auto; align-content: start;
+    }
+    .palette-btn {
+      height: 42px; border-radius: 8px; border: 1.5px solid #cbd5e1; background: white;
+      display: flex; align-items: center; justify-content: center; cursor: pointer;
+      font-weight: 600; font-size: 0.9rem; color: #1e2b3a; transition: 0.1s;
+      position: relative; box-shadow: 0 1px 3px rgba(0,0,0,0.03);
+    }
+    .palette-btn:hover { transform: scale(1.02); border-color: #94a3b8; }
+
+    .status-not_visited { background: #ffffff; border-color: #cbd5e1; }
+    .status-not_answered { background: var(--danger); color: white; border-color: var(--danger); }
+    .status-answered { background: var(--success); color: white; border-color: var(--success); }
+    .status-marked { background: var(--marked); color: white; border-color: var(--marked); }
+    .status-answered_marked { background: var(--marked); color: white; border-color: var(--marked); }
+    .status-answered_marked::after {
+      content: ''; position: absolute; bottom: 4px; right: 4px; width: 9px; height: 9px;
+      background: var(--success); border-radius: 50%; border: 1.5px solid white;
+    }
+
+    .results-overlay {
+      position: fixed; inset: 0; background: var(--bg-light); display: none;
+      flex-direction: column; z-index: 1000; overflow-y: auto; padding: 30px 40px;
+    }
+    .results-overlay.active { display: flex; }
+    .results-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 24px; }
+    .results-header h1 { color: var(--primary); font-size: 1.8rem; }
+    .score-card {
+      background: white; border-radius: 20px; padding: 28px 36px;
+      box-shadow: 0 10px 25px rgba(0,0,0,0.05); display: flex; flex-wrap: wrap;
+      justify-content: space-around; gap: 24px; margin-bottom: 36px; border: 1px solid #e2e8f0;
+    }
+    .stat-item { text-align: center; min-width: 100px; }
+    .stat-value { font-size: 2.2rem; font-weight: 800; color: var(--primary); line-height: 1.2; }
+    .stat-label { font-size: 0.9rem; color: #4b5b6b; font-weight: 500; margin-top: 6px; }
+
+    .review-list { display: flex; flex-direction: column; gap: 20px; }
+    .review-item {
+      background: white; border-radius: 18px; padding: 22px 26px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.03); border: 1px solid #e9edf2; page-break-inside: avoid;
+    }
+    .review-option {
+      padding: 10px 16px; margin-top: 8px; border-radius: 10px; border: 1px solid #e9edf2;
+      background: #fafcff; display: flex; justify-content: space-between; align-items: center; font-size: 0.95rem;
+    }
+    .review-option.correct { background: #e8f8f0; border-color: var(--success); border-left: 6px solid var(--success); }
+    .review-option.wrong { background: #fdecea; border-color: var(--danger); border-left: 6px solid var(--danger); }
+    .review-option .tag { font-size: 0.75rem; font-weight: 700; padding: 4px 12px; border-radius: 40px; background: rgba(0,0,0,0.04); }
+
+    @media (max-width: 900px) {
+      .right-pane { width: 260px; }
+      .palette-grid { grid-template-columns: repeat(4, 1fr); }
+      .action-bar { flex-direction: column; align-items: stretch; }
+      .action-bar > div { display: flex; flex-wrap: wrap; justify-content: center; }
+      .btn { flex: 1 0 auto; margin: 4px; }
+    }
+    @media (max-width: 650px) {
+      .main-container { flex-direction: column; }
+      .right-pane { width: 100%; border-left: none; border-top: 1px solid var(--border); max-height: 280px; }
+      .palette-grid { grid-template-columns: repeat(6, 1fr); }
+    }
+    @media print {
+      body { height: auto; overflow: visible; }
+      .header, .action-bar, .right-pane, .no-print { display: none !important; }
+      .results-overlay { position: static; padding: 0; background: white; }
+      .review-item { box-shadow: none; border: 1px solid #ccc; }
+    }
+  </style>
+</head>
+<body>
+
+  <div id="testContainer" style="display: flex; flex-direction: column; height: 100vh;">
+    <div class="header">
+      <h1>📘 Mock Examination · 90 Maths + 30 GK</h1>
+      <div class="timer-container" id="timerDisplay">⏳ 120:00</div>
+    </div>
+
+    <div class="main-container">
+      <div class="left-pane">
+        <div class="question-scroll-area" id="questionScrollArea">
+          <div class="question-header">
+            <span id="qNumLabel">Question 1 of 120</span>
+            <span>Max Marks: 3 | Negative: 1</span>
+          </div>
+          <div class="question-text" id="qText">Loading…</div>
+          <div class="options-container" id="qOptions"></div>
+        </div>
+
+        <div class="action-bar">
+          <div>
+            <button class="btn btn-prev" onclick="prevQuestion()">◀ Previous</button>
+            <button class="btn btn-clear" onclick="clearResponse()">Clear Response</button>
+          </div>
+          <div>
+            <button class="btn btn-mark" onclick="markForReview()">Mark for Review &amp; Next</button>
+            <button class="btn btn-next" onclick="nextQuestion()">Save &amp; Next ▶</button>
+            <button class="btn btn-submit" style="margin-left:12px;" onclick="submitTest()">Submit Test</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="right-pane">
+        <div class="palette-top">
+          <div class="palette-header">Question Palette</div>
+          <div class="legend">
+            <div class="legend-item"><div class="legend-bubble status-answered"></div> Answered</div>
+            <div class="legend-item"><div class="legend-bubble status-not_answered"></div> Not Answered</div>
+            <div class="legend-item"><div class="legend-bubble status-not_visited"></div> Not Visited</div>
+            <div class="legend-item"><div class="legend-bubble status-marked"></div> Marked</div>
+            <div class="legend-item legend-item-full"><div class="legend-bubble status-answered_marked"></div> Answered &amp; Marked</div>
+          </div>
+        </div>
+        <div class="palette-grid" id="paletteGrid"></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="results-overlay" id="resultsOverlay">
+    <div class="results-header no-print">
+      <h1>📊 Performance &amp; Solutions</h1>
+      <div>
+        <button class="btn btn-submit" onclick="window.print()">⬇ Download PDF / Print</button>
+        <button class="btn btn-prev" style="background:#5d6d7e;" onclick="location.reload()">↻ New Test</button>
+      </div>
+    </div>
+    <div class="score-card" id="scoreCard">
+      <div class="stat-item"><div class="stat-value" id="totalScore">0</div><div class="stat-label">Total Score</div></div>
+      <div class="stat-item"><div class="stat-value" id="accuracyPct">0%</div><div class="stat-label">Accuracy</div></div>
+      <div class="stat-item"><div class="stat-value" id="correctCount" style="color:var(--success);">0</div><div class="stat-label">Correct</div></div>
+      <div class="stat-item"><div class="stat-value" id="wrongCount" style="color:var(--danger);">0</div><div class="stat-label">Wrong</div></div>
+      <div class="stat-item"><div class="stat-value" id="skippedCount" style="color:#7f8c8d;">0</div><div class="stat-label">Skipped</div></div>
+    </div>
+    <div class="review-list" id="reviewList"></div>
+  </div>
+
+  <script>
+    // ============================================================
+    //  120 QUESTIONS – 90 Mathematics (LaTeX) + 30 GK
+    // ============================================================
+    const questions = [
+      // ----- MATHEMATICS (1–90) -----
+      { text: "Let \\(t: \\mathbb{R}^{3} \\rightarrow \\mathbb{R}^{3}\\) be defined by \\(t(x_{1},x_{2},x_{3}) = (x_{1}-x_{2}, x_{1}-x_{2}, 0)\\). If \\(N(t)\\) and \\(R(t)\\) denote null space and range space respectively, then:",
+        options: ["(a) \\(\\dim N(t) = 2,\\ \\dim R(t) = 1\\)", "(b) \\(\\dim N(t) = 0,\\ \\dim R(t) = 3\\)", "(c) \\(\\dim N(t) = 1,\\ \\dim R(t) = 2\\)", "(d) \\(\\dim N(t) = 3,\\ \\dim R(t) = 0\\)"], correct: 0 },
+      { text: "If \\(f(x,y) = \\frac{1}{x^{2}} + \\frac{1}{xy} + \\frac{\\log_{e}x - \\log_{e}y}{x^{2}+y^{2}}\\) then \\(x\\frac{\\partial f}{\\partial x} + y\\frac{\\partial f}{\\partial y} =\\)",
+        options: ["(a) \\(f\\)", "(b) \\(2f\\)", "(c) \\(-f\\)", "(d) \\(-2f\\)"], correct: 3 },
+      { text: "If the auxiliary equation of \\(\\frac{d^{2}y}{dx^{2}} + 2\\alpha\\frac{dy}{dx} + y = 0\\) has two equal roots, then \\(\\alpha\\) are:",
+        options: ["(a) \\(\\pm 2\\)", "(b) \\(\\pm 1\\)", "(c) \\(\\pm \\sqrt{2}\\)", "(d) \\(\\pm 3\\)"], correct: 1 },
+      { text: "A particle in S.H.M. of amplitude \\(a\\). At what distance from the centre is its velocity half of the maximum velocity?",
+        options: ["(a) \\(a\\sqrt{3}\\)", "(b) \\(\\frac{a}{2}\\)", "(c) \\(2a\\)", "(d) \\(\\frac{a\\sqrt{3}}{2}\\)"], correct: 3 },
+      { text: "The equation of the axis of the conic \\(x^{2}-4xy+4y^{2}-32x+4y+16=0\\) is:",
+        options: ["(a) \\(2x-y+3=0\\)", "(b) \\(x+2y+3=0\\)", "(c) \\(x+y+3=0\\)", "(d) \\(x-2y+3=0\\)"], correct: 0 },
+      { text: "The remainder when \\(f(x) = 3x^{4}+x^{3}+2x^{2}+1\\) is divided by \\(g(x) = x^{2}+4x+2\\) in \\(\\mathbb{Z}_{5}[x]\\) is:",
+        options: ["(a) \\(2x-1\\)", "(b) \\(3x+2\\)", "(c) \\(2x+1\\)", "(d) \\(4x+3\\)"], correct: 2 },
+      { text: "If \\(u = \\frac{\\sin 2x}{\\cosh 2y + \\cos 2x}\\), then the analytic function \\(f(z) = u+iv\\) is:",
+        options: ["(a) \\(\\csc z + c\\)", "(b) \\(\\cot z + c\\)", "(c) \\(\\tan z + c\\)", "(d) \\(\\sec z + c\\)"], correct: 1 },
+      { text: "The solution of \\(\\frac{d^{2}y}{dx^{2}} - \\frac{2}{x}\\frac{dy}{dx} + \\left(a^{2} + \\frac{2}{x^{2}}\\right)y = 0\\) is:",
+        options: ["(a) \\(y = -x(c_{1}\\cos ax + c_{2}\\sin ax)\\)", "(b) \\(y = c_{1}\\cos ax + c_{2}\\sin ax\\)", "(c) \\(y = x(c_{1}\\cos ax + c_{2}\\sin ax)\\)", "(d) \\(y = x^{2}(c_{1}\\cos ax + c_{2}\\sin ax)\\)"], correct: 2 },
+      { text: "The maximum value of the solution of \\(\\frac{d^{2}y}{dx^{2}} + y = 0\\) with \\(y(0)=1\\) and \\(\\left.\\frac{dy}{dx}\\right|_{x=0}=1\\) is:",
+        options: ["(a) \\(1\\)", "(b) \\(2\\)", "(c) \\(\\frac{1}{\\sqrt{2}}\\)", "(d) \\(\\sqrt{2}\\)"], correct: 3 },
+      { text: "One part of the solution of the PDE \\((x-y)p + (y-x-z)q = z\\) is:",
+        options: ["(a) \\(y-x+z=cz^{2}\\)", "(b) \\(y+x-z=cz^{2}\\)", "(c) \\(y-x-z=cz^{2}\\)", "(d) \\(x+y+z=cz^{2}\\)"], correct: 2 },
+      { text: "The solution of \\(p-x^{2}=q+y^{2}\\) (where \\(p,q\\) are the usual partial derivatives) is:",
+        options: ["(a) \\(z = \\left(\\frac{x^{3}}{3}-cx\\right) + \\left(cy+\\frac{y^{3}}{3}\\right) + c_{1}\\)", "(b) \\(z = \\left(\\frac{x^{3}}{3}+cx\\right) + \\left(cy+\\frac{y^{3}}{3}\\right) + c_{1}\\)", "(c) \\(z = \\left(\\frac{x^{3}}{3}+cx\\right) + \\left(cy-\\frac{y^{3}}{3}\\right) + c_{1}\\)", "(d) \\(z = \\left(\\frac{x^{3}}{3}-cx\\right) + \\left(cy-\\frac{y^{3}}{3}\\right) + c_{1}\\)"], correct: 1 },
+      { text: "For what values of \\(z\\) does \\(w = u+iv\\) with \\(u = \\sin x\\cosh y\\) and \\(v = \\cos x\\sinh y\\) cease to be analytic?",
+        options: ["(a) \\(z=0\\)", "(b) \\(z=\\pm 1\\)", "(c) \\(z=\\pm 2i\\)", "(d) \\(z=\\pm i\\)"], correct: 1 },
+      { text: "Which of the following is a basis for \\(W = \\left\\{ \\begin{bmatrix} x & y \\\\ 0 & t \\end{bmatrix} : x+2y+t=0,\\ y+t=0 \\right\\}\\)?",
+        options: ["(a) \\(\\left\\{ \\begin{bmatrix} 2 & 1 \\\\ 0 & -1 \\end{bmatrix}, \\begin{bmatrix} 1 & -1 \\\\ 2 & 1 \\end{bmatrix} \\right\\}\\)", "(b) \\(\\left\\{ \\begin{bmatrix} 1 & 0 \\\\ 0 & 0 \\end{bmatrix}, \\begin{bmatrix} 0 & 1 \\\\ 0 & 0 \\end{bmatrix} \\right\\}\\)", "(c) \\(\\left\\{ \\begin{bmatrix} -1 & 1 \\\\ 0 & -1 \\end{bmatrix} \\right\\}\\)", "(d) \\(\\left\\{ \\begin{bmatrix} 1 & -1 \\\\ 0 & 1 \\end{bmatrix} \\right\\}\\)"], correct: 2 },
+      { text: "Monge's subsidiary equations for \\(pt - qs = q^{3}\\) are:",
+        options: ["(a) \\(pdq - q^{3}dy = 0,\\ pdx + qdy = 0\\)", "(b) \\(pdq + q^{3}dy = 0,\\ pdx - qdy = 0\\)", "(c) \\(pdq + q^{3}dy = 0,\\ pdx + qdy = 0\\)", "(d) \\(pdq - q^{3}dx = 0,\\ pdy - qdx = 0\\)"], correct: 0 },
+      { text: "Which of the following algebraic structures is NOT a vector space?",
+        options: ["(a) \\(\\mathbb{C}\\) over \\(\\mathbb{C}\\)", "(b) \\(\\mathbb{R}\\) over \\(\\mathbb{Q}\\)", "(c) \\(\\mathbb{C}\\) over \\(\\mathbb{R}\\)", "(d) \\(\\mathbb{Q}\\) over \\(\\mathbb{R}\\)"], correct: 3 },
+      { text: "For subspaces \\(W_1, W_2\\) of a finite-dimensional vector space \\(V\\), which of the following is correct?",
+        options: ["(a) \\(\\dim(W_1+W_2) = \\dim(W_1)\\cdot\\dim(W_2)\\)", "(b) \\(\\dim(W_1+W_2) = \\dim W_1 + \\dim W_2 - \\dim(W_1\\cap W_2)\\)", "(c) \\(\\dim(W_1+W_2) = \\dim W_1 + \\dim W_2\\)", "(d) \\(\\dim(W_1+W_2) = \\dim W_1 + \\dim W_2 + \\dim(W_1\\cap W_2)\\)"], correct: 1 },
+      { text: "Let \\(S=\\{z:|z|=1\\}\\) and \\(f(z)=z\\overline{z}\\). The image of \\(S\\) under \\(f\\) is:",
+        options: ["(a) the entire real axis", "(b) the point \\((1,0)\\)", "(c) the segment from \\((0,0)\\) to \\((1,0)\\)", "(d) the unit circle"], correct: 1 },
+      { text: "The line \\(l/r = A\\cos\\theta + B\\sin\\theta\\) touches the conic \\(l/r = 1+e\\cos\\theta\\) if:",
+        options: ["(a) \\(A^{2}+(B+e)^{2}=1\\)", "(b) \\((A+e)^{2}+B^{2}=1\\)", "(c) \\(A^{2}+(B-e)^{2}=1\\)", "(d) \\((A-e)^{2}+B^{2}=1\\)"], correct: 3 },
+      { text: "If \\(ax^{2}+by^{2}+cz^{2}=1\\), the maximum and minimum values of \\(u=x^{2}+y^{2}+z^{2}\\) are the roots of:",
+        options: ["(a) \\((u+a)(b+u^{-1})(u+c)=0\\)", "(b) \\((a+u^{-1})(u+b^{-1})(u+c^{-1})=0\\)", "(c) \\((u-a^{-1})(u-b^{-1})(u-c^{-1})=0\\)", "(d) \\((u-a)(u-b)(u-c)=0\\)"], correct: 2 },
+      { text: "The solution of the total differential equation \\((y^{2}+z^{2}-x^{2})dx - 2xydy - 2xzdz = 0\\) is:",
+        options: ["(a) \\(x^{2}+y^{2}+z^{2}=zc\\)", "(b) \\(x^{2}+y^{2}+z^{2}=xc\\)", "(c) \\(x^{2}+y^{2}+z^{2}=yc\\)", "(d) \\(x^{2}+y^{2}+z^{2}=c\\)"], correct: 1 },
+      { text: "If \\(R\\) is a ring with \\(x^{2}=x\\) for all \\(x\\in R\\), which of the following are true?\n1. \\(x+x=0\\)\n2. \\(x+y=0 \\implies x=y\\)\n3. \\(R\\) is commutative",
+        options: ["(a) All 1, 2, 3", "(b) only 2 and 3", "(c) only 1 and 3", "(d) only 1 and 2"], correct: 0 },
+      { text: "The lengths of the semi-axes of the conic \\(36x^{2}+24xy+29y^{2}-72x+126y+81=0\\) are:",
+        options: ["(a) \\(9,4\\)", "(b) \\(6,4\\)", "(c) \\(6,3\\)", "(d) \\(3,2\\)"], correct: 3 },
+      { text: "The work done by \\(\\vec F = (2x^{2}y)\\hat i + (3xy)\\hat j\\) from \\((0,0)\\) to \\((1,4)\\) along \\(y=4x^{2}\\) is:",
+        options: ["(a) 100", "(b) 104", "(c) -104", "(d) \\(1/5\\)"], correct: 1 },
+      { text: "The solution of \\(x^{2}p^{2}+y^{2}q^{2}=z^{2}\\) is:",
+        options: ["(a) \\(z = cx^{a}y^{\\sqrt{1-a^{2}}}\\)", "(b) \\(z = ax+(\\sqrt{1-a^{2}})y+c\\)", "(c) \\(z = c(y/x)^{a}\\)", "(d) \\(z = c(x/y)^{a}\\)"], correct: 0 },
+      { text: "The value of \\(\\int_{C} \\frac{\\cos z}{z(z-4)}dz\\) along \\(|z|=1\\) is:",
+        options: ["(a) \\(\\pi i\\)", "(b) \\(-\\frac{3}{2}\\pi i\\)", "(c) \\(-\\frac{\\pi i}{2}\\)", "(d) \\(\\frac{3}{2}\\pi i\\)"], correct: 2 },
+      { text: "Which of the following statements are correct?\n1. A set containing the zero vector is linearly dependent.\n2. Every non-empty subset of a linearly independent set is linearly independent.",
+        options: ["(a) 1 only", "(b) Both 1 and 2", "(c) Neither 1 nor 2", "(d) 2 only"], correct: 1 },
+      { text: "Let \\(f=2x+4x^{2}\\) and \\(g=2+6x+4x^{2}\\) be polynomials over \\(\\mathbb{Z}_{8}\\). Then \\(\\deg(fg)\\) is:",
+        options: ["(a) 6", "(b) 2", "(c) 4", "(d) 0"], correct: 1 },
+      { text: "Over which of the following fields is \\(x^{2}+1\\) reducible?",
+        options: ["(a) \\(\\mathbb{Z}_{3}\\)", "(b) \\(\\mathbb{Z}_{5}\\)", "(c) \\(\\mathbb{Z}_{7}\\)", "(d) \\(\\mathbb{Z}_{2}\\)"], correct: 1 },
+      { text: "The moments of several forces about \\((2,0)\\), \\((0,2)\\) and \\((2,2)\\) are 3, 4 and 10 respectively. The magnitude of the resultant is:",
+        options: ["(a) \\(\\frac{1}{3}\\sqrt{85}\\)", "(b) \\(\\sqrt{85}\\)", "(c) \\(\\sqrt{85/2}\\)", "(d) \\(\\frac{1}{2}\\sqrt{85}\\)"], correct: 3 },
+      { text: "If \\(\\vec a, \\vec b\\) are constant vectors and \\(\\vec r = x\\hat i + y\\hat j + z\\hat k\\), then \\(\\text{curl}\\,[(\\vec r \\times \\vec a)\\times \\vec b]\\) equals:",
+        options: ["(a) \\(-2\\vec b\\times\\vec a\\)", "(b) \\(\\vec b\\times\\vec a\\)", "(c) \\(-2(\\vec a\\cdot\\vec b)\\)", "(d) \\(\\vec a\\cdot\\vec b\\)"], correct: 0 },
+      { text: "Two lines with direction cosines satisfying \\(al+bm+cn=0\\) and \\(ul^{2}+vm^{2}+wn^{2}=0\\) are parallel if:",
+        options: ["(a) \\(u/a^{2}+v/b^{2}+w/c^{2}=0\\)", "(b) \\(u/a+v/b+w/c=0\\)", "(c) \\(a^{2}/u+b^{2}/v+c^{2}/w=0\\)", "(d) \\(a/u+b/v+c/w=0\\)"], correct: 2 },
+      { text: "The value of \\(\\int_{C} \\frac{\\sin z}{(z-\\pi/4)^{3}}dz\\), where \\(C:|z-\\pi/4|=1/2\\), is:",
+        options: ["(a) \\(\\pi i/\\sqrt{2}\\)", "(b) \\(\\pi/\\sqrt{2}\\)", "(c) \\(-\\pi/\\sqrt{2}\\)", "(d) \\(-\\pi i/\\sqrt{2}\\)"], correct: 3 },
+      { text: "A catenary of weight \\(w\\) per unit length has arc length \\(AP=s\\). The vertical component of tension at \\(P\\) is:",
+        options: ["(a) \\(w-s\\)", "(b) \\(w+s\\)", "(c) \\(w/s\\)", "(d) \\(ws\\)"], correct: 3 },
+      { text: "The solution of \\((yz+xyz)dx + (zx+xyz)dy + (xy+xyz)dz = 0\\) is:",
+        options: ["(a) \\(xyz+\\log(x+y+z)=c\\)", "(b) \\(\\log(xyz)+(x+y+z)=c\\)", "(c) \\(\\log(xyz)+(x-y-z)=c\\)", "(d) \\(xyz+\\log(x-y-z)=c\\)"], correct: 3 },
+      { text: "A matrix \\(P\\) has eigenvalues 1 and 6 with corresponding eigenvectors \\((1,-1)^{T}\\) and \\((4,-1)^{T}\\). Then \\(P\\) is:",
+        options: ["(a) \\(\\begin{bmatrix} 1 & 4 \\\\ -1 & -1 \\end{bmatrix}\\)", "(b) \\(\\begin{bmatrix} 1 & 4 \\\\ -1 & -1 \\end{bmatrix}\\begin{bmatrix} 1 & 0 \\\\ 0 & 6 \\end{bmatrix}\\begin{bmatrix} 1 & 4 \\\\ -1 & -1 \\end{bmatrix}^{-1}\\)", "(c) \\(\\begin{bmatrix} 1 & 0 \\\\ 0 & 6 \\end{bmatrix}\\)", "(d) \\(\\begin{bmatrix} 6 & 0 \\\\ 0 & 1 \\end{bmatrix}\\)"], correct: 1 },
+      { text: "A \\(3\\times 3\\) matrix has eigenvalues 1, 2, 3. Then the matrix is:",
+        options: ["(a) not invertible but diagonalizable", "(b) both invertible and diagonalizable", "(c) invertible but not diagonalizable", "(d) neither invertible nor diagonalizable"], correct: 1 },
+      { text: "The PDE whose general solution is \\(z=f(x^{2}-y^{2})\\) is:",
+        options: ["(a) \\(yp-xq=0\\)", "(b) \\(yp+xq=0\\)", "(c) \\(xp-yq=0\\)", "(d) \\(xp+yq=0\\)"], correct: 1 },
+      { text: "Let \\(N\\) be a normal subgroup and \\(H\\) a subgroup of a group \\(G\\). Which of the following are true?\n1. \\(HN\\) is a subgroup.\n2. \\(N\\) is normal in \\(HN\\).",
+        options: ["(a) only 1", "(b) both 1 and 2", "(c) only 2", "(d) neither"], correct: 1 },
+      { text: "Which of the following is a normal subgroup of \\(S_3\\)?",
+        options: ["(a) \\(\\{(1),(12)\\}\\)", "(b) \\(\\{(1),(23)\\}\\)", "(c) \\(\\{(1),(13)\\}\\)", "(d) \\(\\{(1),(123),(132)\\}\\)"], correct: 3 },
+      { text: "If \\(x=r\\cos\\theta\\), \\(y=r\\sin\\theta\\), and \\(r,\\theta\\) are functions of \\(t\\), then \\(x\\frac{dy}{dt} - y\\frac{dx}{dt}\\) equals:",
+        options: ["(a) \\(r^{2}\\frac{d^{2}\\theta}{dt^{2}}\\)", "(b) \\(r\\frac{d\\theta}{dt}\\)", "(c) \\(r^{2}\\frac{dr}{dt}\\)", "(d) \\(r\\frac{dr}{dt}\\)"], correct: 1 },
+      { text: "Monge's subsidiary equations for \\(r = a^{2}t\\) are:",
+        options: ["(a) \\(dp\\,dx + a^{2}dq\\,dy = 0\\) and \\((dx)^{2} + a^{2}(dy)^{2} = 0\\)", "(b) \\(dp\\,dx - a^{2}dq\\,dy = 0\\) and \\((dx)^{2} - a^{2}(dy)^{2} = 0\\)", "(c) \\(dp\\,dx + a^{2}dq\\,dx = 0\\) and \\((dy)^{2} + a^{2}(dx)^{2} = 0\\)", "(d) \\(dp\\,dy - a^{2}dq\\,dx = 0\\) and \\((dy)^{2} - a^{2}(dx)^{2} = 0\\)"], correct: 3 },
+      { text: "The surface \\(\\frac{x^{2}}{a^{2}} + \\frac{y^{2}}{b^{2}} - \\frac{z^{2}}{c^{2}} = 1\\) represents a:",
+        options: ["(a) hyperboloid of two sheets", "(b) virtual ellipsoid", "(c) ellipsoid", "(d) hyperboloid of one sheet"], correct: 3 },
+      { text: "Which of the following statements is/are correct?\n1. The divergence of a vector is a vector.\n2. The curl of a vector is a scalar.",
+        options: ["(a) only 1", "(b) neither 1 nor 2", "(c) both 1 and 2", "(d) only 2"], correct: 1 },
+      { text: "If \\(\\vec a\\) and \\(\\vec b\\) are irrotational vectors, then \\(\\vec a \\times \\vec b\\) is always:",
+        options: ["(a) neither irrotational nor solenoidal", "(b) irrotational only", "(c) irrotational and solenoidal", "(d) solenoidal only"], correct: 3 },
+      { text: "The equation of the chord of contact of \\(l/r = 1+e\\cos\\theta\\) with angles \\(\\alpha-\\beta\\) and \\(\\alpha+\\beta\\) is:",
+        options: ["(a) \\(l/r = e\\cos\\theta + \\csc\\alpha \\cos(\\theta-\\beta)\\)", "(b) \\(l/r = e\\cos\\theta + \\sec\\alpha \\cos(\\theta-\\beta)\\)", "(c) \\(l/r = e\\cos\\theta + \\csc\\beta \\cos(\\theta-\\alpha)\\)", "(d) \\(l/r = e\\cos\\theta + \\sec\\beta \\cos(\\theta-\\alpha)\\)"], correct: 3 },
+      { text: "The point \\((-1,2)\\) on the curve \\(x^{3}+x^{2}-x+y^{2}-4y+3=0\\) is a:",
+        options: ["(a) node", "(b) cusp", "(c) conjugate point", "(d) none of these"], correct: 0 },
+      { text: "For a projectile, the range is twice the greatest height. The range is:",
+        options: ["(a) \\(5u^{2}/g\\)", "(b) \\(4u^{2}/(5g)\\)", "(c) \\(u^{2}/g\\)", "(d) \\(4u^{2}/g\\)"], correct: 1 },
+      { text: "The lines \\(\\frac{x-1/3}{1/6}=\\frac{y+1/3}{1/3}=\\frac{z-1}{1/2}\\) and \\(\\frac{x-2}{\\lambda}=\\frac{2y-5}{-3}=\\frac{z+2}{0}\\) are perpendicular. Then \\(\\lambda =\\)",
+        options: ["(a) 2", "(b) 3", "(c) 1", "(d) -3"], correct: 1 },
+      { text: "Which of the following statements is/are correct?\n1. Every finite integral domain is a field.\n2. Every finite ring without zero divisors is a field.",
+        options: ["(a) 1 only", "(b) both 1 and 2", "(c) neither 1 nor 2", "(d) 2 only"], correct: 0 },
+      { text: "If \\(U\\) is an ideal of a ring \\(R\\) and \\(1\\in U\\), then:",
+        options: ["(a) \\(U=R\\)", "(b) \\(U\\) is a proper subset of \\(R\\)", "(c) \\(U=\\{0\\}\\)", "(d) \\(U=\\phi\\)"], correct: 0 },
+      { text: "The director sphere of the ellipsoid \\(\\frac{x^{2}}{a^{2}}+\\frac{y^{2}}{b^{2}}+\\frac{z^{2}}{c^{2}}=1\\) is:",
+        options: ["(a) \\(x^{2}+y^{2}+z^{2}=a+b+c\\)", "(b) \\(x^{2}+y^{2}+z^{2}=a^{2}+b^{2}+c^{2}\\)", "(c) \\(x^{2}+y^{2}+z^{2}=1/a+1/b+1/c\\)", "(d) \\(x^{2}+y^{2}+z^{2}=1/a^{2}+1/b^{2}+1/c^{2}\\)"], correct: 1 },
+      { text: "The singular solution of \\(y = x\\frac{dy}{dx} - \\left(\\frac{dy}{dx}\\right)^{2}\\) is:",
+        options: ["(a) \\(y=x+4\\)", "(b) \\(x^{2}=4y\\)", "(c) \\(x^{2}+y^{2}=4\\)", "(d) \\(y^{2}=4x\\)"], correct: 1 },
+      { text: "For the system \\(t\\,dx=(t-2x)dt\\), \\(t\\,dy=(tx+ty+2x-t)dt\\), the quantity \\(x+y\\) equals:",
+        options: ["(a) \\(Ce^{-t}\\)", "(b) \\(Ct^{2}/2\\)", "(c) \\(Ct\\)", "(d) \\(Ce^{t}\\)"], correct: 3 },
+      { text: "In triangle \\(ABC\\), \\(P\\) divides \\(AB\\) in the ratio \\(m:n\\). If \\(\\angle ACP=\\alpha\\), \\(\\angle BCP=\\beta\\) and \\(\\angle CPB=\\theta\\), which of the following relations is/are true?\n1. \\((m+n)\\cot\\theta = m\\cot\\alpha - n\\cot\\beta\\)\n2. \\((m+n)\\cot\\theta = n\\cot A - m\\cot B\\)",
+        options: ["(a) 1 only", "(b) both 1 and 2", "(c) 2 only", "(d) neither 1 nor 2"], correct: 1 },
+      { text: "The surface area of the solid generated by revolving the astroid \\(x=a\\cos^{3}t,\\ y=a\\sin^{3}t\\) about the x-axis is:",
+        options: ["(a) \\(\\frac{6}{5}\\pi a^{2}\\)", "(b) \\(\\frac{4}{5}\\pi a^{2}\\)", "(c) \\(\\frac{8}{5}\\pi a^{2}\\)", "(d) \\(\\frac{12}{5}\\pi a^{2}\\)"], correct: 3 },
+      { text: "The matrix of the linear transformation \\(T(x_1,x_2,x_3)=(3x_1,\\ -2x_1+x_2,\\ -x_1+2x_2+4x_3)\\) in the standard basis is:",
+        options: ["(a) \\(\\begin{bmatrix}3&0&1\\\\-2&1&0\\\\1&2&-4\\end{bmatrix}\\)", "(b) \\(\\begin{bmatrix}3&0&1\\\\2&1&0\\\\1&2&-4\\end{bmatrix}\\)", "(c) \\(\\begin{bmatrix}3&0&1\\\\2&1&0\\\\1&2&4\\end{bmatrix}\\)", "(d) \\(\\begin{bmatrix}3&0&0\\\\-2&1&0\\\\-1&2&4\\end{bmatrix}\\)"], correct: 3 },
+      { text: "If \\(\\hat r\\) is the unit vector along \\(\\vec r\\), then \\(\\hat r \\times \\frac{d\\hat r}{dt}\\) equals:",
+        options: ["(a) \\(\\frac{1}{r}\\left(\\vec r \\times \\frac{d\\vec r}{dt}\\right)\\)", "(b) \\(\\frac{1}{r^{2}}\\left(\\vec r \\times \\frac{d\\vec r}{dt}\\right)\\)", "(c) \\(\\frac{1}{r^{2}}\\left(\\frac{d\\vec r}{dt} \\times \\vec r\\right)\\)", "(d) \\(\\frac{1}{r}\\left(\\frac{d\\vec r}{dt} \\times \\vec r\\right)\\)"], correct: 2 },
+      { text: "The radius of the circle passing through the foci of \\(\\frac{x^{2}}{9}+\\frac{y^{2}}{16}=1\\) with centre at \\((3,0)\\) is:",
+        options: ["(a) \\(7/2\\)", "(b) 4", "(c) 3", "(d) \\(1/\\sqrt{2}\\)"], correct: 1 },
+      { text: "The normals at points with parameters \\(\\alpha,\\beta,\\gamma\\) on a parabola meet at a point making an angle \\(\\delta\\). Which of the following is true?",
+        options: ["(a) \\(\\delta=\\alpha+\\beta+\\gamma+\\pi\\)", "(b) \\(\\delta=\\alpha+\\beta+\\gamma-\\pi\\)", "(c) \\(2\\delta=\\alpha+\\beta+\\gamma-\\pi\\)", "(d) \\(2\\delta=\\alpha+\\beta+\\gamma+\\pi\\)"], correct: 2 },
+      { text: "If \\(\\vec F = x^{2}\\hat i + xy\\hat j\\) and \\(C\\) is the boundary of the unit square, then \\(\\int_C \\vec F\\cdot d\\vec r\\) equals:",
+        options: ["(a) \\(2/3\\)", "(b) \\(1/3\\)", "(c) \\(7/6\\)", "(d) \\(1/2\\)"], correct: 3 },
+      { text: "If \\(\\vec F = (\\sin y)\\hat i + \\{x(1+\\cos y)\\}\\hat j\\) and \\(C: x^{2}+y^{2}=1\\), then \\(\\int_C \\vec F\\cdot d\\vec r\\) equals:",
+        options: ["(a) \\(\\pi\\)", "(b) \\(2\\pi\\)", "(c) 0", "(d) \\(-\\pi\\)"], correct: 0 },
+      { text: "As \\(x\\to\\infty\\), the common catenary tends to:",
+        options: ["(a) an exponential curve", "(b) a straight line", "(c) a circle", "(d) a hyperbola"], correct: 0 },
+      { text: "Which of the following groups is NOT solvable?",
+        options: ["(a) every abelian group", "(b) \\(S_4\\)", "(c) \\(S_3\\)", "(d) \\(S_5\\)"], correct: 3 },
+      { text: "The vectors \\((0,1,a), (1,a,1), (a,1,0)\\) in \\(\\mathbb{R}^3\\) are linearly dependent if \\(a =\\)",
+        options: ["(a) \\(1,\\sqrt{2},-\\sqrt{2}\\)", "(b) \\(0,2,-2\\)", "(c) \\(0,\\sqrt{2},-\\sqrt{2}\\)", "(d) \\(0,1,-1\\)"], correct: 2 },
+      { text: "The solution of \\(\\frac{dx}{x(y^2-z^2)}=\\frac{dy}{y(z^2-x^2)}=\\frac{dz}{z(x^2-y^2)}\\) is:",
+        options: ["(a) \\(xyz=C_1,\\ x+y+z=C_2\\)", "(b) \\(x+y+z=C_1,\\ x^2+y^2+z^2=C_2\\)", "(c) \\(xyz=C_1,\\ x^2+y^2+z^2=C_2\\)", "(d) \\(x^2y^2z^2=C_1,\\ x+y+z=C_2\\)"], correct: 2 },
+      { text: "The general solution of \\(p - 1/p - x/y + y/x = 0\\) is:",
+        options: ["(a) \\((x+y+z)(x^2-y^2-c)=0\\)", "(b) \\((xy-z)(x^2+y^2-c)=0\\)", "(c) \\((x-y-z)(x^2-y^2-c)=0\\)", "(d) \\((xy-c)(x^2-y^2-c)=0\\)"], correct: 3 },
+      { text: "Which of the following statements is/are correct?\n1. Every group is homomorphic to a quotient group.\n2. Every homomorphic image of a group is isomorphic to a quotient group.",
+        options: ["(a) neither 1 nor 2", "(b) 2 only", "(c) both 1 and 2", "(d) 1 only"], correct: 2 },
+      { text: "If \\(z = x\\ln(x+r) - r\\) where \\(r^2=x^2+y^2\\), then \\(\\frac{\\partial^2 z}{\\partial x^2} + \\frac{\\partial^2 z}{\\partial y^2}\\) equals:",
+        options: ["(a) \\(1/(y+r)\\)", "(b) \\(1/(y-r)\\)", "(c) \\(1/(x-r)\\)", "(d) \\(1/(x+r)\\)"], correct: 3 },
+      { text: "The point of maximum curvature on the curve \\(y=4x-x^2\\) is:",
+        options: ["(a) \\((0,0)\\)", "(b) \\((1,3)\\)", "(c) \\((3,3)\\)", "(d) \\((2,4)\\)"], correct: 3 },
+      { text: "Which of the following statements is/are correct?\nI. The evolute is the locus of the centre of curvature.\nII. The evolute is the envelope of the normals.",
+        options: ["(a) II only", "(b) neither I nor II", "(c) both I and II", "(d) I only"], correct: 2 },
+      { text: "The particular integral of \\(2r-s-3t = 5e^{x-y}\\) is:",
+        options: ["(a) \\(\\frac{1}{2}e^{x-y}\\)", "(b) \\(xe^{x-y}\\)", "(c) \\(\\frac{5}{2}e^{x-y}\\)", "(d) \\(5xe^{x-y}\\)"], correct: 1 },
+      { text: "The solution of \\(\\frac{\\partial q}{\\partial y} + \\frac{\\partial p}{\\partial y} + \\frac{\\partial z}{\\partial y} = 0\\) is:",
+        options: ["(a) \\(ze^{x} - F(x) = \\phi(x+y)\\)", "(b) \\(ze^{x} - F(x) = \\phi(x-y)\\)", "(c) \\(ze^{-x} + F(x) = \\phi(x-y)\\)", "(d) \\(ze^{-x} + F(x) = \\phi(x+y)\\)"], correct: 1 },
+      { text: "Let \\(S = \\left\\{ \\begin{bmatrix} a & 0 \\\\ 0 & b \\end{bmatrix} : a,b\\in\\mathbb{Z} \\right\\}\\) be a subring of the ring of \\(2\\times 2\\) matrices over \\(\\mathbb{Z}\\). Then \\(S\\) is:",
+        options: ["(a) neither a left nor a right ideal", "(b) a left ideal", "(c) both a left and a right ideal", "(d) a right ideal"], correct: 0 },
+      { text: "The volume of the solid generated by revolving the region bounded by \\(x^2+4y^2=4\\) about the y-axis is:",
+        options: ["(a) \\(8\\pi/3\\)", "(b) \\(16\\pi/3\\)", "(c) \\(4\\pi/3\\)", "(d) \\(2\\pi/3\\)"], correct: 0 },
+      { text: "A sphere centred at the origin touches the line \\(2(x+1)=2-y=z+3\\). Its equation is:",
+        options: ["(a) \\(5(x^2+y^2+z^2)=9\\)", "(b) \\(9(x^2+y^2+z^2)=5\\)", "(c) \\(x^2+y^2+z^2=196\\)", "(d) \\(x^2+y^2+z^2=5\\)"], correct: 1 },
+      { text: "Which of the following statements is/are correct?\n1. The eigenvalues of a skew-Hermitian matrix are zero or purely imaginary.\n2. The eigenvalues of a unitary matrix have unit modulus.",
+        options: ["(a) 1 only", "(b) both 1 and 2", "(c) 2 only", "(d) neither 1 nor 2"], correct: 1 },
+      { text: "The plane \\(ax+by+cz=0\\) cuts the cone \\(yz+zx+xy=0\\) in perpendicular lines if:",
+        options: ["(a) \\(a+b+c=0\\)", "(b) \\(1/a+1/b+1/c=0\\)", "(c) \\(1/a+1/b+1/c=1\\)", "(d) \\(ab+bc+ca=1\\)"], correct: 1 },
+      { text: "The solution of \\((D^3-4DD'^2+4D'^3+D-2D')z=0\\) is:",
+        options: ["(a) \\(z=\\phi_1(y+x)+e^{-x}\\phi_2(y+2x)\\)", "(b) \\(z=\\phi_1(y+2x)+e^{x}\\phi_2(y+2x)\\)", "(c) \\(z=\\phi_1(y-2x)+e^{-x}\\phi_2(y-2x)\\)", "(d) \\(z=\\phi_1(y-2x)+e^{x}\\phi_2(y-2x)\\)"], correct: 0 },
+      { text: "The value of \\(\\int_{0}^{\\infty} xe^{-x^{4}}dx\\) is:",
+        options: ["(a) \\(\\frac{1}{4}\\Gamma(3/4)\\)", "(b) \\(\\frac{1}{4}\\Gamma(1/4)\\)", "(c) \\(\\frac{1}{2}\\Gamma(1/2)\\)", "(d) \\(\\frac{1}{4}\\Gamma(1/2)\\)"], correct: 3 },
+      { text: "If \\(A = \\begin{bmatrix}1&2&0\\\\2&-1&0\\\\0&0&-1\\end{bmatrix}\\), then \\(A^{-1}\\) equals:",
+        options: ["(a) \\(\\frac{1}{5}(A^2-A+5I)\\)", "(b) \\(\\frac{1}{5}(A^2-A-5I)\\)", "(c) \\(\\frac{1}{5}(A^2+A-5I)\\)", "(d) \\(\\frac{1}{5}(A^2+A+5I)\\)"], correct: 2 },
+      { text: "The matrix of the linear map \\(t:V_2\\to V_3\\) defined by \\(t(a_1,a_2)=(a_1+a_2,\\ 2a_1-a_2,\\ 7a_1)\\) is:",
+        options: ["(a) \\(\\begin{bmatrix}1&1\\\\-1&-2\\\\7&0\\end{bmatrix}\\)", "(b) \\(\\begin{bmatrix}1&1\\\\2&-1\\\\7&0\\end{bmatrix}\\)", "(c) \\(\\begin{bmatrix}1&-1&7\\\\1&-2&0\\end{bmatrix}\\)", "(d) \\(\\begin{bmatrix}1&-2&0\\\\1&-1&7\\end{bmatrix}\\)"], correct: 1 },
+      { text: "Let \\(N\\) be a normal subgroup of \\(G\\) and \\(f:G\\to G/N\\) be defined by \\(f(x)=xN\\). Then \\(f\\) is:",
+        options: ["(a) an epimorphism only", "(b) a monomorphism only", "(c) an isomorphism only", "(d) a homomorphism only"], correct: 0 },
+      { text: "Which of the following statements is/are correct?\n1. The directional derivative \\(df/ds = (\\text{grad }f)\\cdot\\hat a\\).\n2. \\(\\text{grad }f\\) points in the direction of minimum \\(df/ds\\).",
+        options: ["(a) 1 only", "(b) neither 1 nor 2", "(c) 2 only", "(d) both 1 and 2"], correct: 0 },
+      { text: "If \\(\\vec r = x\\hat i + y\\hat j + z\\hat k\\) and \\(\\vec a\\) is a constant vector, then \\(\\text{curl}(\\vec a \\times \\vec r)\\) equals:",
+        options: ["(a) \\(-2\\vec a\\)", "(b) \\(\\vec a\\)", "(c) 0", "(d) \\(2\\vec a\\)"], correct: 3 },
+      { text: "Let \\(G\\) be the group of non-zero real numbers under multiplication. Let \\(H\\) be the set of irrationals together with 1, and \\(K=\\{x\\ge 1\\}\\). Which of the following is true?",
+        options: ["(a) \\(H\\) is not a subgroup, \\(K\\) is a subgroup", "(b) both \\(H\\) and \\(K\\) are not subgroups", "(c) both \\(H\\) and \\(K\\) are subgroups", "(d) \\(H\\) is a subgroup, \\(K\\) is not"], correct: 1 },
+      { text: "\\(n\\) orthonormal vectors in an inner product space \\(V\\) form a basis if and only if \\(\\dim V =\\)",
+        options: ["(a) \\(n\\)", "(b) \\(n(n-1)\\)", "(c) \\(n+1\\)", "(d) \\(n-1\\)"], correct: 0 },
+      { text: "The value of \\(\\int_C \\tan z\\, dz\\), where \\(C:|z|=2\\), is:",
+        options: ["(a) \\(4\\pi i\\)", "(b) \\(2\\pi i\\)", "(c) \\(\\pi i\\)", "(d) \\(-4\\pi i\\)"], correct: 3 },
+      { text: "The transformation \\(W=\\overline{Z}\\) is:",
+        options: ["(a) neither isogonal nor conformal", "(b) both isogonal and conformal", "(c) isogonal but not conformal", "(d) conformal but not isogonal"], correct: 2 },
+      { text: "The conic \\(4x^2-12xy+9y^2-4x+6y-5=0\\) represents:",
+        options: ["(a) a pair of parallel lines", "(b) a rectangular hyperbola", "(c) an ellipse", "(d) a parabola"], correct: 3 },
+      { text: "A particle starts from rest at a distance \\(a\\) from a centre of force varying inversely as the cube of the distance. The time to reach the centre is:",
+        options: ["(a) \\(\\sqrt{a/\\mu}\\)", "(b) \\(a^2/(2\\sqrt{\\mu})\\)", "(c) \\(a^2/\\sqrt{2\\mu}\\)", "(d) \\(a^2/\\sqrt{\\mu}\\)"], correct: 3 },
+      { text: "The value of \\(\\int_{0}^{\\pi/2} \\frac{dx}{1+\\tan x}\\) is:",
+        options: ["(a) \\(\\pi/4\\)", "(b) \\(\\pi/2\\)", "(c) \\(\\pi\\)", "(d) \\(\\pi/6\\)"], correct: 0 },
+      { text: "The radius of convergence of the power series \\(\\sum_{n=1}^{\\infty} \\frac{x^{n}}{n^{2}}\\) is:",
+        options: ["(a) 0", "(b) 1", "(c) 2", "(d) \\(\\infty\\)"], correct: 1 },
+      { text: "The value of \\(\\lim_{x\\to 0} \\frac{\\sin x - x}{x^{3}}\\) is:",
+        options: ["(a) \\(1/6\\)", "(b) \\(-1/6\\)", "(c) \\(1/3\\)", "(d) \\(-1/3\\)"], correct: 1 },
+      { text: "The Laplace transform of \\(t^{2}\\) is:",
+        options: ["(a) \\(1/s^{2}\\)", "(b) \\(2/s^{3}\\)", "(c) \\(1/s^{3}\\)", "(d) \\(2/s^{2}\\)"], correct: 1 },
+      { text: "The Fourier series of \\(f(x)=x\\) on \\((-\\pi,\\pi)\\) contains:",
+        options: ["(a) only sine terms", "(b) only cosine terms", "(c) both sine and cosine terms", "(d) only constant term"], correct: 0 },
+      { text: "The value of \\(\\int_{0}^{1} \\frac{\\ln(1+x)}{1+x^{2}}dx\\) is:",
+        options: ["(a) \\(\\frac{\\pi}{8}\\ln 2\\)", "(b) \\(\\frac{\\pi}{4}\\ln 2\\)", "(c) \\(\\frac{\\pi}{2}\\ln 2\\)", "(d) \\(\\ln 2\\)"], correct: 0 },
+
+      // ----- GK (91–120) -----
+      { text: "Which international organization publishes the Global Innovation Index?",
+        options: ["A) World Economic Forum", "B) WIPO", "C) IMF", "D) World Bank"], correct: 1 },
+      { text: "What is the primary objective of India's Aditya-L1 space mission?",
+        options: ["A) Deep ocean exploration", "B) Lunar surface mapping", "C) Solar observation", "D) Mars orbital research"], correct: 2 },
+      { text: "The Thomas Cup is associated with which sport?",
+        options: ["A) Tennis", "B) Badminton", "C) Table Tennis", "D) Hockey"], correct: 1 },
+      { text: "Who was the first Indian to be awarded a Nobel Prize in Science?",
+        options: ["A) Homi J. Bhabha", "B) Satyendra Nath Bose", "C) C.V. Raman", "D) Vikram Sarabhai"], correct: 2 },
+      { text: "Which city hosts the headquarters of the International Solar Alliance (ISA)?",
+        options: ["A) Geneva", "B) Paris", "C) Gurugram", "D) New Delhi"], correct: 2 },
+      { text: "According to Bloom's Taxonomy, which is the highest level of cognitive learning?",
+        options: ["A) Understanding", "B) Applying", "C) Analyzing", "D) Creating"], correct: 3 },
+      { text: "Action research is primarily conducted by practitioners to:",
+        options: ["A) Formulate a universally applicable theory", "B) Solve an immediate, practical classroom or local problem", "C) Conduct long-term experimental laboratory studies", "D) Analyze historical documents"], correct: 1 },
+      { text: "A researcher relies on census data previously published by the government. This is an example of using:",
+        options: ["A) Primary data", "B) Secondary data", "C) Tertiary data", "D) Experimental data"], correct: 1 },
+      { text: "The University Grants Commission (UGC) of India was established based on the recommendations of which commission?",
+        options: ["A) Kothari Commission", "B) Mudaliar Commission", "C) Radhakrishnan Commission", "D) Hunter Commission"], correct: 2 },
+      { text: "The primary purpose of formative evaluation is to:",
+        options: ["A) Grade students at the end of the academic year", "B) Select candidates for scholarships", "C) Rank schools against one another", "D) Monitor student learning to provide ongoing instructional feedback"], correct: 3 },
+      { text: "Which of the following is considered a primary disadvantage of extensive ICT use in education?",
+        options: ["A) Increased access to global resources", "B) Enhanced interactive learning", "C) Widening of the digital divide", "D) Automation of administrative tasks"], correct: 2 },
+      { text: "In standard email platforms, what does 'BCC' stand for?",
+        options: ["A) Basic Carbon Copy", "B) Blind Carbon Copy", "C) Broad Communication Channel", "D) Blind Computer Code"], correct: 1 },
+      { text: "What does 'URL' stand for in the context of the internet?",
+        options: ["A) Universal Routing Logic", "B) Uniform Resource Locator", "C) Unified Resource Link", "D) Uniform Routing Locator"], correct: 1 },
+      { text: "Which protocol is fundamentally used for transferring hyperlinked web pages across the World Wide Web?",
+        options: ["A) FTP", "B) SMTP", "C) HTTP", "D) TCP"], correct: 2 },
+      { text: "In cybersecurity terminology, 'Phishing' refers to:",
+        options: ["A) Optimizing a search engine's ranking", "B) Attempting to acquire sensitive information by masquerading as a trustworthy entity", "C) Compressing large data files for email transmission", "D) The process of booting up a server"], correct: 1 },
+      { text: "The transition zone where two distinct ecosystems meet and integrate is known as an:",
+        options: ["A) Ecotype", "B) Ecotone", "C) Ecological niche", "D) Ecosphere"], correct: 1 },
+      { text: "Which of the following greenhouse gases possesses the highest global warming potential on a per-molecule basis?",
+        options: ["A) Carbon dioxide (CO2)", "B) Methane (CH4)", "C) Nitrous oxide (N2O)", "D) Chlorofluorocarbons (CFCs)"], correct: 3 },
+      { text: "The Montreal Protocol is an international treaty specifically designed to:",
+        options: ["A) Phase out substances that deplete the ozone layer", "B) Regulate the international trade of endangered species", "C) Reduce greenhouse gas emissions causing climate change", "D) Protect globally significant wetlands"], correct: 0 },
+      { text: "The comprehensive Environment (Protection) Act of India was enacted in the year:",
+        options: ["A) 1972", "B) 1981", "C) 1986", "D) 2002"], correct: 2 },
+      { text: "Eutrophication in freshwater lakes is primarily caused by runoff containing excessive amounts of:",
+        options: ["A) Heavy metals like lead and mercury", "B) Dissolved oxygen", "C) Nitrogen and Phosphorus", "D) Microplastics"], correct: 2 },
+      { text: "The classical dance form 'Sattriya' is indigenous to which Indian state?",
+        options: ["A) Kerala", "B) Odisha", "C) Assam", "D) Manipur"], correct: 2 },
+      { text: "The Indian National Congress was founded in 1885 by:",
+        options: ["A) W.C. Bonnerjee", "B) Allan Octavian Hume", "C) Annie Besant", "D) Dadabhai Naoroji"], correct: 1 },
+      { text: "Which planet in our solar system exhibits the highest average surface temperature?",
+        options: ["A) Mercury", "B) Venus", "C) Earth", "D) Mars"], correct: 1 },
+      { text: "Which of the following major Indian rivers flows westward through a rift valley?",
+        options: ["A) Godavari", "B) Krishna", "C) Narmada", "D) Mahanadi"], correct: 2 },
+      { text: "The Quit India Movement of 1942 was launched immediately following the failure of the:",
+        options: ["A) Simon Commission", "B) August Offer", "C) Cripps Mission", "D) Cabinet Mission Plan"], correct: 2 },
+      { text: "The Directive Principles of State Policy are enshrined in which part of the Indian Constitution?",
+        options: ["A) Part II", "B) Part III", "C) Part IV", "D) Part V"], correct: 2 },
+      { text: "Under the Indian political system, who holds the constitutional power to prorogue a session of the Lok Sabha?",
+        options: ["A) The Prime Minister", "B) The Speaker of the Lok Sabha", "C) The President of India", "D) The Minister of Parliamentary Affairs"], correct: 2 },
+      { text: "Members of the Union Public Service Commission (UPSC) are appointed by the:",
+        options: ["A) Parliament of India", "B) President of India", "C) Chief Justice of India", "D) Prime Minister"], correct: 1 },
+      { text: "The Reserve Bank of India (RBI), initially established as a private entity, was formally nationalized in the year:",
+        options: ["A) 1935", "B) 1947", "C) 1949", "D) 1955"], correct: 2 },
+      { text: "'Disguised unemployment' is a phenomenon most frequently observed in which sector of the Indian economy?",
+        options: ["A) Information Technology", "B) Manufacturing and Heavy Industry", "C) Agriculture", "D) Banking and Finance"], correct: 2 },
+      { text: "Which article of the Indian Constitution deals with the Right to Equality?",
+        options: ["A) Article 12", "B) Article 14", "C) Article 19", "D) Article 21"], correct: 1 },
+      { text: "The 'Green Revolution' in India is associated with:",
+        options: ["A) Increase in milk production", "B) Increase in food grain production", "C) Increase in fish production", "D) Increase in cotton production"], correct: 1 }
+    ];
+
+    // ============================================================
+    //  STATE MANAGEMENT
+    // ============================================================
+    let currentIndex = 0;
+    let timeLeft = 120 * 60;
+    let timerInterval = null;
+    let testSubmitted = false;
+
+    questions.forEach((q) => {
+      q.userChoice = null;
+      q.status = 'not_visited';
+    });
+
+    const qNumLabel = document.getElementById('qNumLabel');
+    const qText = document.getElementById('qText');
+    const qOptions = document.getElementById('qOptions');
+    const paletteGrid = document.getElementById('paletteGrid');
+    const timerDisplay = document.getElementById('timerDisplay');
+    const questionScrollArea = document.getElementById('questionScrollArea');
+
+    function renderPalette() {
+      paletteGrid.innerHTML = '';
+      questions.forEach((q, i) => {
+        const btn = document.createElement('div');
+        btn.className = `palette-btn status-${q.status}`;
+        btn.innerText = i + 1;
+        btn.onclick = () => jumpToQuestion(i);
+        paletteGrid.appendChild(btn);
+      });
+    }
+
+    function updatePaletteButton(index) {
+      const btn = paletteGrid.children[index];
+      if (btn) btn.className = `palette-btn status-${questions[index].status}`;
+    }
+
+    function renderQuestion() {
+      const q = questions[currentIndex];
+      if (!q) return;
+      if (q.status === 'not_visited') {
+        q.status = 'not_answered';
+        updatePaletteButton(currentIndex);
+      }
+      qNumLabel.innerText = `Question ${currentIndex + 1} of ${questions.length}`;
+      qText.innerHTML = q.text;
+      qOptions.innerHTML = '';
+      q.options.forEach((opt, idx) => {
+        const div = document.createElement('div');
+        div.className = `option ${q.userChoice === idx ? 'selected' : ''}`;
+        div.onclick = () => selectOption(idx);
+        const radio = document.createElement('input');
+        radio.type = 'radio';
+        radio.className = 'option-radio';
+        radio.name = `q${currentIndex}`;
+        radio.checked = q.userChoice === idx;
+        const span = document.createElement('span');
+        span.innerHTML = opt;
+        div.appendChild(radio);
+        div.appendChild(span);
+        qOptions.appendChild(div);
+      });
+      if (window.MathJax && window.MathJax.typesetPromise) {
+        MathJax.typesetPromise([questionScrollArea]).catch(err => console.warn(err));
+      }
+      questionScrollArea.scrollTop = 0;
+    }
+
+    function selectOption(optIndex) {
+      const q = questions[currentIndex];
+      if (q.userChoice === optIndex) {
+        q.userChoice = null;
+        if (q.status === 'answered_marked') q.status = 'marked';
+        else if (q.status === 'answered') q.status = 'not_answered';
+        else if (q.status !== 'marked') q.status = 'not_answered';
+      } else {
+        q.userChoice = optIndex;
+        if (q.status === 'marked' || q.status === 'answered_marked') q.status = 'answered_marked';
+        else q.status = 'answered';
+      }
+      renderQuestion();
+      updatePaletteButton(currentIndex);
+    }
+
+    function clearResponse() {
+      const q = questions[currentIndex];
+      q.userChoice = null;
+      if (q.status === 'answered_marked') q.status = 'marked';
+      else if (q.status === 'answered') q.status = 'not_answered';
+      else if (q.status !== 'marked') q.status = 'not_answered';
+      renderQuestion();
+      updatePaletteButton(currentIndex);
+    }
+
+    function markForReview() {
+      const q = questions[currentIndex];
+      q.status = q.userChoice !== null ? 'answered_marked' : 'marked';
+      updatePaletteButton(currentIndex);
+      nextQuestion();
+    }
+
+    function nextQuestion() {
+      if (currentIndex < questions.length - 1) {
+        currentIndex++;
+        renderQuestion();
+      }
+    }
+
+    function prevQuestion() {
+      if (currentIndex > 0) {
+        currentIndex--;
+        renderQuestion();
+      }
+    }
+
+    function jumpToQuestion(index) {
+      if (index >= 0 && index < questions.length) {
+        currentIndex = index;
+        renderQuestion();
+      }
+    }
+
+    function startTimer() {
+      if (timerInterval) clearInterval(timerInterval);
+      timerInterval = setInterval(() => {
+        if (timeLeft <= 0) {
+          clearInterval(timerInterval);
+          if (!testSubmitted) submitTest(true);
+        } else {
+          timeLeft--;
+          const m = Math.floor(timeLeft / 60).toString().padStart(2, '0');
+          const s = (timeLeft % 60).toString().padStart(2, '0');
+          timerDisplay.innerText = `⏳ ${m}:${s}`;
+        }
+      }, 1000);
+    }
+
+    function submitTest(auto = false) {
+      if (testSubmitted) return;
+      if (!auto && !confirm('Submit the test? You cannot change answers after submission.')) return;
+      testSubmitted = true;
+      clearInterval(timerInterval);
+
+      let score = 0, correct = 0, wrong = 0, skipped = 0;
+      questions.forEach(q => {
+        if (q.userChoice === null) skipped++;
+        else if (q.userChoice === q.correct) { score += 3; correct++; }
+        else { score -= 1; wrong++; }
+      });
+      const totalAttempted = correct + wrong;
+      const accuracy = totalAttempted === 0 ? 0 : Math.round((correct / totalAttempted) * 100);
+
+      document.getElementById('totalScore').innerText = score;
+      document.getElementById('accuracyPct').innerText = accuracy + '%';
+      document.getElementById('correctCount').innerText = correct;
+      document.getElementById('wrongCount').innerText = wrong;
+      document.getElementById('skippedCount').innerText = skipped;
+
+      const reviewList = document.getElementById('reviewList');
+      reviewList.innerHTML = '';
+      questions.forEach((q, i) => {
+        const item = document.createElement('div');
+        item.className = 'review-item';
+        let statusLabel = '', statusColor = '';
+        if (q.userChoice === null) { statusLabel = 'Skipped (0)'; statusColor = '#7f8c8d'; }
+        else if (q.userChoice === q.correct) { statusLabel = 'Correct (+3)'; statusColor = 'var(--success)'; }
+        else { statusLabel = 'Wrong (-1)'; statusColor = 'var(--danger)'; }
+
+        let html = `<div style="font-weight:700; margin-bottom:10px; color:${statusColor};">Q${i+1}. ${statusLabel}</div>`;
+        html += `<div style="margin-bottom:16px; font-size:1rem; line-height:1.6; white-space:pre-line;">${q.text}</div>`;
+        q.options.forEach((opt, idx) => {
+          let optClass = 'review-option';
+          let tag = '';
+          if (idx === q.correct) {
+            optClass += ' correct';
+            tag = '<span class="tag" style="background:#d4edda; color:#155724;">✓ Correct</span>';
+          }
+          if (q.userChoice === idx && q.userChoice !== q.correct) {
+            optClass += ' wrong';
+            tag = '<span class="tag" style="background:#f8d7da; color:#721c24;">✗ Your choice</span>';
+          } else if (q.userChoice === idx && q.userChoice === q.correct) {
+            tag = '<span class="tag" style="background:#d4edda; color:#155724;">✓ Your choice (correct)</span>';
+          }
+          html += `<div class="${optClass}">${opt} ${tag}</div>`;
+        });
+        item.innerHTML = html;
+        reviewList.appendChild(item);
+      });
+
+      document.getElementById('testContainer').style.display = 'none';
+      document.getElementById('resultsOverlay').classList.add('active');
+      if (window.MathJax && window.MathJax.typesetPromise) {
+        MathJax.typesetPromise([document.getElementById('resultsOverlay')]).catch(err => console.warn(err));
+      }
+    }
+
+    function init() {
+      renderPalette();
+      renderQuestion();
+      startTimer();
+      if (!window.MathJax) {
+        const script = document.createElement('script');
+        script.src = 'https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js';
+        script.async = true;
+        document.head.appendChild(script);
+      }
+    }
+    window.onload = init;
+  </script>
+</body>
+</html>
