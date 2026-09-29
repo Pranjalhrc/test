@@ -1,0 +1,1081 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TCS iON style MCQ Test · 120 Questions</title>
+    <!-- MathJax for LaTeX rendering -->
+    <script>
+        window.MathJax = {
+            tex: { inlineMath: [['$', '$'], ['\\(', '\\)']] },
+            svg: { fontCache: 'global' }
+        };
+    </script>
+    <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-svg.js" async></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Roboto, system-ui, sans-serif;
+        }
+        body {
+            background: #f4f7fc;
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+        }
+
+        /* ---------- TCS iON style header ---------- */
+        .header {
+            background: #0b2a4a;
+            color: white;
+            padding: 0.9rem 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+        }
+        .header-left {
+            display: flex;
+            align-items: center;
+            gap: 1.5rem;
+        }
+        .logo {
+            font-weight: 800;
+            font-size: 1.7rem;
+            letter-spacing: 1px;
+            color: #f9a826;
+        }
+        .logo span {
+            color: white;
+            font-weight: 300;
+        }
+        .timer {
+            background: #1e3a5f;
+            padding: 0.5rem 1.2rem;
+            border-radius: 40px;
+            font-weight: 700;
+            font-size: 1.4rem;
+            color: #f9a826;
+            display: flex;
+            align-items: center;
+            gap: 0.6rem;
+            border: 1px solid #f9a82644;
+        }
+        .timer i {
+            font-style: normal;
+            font-size: 1.2rem;
+        }
+        .header-right {
+            display: flex;
+            gap: 1rem;
+        }
+        .btn-outline-light {
+            background: transparent;
+            border: 1.5px solid #f9a826;
+            color: #f9a826;
+            padding: 0.5rem 1.2rem;
+            border-radius: 30px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: 0.2s;
+        }
+        .btn-outline-light:hover {
+            background: #f9a826;
+            color: #0b2a4a;
+        }
+
+        /* ---------- Main layout ---------- */
+        .main-container {
+            display: flex;
+            flex: 1;
+            padding: 1.5rem 2rem;
+            gap: 1.8rem;
+            max-width: 1600px;
+            margin: 0 auto;
+            width: 100%;
+        }
+
+        /* ---------- Question card (left) ---------- */
+        .question-section {
+            flex: 3;
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 8px 20px rgba(0,0,0,0.06);
+            padding: 2rem 2rem 1.8rem;
+            display: flex;
+            flex-direction: column;
+            min-height: 500px;
+        }
+        .q-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.5rem;
+            border-bottom: 2px solid #eef2f7;
+            padding-bottom: 0.8rem;
+        }
+        .q-number {
+            font-weight: 700;
+            color: #0b2a4a;
+            background: #eef2f7;
+            padding: 0.4rem 1.2rem;
+            border-radius: 30px;
+            font-size: 1.1rem;
+        }
+        .q-status-badge {
+            background: #f9a82622;
+            color: #b16f00;
+            padding: 0.3rem 1rem;
+            border-radius: 30px;
+            font-weight: 600;
+            font-size: 0.9rem;
+        }
+        .q-text {
+            font-size: 1.25rem;
+            line-height: 1.7;
+            margin: 1rem 0 2rem;
+            color: #1a2b3c;
+            font-weight: 500;
+        }
+        .options {
+            display: flex;
+            flex-direction: column;
+            gap: 0.9rem;
+            margin-bottom: 2rem;
+        }
+        .option {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            background: #f9fbfe;
+            border: 2px solid #e2e9f2;
+            border-radius: 14px;
+            padding: 1rem 1.5rem;
+            cursor: pointer;
+            transition: 0.15s;
+            font-size: 1.1rem;
+        }
+        .option:hover {
+            background: #eef4ff;
+            border-color: #b8cbe0;
+        }
+        .option.selected {
+            background: #0b2a4a0c;
+            border-color: #0b2a4a;
+            box-shadow: 0 0 0 1px #0b2a4a;
+        }
+        .option .opt-label {
+            font-weight: 700;
+            color: #0b2a4a;
+            min-width: 28px;
+            text-align: center;
+        }
+        .option .opt-text {
+            flex: 1;
+        }
+
+        /* ---------- Action buttons ---------- */
+        .action-buttons {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 1rem;
+            margin-top: auto;
+            padding-top: 1.5rem;
+            border-top: 2px solid #eef2f7;
+        }
+        .btn {
+            padding: 0.7rem 1.6rem;
+            border-radius: 40px;
+            font-weight: 600;
+            border: none;
+            cursor: pointer;
+            font-size: 0.95rem;
+            transition: 0.2s;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+        }
+        .btn-primary {
+            background: #0b2a4a;
+            color: white;
+        }
+        .btn-primary:hover {
+            background: #123b63;
+        }
+        .btn-warning {
+            background: #f9a826;
+            color: #0b2a4a;
+        }
+        .btn-warning:hover {
+            background: #e6951a;
+        }
+        .btn-outline {
+            background: transparent;
+            border: 1.5px solid #cbd6e3;
+            color: #2c3e50;
+        }
+        .btn-outline:hover {
+            background: #f0f4fa;
+            border-color: #9aaec2;
+        }
+        .btn-danger {
+            background: #c0392b;
+            color: white;
+        }
+        .btn-danger:hover {
+            background: #a93226;
+        }
+        .btn-success {
+            background: #1e7e34;
+            color: white;
+        }
+        .btn-success:hover {
+            background: #16642a;
+        }
+        .spacer {
+            flex: 1;
+        }
+
+        /* ---------- Palette (right) ---------- */
+        .palette-section {
+            flex: 1;
+            min-width: 280px;
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 8px 20px rgba(0,0,0,0.06);
+            padding: 1.8rem 1.5rem;
+            display: flex;
+            flex-direction: column;
+            max-height: 85vh;
+            overflow-y: auto;
+        }
+        .palette-title {
+            font-weight: 700;
+            color: #0b2a4a;
+            font-size: 1.2rem;
+            margin-bottom: 1rem;
+            display: flex;
+            justify-content: space-between;
+        }
+        .legend {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.8rem 1.2rem;
+            font-size: 0.75rem;
+            margin-bottom: 1.5rem;
+            color: #4a5c6e;
+        }
+        .legend-item {
+            display: flex;
+            align-items: center;
+            gap: 0.4rem;
+        }
+        .legend-box {
+            width: 16px;
+            height: 16px;
+            border-radius: 6px;
+        }
+        .palette-grid {
+            display: grid;
+            grid-template-columns: repeat(5, 1fr);
+            gap: 0.7rem;
+            margin-bottom: 1.5rem;
+        }
+        .palette-btn {
+            aspect-ratio: 1/1;
+            border-radius: 10px;
+            border: 2px solid transparent;
+            font-weight: 700;
+            font-size: 0.9rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            background: #f0f4fa;
+            color: #2c3e50;
+            transition: 0.1s;
+        }
+        .palette-btn:hover {
+            transform: scale(1.05);
+            border-color: #0b2a4a44;
+        }
+        /* palette states */
+        .palette-btn.not-visited {
+            background: #eef2f7;
+            color: #6b7b8c;
+        }
+        .palette-btn.answered {
+            background: #1e7e34;
+            color: white;
+        }
+        .palette-btn.not-answered {
+            background: #c0392b;
+            color: white;
+        }
+        .palette-btn.marked {
+            background: #f9a826;
+            color: #0b2a4a;
+        }
+        .palette-btn.answered-marked {
+            background: #f9a826;
+            color: #0b2a4a;
+            border: 2px solid #1e7e34;
+        }
+        .palette-btn.current {
+            border: 3px solid #0b2a4a;
+            box-shadow: 0 0 0 2px #f9a826;
+        }
+
+        .palette-stats {
+            font-size: 0.9rem;
+            color: #2c3e50;
+            border-top: 1px solid #dce5ef;
+            padding-top: 1rem;
+            margin-top: auto;
+        }
+        .palette-stats p {
+            display: flex;
+            justify-content: space-between;
+            margin: 0.3rem 0;
+        }
+
+        /* ---------- Overlay / Result ---------- */
+        .overlay {
+            position: fixed;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.65);
+            backdrop-filter: blur(4px);
+            display: none;
+            align-items: center;
+            justify-content: center;
+            padding: 2rem;
+            z-index: 1000;
+            overflow-y: auto;
+        }
+        .overlay.active {
+            display: flex;
+        }
+        .result-card {
+            background: white;
+            border-radius: 32px;
+            max-width: 1100px;
+            width: 100%;
+            max-height: 90vh;
+            overflow-y: auto;
+            padding: 2rem 2.5rem;
+            box-shadow: 0 30px 50px rgba(0,0,0,0.4);
+        }
+        .result-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            margin-bottom: 1.5rem;
+            border-bottom: 2px solid #eef2f7;
+            padding-bottom: 1rem;
+        }
+        .result-header h2 {
+            color: #0b2a4a;
+            font-weight: 700;
+        }
+        .score-summary {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 1.2rem;
+            background: #f8fafd;
+            border-radius: 24px;
+            padding: 1.8rem;
+            margin-bottom: 2rem;
+            border: 1px solid #dfe8f2;
+        }
+        .stat {
+            text-align: center;
+        }
+        .stat .label {
+            color: #4a5c6e;
+            font-size: 0.9rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+        .stat .value {
+            font-size: 2.5rem;
+            font-weight: 800;
+            color: #0b2a4a;
+        }
+        .stat .value.small {
+            font-size: 1.8rem;
+        }
+        .stat .value.green {
+            color: #1e7e34;
+        }
+        .stat .value.red {
+            color: #c0392b;
+        }
+
+        .review-section {
+            margin-top: 2rem;
+        }
+        .review-item {
+            border-left: 6px solid #dfe8f2;
+            padding: 1rem 1.5rem;
+            margin-bottom: 1rem;
+            border-radius: 0 14px 14px 0;
+            background: #fbfdff;
+        }
+        .review-item.correct {
+            border-left-color: #1e7e34;
+            background: #f0faf2;
+        }
+        .review-item.wrong {
+            border-left-color: #c0392b;
+            background: #fdf1f0;
+        }
+        .review-item.skipped {
+            border-left-color: #8e9eae;
+            background: #f7f9fc;
+        }
+        .review-q {
+            font-weight: 600;
+            color: #1a2b3c;
+            margin-bottom: 0.6rem;
+            display: flex;
+            justify-content: space-between;
+            flex-wrap: wrap;
+        }
+        .review-choices {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.8rem 2rem;
+            font-size: 0.95rem;
+        }
+        .choice-badge {
+            display: inline-block;
+            padding: 0.2rem 1rem;
+            border-radius: 40px;
+            font-weight: 600;
+            font-size: 0.85rem;
+        }
+        .choice-badge.user-correct {
+            background: #1e7e34;
+            color: white;
+        }
+        .choice-badge.user-wrong {
+            background: #c0392b;
+            color: white;
+        }
+        .choice-badge.correct-ans {
+            background: #0b2a4a;
+            color: white;
+        }
+        .choice-badge.neutral {
+            background: #dce5ef;
+            color: #1a2b3c;
+        }
+
+        .download-btn {
+            background: #f9a826;
+            color: #0b2a4a;
+            padding: 0.8rem 2rem;
+            border-radius: 40px;
+            font-weight: 700;
+            border: none;
+            cursor: pointer;
+            font-size: 1rem;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            transition: 0.2s;
+        }
+        .download-btn:hover {
+            background: #e6951a;
+            transform: translateY(-2px);
+        }
+
+        /* ---------- Responsive ---------- */
+        @media (max-width: 900px) {
+            .main-container {
+                flex-direction: column;
+                padding: 1rem;
+            }
+            .palette-section {
+                max-height: 400px;
+            }
+            .header {
+                padding: 0.8rem 1rem;
+                flex-direction: column;
+                gap: 0.6rem;
+                align-items: stretch;
+            }
+            .header-left {
+                justify-content: space-between;
+            }
+            .timer {
+                font-size: 1.1rem;
+                padding: 0.3rem 1rem;
+            }
+            .result-card {
+                padding: 1.5rem;
+            }
+            .q-text {
+                font-size: 1.1rem;
+            }
+        }
+    </style>
+</head>
+<body>
+
+<!-- ========== HEADER ========== -->
+<header class="header">
+    <div class="header-left">
+        <div class="logo">TCS <span>iON</span></div>
+        <div class="timer"><i>⏳</i> <span id="timerDisplay">120:00</span></div>
+    </div>
+    <div class="header-right">
+        <button class="btn-outline-light" id="submitTopBtn">Submit Test</button>
+    </div>
+</header>
+
+<!-- ========== MAIN ========== -->
+<div class="main-container">
+    <!-- Question section -->
+    <div class="question-section">
+        <div class="q-header">
+            <span class="q-number" id="qNumberLabel">Question 1 of 120</span>
+            <span class="q-status-badge" id="qStatusLabel">Not Visited</span>
+        </div>
+        <div class="q-text" id="questionText">Loading...</div>
+        <div class="options" id="optionsContainer"></div>
+
+        <div class="action-buttons">
+            <button class="btn btn-outline" id="prevBtn">◀ Previous</button>
+            <button class="btn btn-outline" id="clearBtn">Clear Response</button>
+            <button class="btn btn-warning" id="markBtn">⚑ Mark for Review</button>
+            <button class="btn btn-primary" id="nextBtn">Next ▶</button>
+            <div class="spacer"></div>
+            <button class="btn btn-danger" id="submitBottomBtn">Submit</button>
+        </div>
+    </div>
+
+    <!-- Palette section -->
+    <div class="palette-section">
+        <div class="palette-title">
+            <span>Question Palette</span>
+            <span id="paletteProgress">1/120</span>
+        </div>
+        <div class="legend">
+            <div class="legend-item"><span class="legend-box" style="background:#1e7e34;"></span> Answered</div>
+            <div class="legend-item"><span class="legend-box" style="background:#c0392b;"></span> Not Answered</div>
+            <div class="legend-item"><span class="legend-box" style="background:#f9a826;"></span> Marked</div>
+            <div class="legend-item"><span class="legend-box" style="background:#eef2f7;"></span> Not Visited</div>
+        </div>
+        <div class="palette-grid" id="paletteGrid"></div>
+        <div class="palette-stats">
+            <p><span>Answered</span> <strong id="statAnswered">0</strong></p>
+            <p><span>Not Answered</span> <strong id="statNotAnswered">0</strong></p>
+            <p><span>Marked</span> <strong id="statMarked">0</strong></p>
+            <p><span>Not Visited</span> <strong id="statNotVisited">120</strong></p>
+        </div>
+    </div>
+</div>
+
+<!-- ========== RESULT OVERLAY ========== -->
+<div class="overlay" id="resultOverlay">
+    <div class="result-card" id="resultCard">
+        <div class="result-header">
+            <h2>📋 Performance & Solutions</h2>
+            <button class="download-btn" id="downloadBtn">⬇ Download Report</button>
+        </div>
+        <div id="resultSummary"></div>
+        <div id="resultReview"></div>
+        <div style="text-align: center; margin-top: 2rem;">
+            <button class="btn btn-primary" id="closeOverlayBtn">Close Review</button>
+        </div>
+    </div>
+</div>
+
+<script>
+    // ============================================================
+    // 1. QUESTION BANK (120 questions: 30 GK + 30 Maths + 60 Maths)
+    // ============================================================
+    const questions = [
+        // ==================== GK (30 QUESTIONS) ====================
+        // Unit-1: Current Affairs
+        { text: "The G20 Leaders' Summit 2023, a major international event, was hosted by which country?", options: ["Indonesia", "Brazil", "India", "South Africa"], correct: 2 },
+        { text: "Chandrayaan-3 is a historic space mission launched by ISRO to explore which celestial body?", options: ["Mars", "The Moon", "Venus", "Jupiter"], correct: 1 },
+        { text: "Which country's men's team won the ICC Cricket World Cup in 2023?", options: ["India", "Australia", "England", "New Zealand"], correct: 1 },
+        { text: "Who among the following is the current Secretary-General of the United Nations?", options: ["Ban Ki-moon", "Kofi Annan", "António Guterres", "Tedros Adhanom Ghebreyesus"], correct: 2 },
+        { text: "The BRICS group of nations recently expanded. Which of the following was NOT an original member before South Africa joined in 2010?", options: ["Brazil", "Russia", "India", "South Africa"], correct: 3 },
+        // Unit-2: Teaching and Research Aptitude
+        { text: "Which of the following is considered a learner-centered teaching method?", options: ["Lecture method", "Demonstration method", "Team teaching", "Project work"], correct: 3 },
+        { text: "A \"null hypothesis\" in research typically posits that:", options: ["There is a significant difference between two variables", "The researcher's prediction is perfectly accurate", "There is no significant relationship or difference between variables", "The research design is flawed"], correct: 2 },
+        { text: "A researcher distributes a structured questionnaire to 500 college students to gather their opinions. This is a method of collecting:", options: ["Secondary data", "Primary data", "Historical data", "Tertiary data"], correct: 1 },
+        { text: "The core mandate of the University Grants Commission (UGC) in India is:", options: ["Conducting school board examinations", "Regulating secondary education", "Coordination, determination, and maintenance of standards of university education", "Managing elementary school funding"], correct: 2 },
+        { text: "Summative evaluation is best described as an assessment that takes place:", options: ["Continuously during the learning process", "Before a course begins to check baseline knowledge", "At the end of a course or program to measure overall achievement", "Whenever a student asks a question in class"], correct: 2 },
+        // Unit-3: ICT
+        { text: "In computer terminology, what does RAM stand for?", options: ["Read Access Memory", "Random Access Memory", "Rapid Action Memory", "Readable Applied Memory"], correct: 1 },
+        { text: "What is the full form of MOOC, a significant development in online education?", options: ["Massive Open Online Course", "Multiple Online Open Classes", "Modern Online Operating Computer", "Main Objective Online Course"], correct: 0 },
+        { text: "When writing an email, where do deleted messages temporarily go before being permanently erased?", options: ["Drafts", "Spam", "Outbox", "Trash/Bin"], correct: 3 },
+        { text: "Which of the following is an example of a web browser?", options: ["Google Chrome", "Windows 11", "Microsoft Word", "Python"], correct: 0 },
+        { text: "1 Gigabyte (GB) of digital storage is equal to:", options: ["1024 Bytes", "1024 Kilobytes (KB)", "1024 Megabytes (MB)", "1024 Terabytes (TB)"], correct: 2 },
+        // Unit-4: People and Environment
+        { text: "The international agreement known as the Kyoto Protocol was primarily adopted to:", options: ["Protect endangered flora and fauna", "Reduce greenhouse gas emissions", "Regulate international maritime trade", "Ban plastic pollution in oceans"], correct: 1 },
+        { text: "Minamata disease, a severe neurological syndrome, is caused by severe poisoning from:", options: ["Lead", "Cadmium", "Arsenic", "Mercury"], correct: 3 },
+        { text: "Who is credited with first coining the term \"ecosystem\" in 1935?", options: ["Charles Darwin", "A.G. Tansley", "Ernst Haeckel", "Rachel Carson"], correct: 1 },
+        { text: "The headquarters of the United Nations Environment Programme (UNEP) is located in:", options: ["Geneva, Switzerland", "New York, USA", "Nairobi, Kenya", "Paris, France"], correct: 2 },
+        { text: "Which of the following is considered a renewable source of energy?", options: ["Coal", "Natural Gas", "Petroleum", "Wind power"], correct: 3 },
+        // Unit-5: Indian History and Geography
+        { text: "The famous slogan \"Swaraj is my birthright and I shall have it\" was coined by:", options: ["Mahatma Gandhi", "Jawaharlal Nehru", "Subhas Chandra Bose", "Bal Gangadhar Tilak"], correct: 3 },
+        { text: "The highest mountain peak in the Western Ghats (and South India) is:", options: ["Doddabetta", "Anamudi", "Mahendragiri", "Kodaikanal"], correct: 1 },
+        { text: "The Ajanta Caves, renowned for their ancient mural paintings, are predominantly associated with which religion?", options: ["Hinduism", "Jainism", "Buddhism", "Sikhism"], correct: 2 },
+        { text: "The main asteroid belt in our solar system is located between the orbits of which two planets?", options: ["Earth and Mars", "Mars and Jupiter", "Jupiter and Saturn", "Venus and Earth"], correct: 1 },
+        { text: "The tragic Jallianwala Bagh massacre occurred in Amritsar in which year?", options: ["1905", "1919", "1922", "1930"], correct: 1 },
+        // Unit-6: Indian Constitution and Economy
+        { text: "In the Indian Constitution, the 'Right to Equality' is guaranteed under which cluster of Articles?", options: ["Articles 12-13", "Articles 14-18", "Articles 19-22", "Articles 23-24"], correct: 1 },
+        { text: "Which institution is responsible for formulating and implementing the monetary policy in India?", options: ["State Bank of India (SBI)", "Ministry of Finance", "NITI Aayog", "Reserve Bank of India (RBI)"], correct: 3 },
+        { text: "The Chief Election Commissioner of India holds office for a term of:", options: ["5 years or up to 60 years of age", "6 years or up to 65 years of age", "4 years or up to 62 years of age", "During the pleasure of the President"], correct: 1 },
+        { text: "In the Indian bicameral parliamentary system, the Rajya Sabha is also known as the:", options: ["House of the People", "Legislative Assembly", "Council of States", "Lower House"], correct: 2 },
+        { text: "In 2015, the Government of India replaced the Planning Commission with a new policy think tank called:", options: ["National Development Council", "Finance Commission", "NITI Aayog", "NAFED"], correct: 2 },
+
+        // ==================== MATHS Q1–Q30 (from second file) ====================
+        { text: "The condition that the straight line \\(\\frac{l}{r} = A\\cos \\theta +B\\sin \\theta\\) may touch the circle \\(r = 2a\\cos \\theta\\) is", options: ["\\(B^{2}a^{2} + A^{2}a^{2} = 1\\)", "\\(B^{2}a^{2} - A^{2}a^{2} = 1\\)", "\\(B^{2}a^{2} - 2Ala = 1\\)", "\\(B^{2}a^{2} + 2Ala = 1\\)"], correct: 3 },
+        { text: "The polar equation of the parabola is equal to", options: ["\\(r = l\\sec^{2}\\frac{\\theta}{2}\\)", "\\(r = \\frac{1}{2}\\sec^{2}\\frac{\\theta}{2}\\)", "\\(r = \\sec^{2}\\frac{\\theta}{2}\\)", "\\(r = 2a\\sec^{2}\\frac{\\theta}{2}\\)"], correct: 0 },
+        { text: "The \\(PSP^{\\prime}\\) is a chord of a conic \\(\\frac{l}{r} = 1 + e\\cos \\theta\\), whose focus is \\(S\\) and semi latus rectum is \\(l\\), then \\(\\frac{1}{SP} +\\frac{1}{SP^{\\prime}}\\) is equal to", options: ["\\(\\frac{1}{2l}\\)", "\\(\\frac{1}{l}\\)", "\\(\\frac{2}{l}\\)", "\\(\\frac{4}{l}\\)"], correct: 2 },
+        { text: "Let \\(PSP^{\\prime}\\) is a focal chord of the conic \\(\\frac{l}{r} = 1 + e\\cos \\theta\\), where \\(S\\) is the focus of the conic. Then the tangent at \\(P\\) and \\(P^{\\prime}\\) intersect on the directrix whose equation is", options: ["\\(\\frac{l}{r} = e\\cos \\theta\\)", "\\(\\frac{l}{r} = -e\\cos \\theta\\)", "\\(\\frac{l}{r} = 2e\\cos \\theta\\)", "\\(\\frac{l}{r} = -2e\\cos \\theta\\)"], correct: 1 },
+        { text: "The straight lines \\(\\frac{x}{a} - \\frac{y}{b} = \\frac{z}{c}\\) and \\(\\frac{x}{a} - \\frac{y}{b} = \\frac{z}{c} = \\frac{z}{c}\\) are coplanar, then which of the following is true?", options: ["\\(a^{2} + b^{2} + c^{2} = a\\alpha +b\\beta +c\\gamma\\)", "\\((a\\alpha +b\\beta +c\\gamma)^{2} = ab + bc + ca\\)", "\\(a^{2} + b^{2} + c^{2} = \\alpha^{2} + \\beta^{2} + \\gamma^{2}\\)", "\\((a\\alpha +b\\beta +c\\gamma) = a + b + c\\)"], correct: 1 },
+        { text: "Suppose \\(r\\) and \\(s\\) are the distances of points \\(P(a,b,c)\\) and \\(Q(a',b',c')\\) from the origin respectively. If line \\(PQ\\) passes through the origin, then \\(rs\\) is equal to", options: ["\\((a - a')^2 + (b - b')^2 + (c - c')^2\\)", "\\(a^2 + b^2 + c^2 - (a'^2 + b'^2 + c'^2)\\)", "\\(aa' + bb' + cc'\\)", "\\(\\sqrt{a^2 + b^2 + c^2}\\sqrt{a'^2 + b'^2 + c'^2}\\)"], correct: 2 },
+        { text: "The shortest distance between the z-axis and the line \\(ax + by + cz + d = 0 = a'x + b'y + c'z + d'\\) is equal to", options: ["\\(\\frac{dc' - d'c}{\\sqrt{(ab' - a'b)^2 + (bc' - b'c)^2}}\\)", "\\(\\frac{dc' - d'c}{\\sqrt{(ac' - a'c)^2 + (bc' - b'c)^2}}\\)", "\\(\\frac{da' - a'd}{\\sqrt{(ac' - a'c)^2 + (bc' - b'c)^2}}\\)", "\\(\\frac{dc' - d'c}{\\sqrt{(ac' - a'c)^2 + (ab' - a'b)^2}}\\)"], correct: 1 },
+        { text: "Two spheres of radii \\(r_1\\) and \\(r_2\\) cut orthogonally, then the radius of their common circle is", options: ["\\(\\frac{r_1r_2}{\\sqrt{r_1^2 + r_2^2}}\\)", "\\(\\frac{r_1 + r_2}{\\sqrt{r_1^2 + r_2^2}}\\)", "\\(\\frac{r_1r_2}{r_1^2 + r_2^2}\\)", "\\(\\frac{2r_1r_2}{\\sqrt{r_1^2 + r_2^2}}\\)"], correct: 0 },
+        { text: "The equation of the sphere circumscribing the tetrahedron whose faces are \\(x = 0, y = 0, z = 0\\) and \\(x + y + z = 1\\) is", options: ["\\(x^2 + y^2 + z^2 + x + y + z = 0\\)", "\\(x^2 + y^2 + z^2 - x + y + z = 0\\)", "\\(x^2 + y^2 + z^2 - x - y + z = 0\\)", "\\(x^2 + y^2 + z^2 - x - y - z = 0\\)"], correct: 3 },
+        { text: "If \\(d\\) be the distance between the centres of two spheres of radii \\(r_1\\) and \\(r_2\\), then the angle between them is equal to", options: ["\\(\\cos^{-1}\\left(\\frac{r_1^2 + r_2^2 - d^2}{2r_1r_2}\\right)\\)", "\\(\\cos^{-1}\\left(\\frac{r_1^2 + r_2^2 + d^2}{2r_1r_2}\\right)\\)", "\\(\\cos^{-1}\\left(\\frac{r_1^2 - r_2^2 - d^2}{2r_1r_2}\\right)\\)", "\\(\\sin^{-1}\\left(\\frac{r_1^2 + r_2^2 - d^2}{2r_1r_2}\\right)\\)"], correct: 0 },
+        { text: "The equation of the cone generated by the line passing through \\((\\alpha,\\beta,\\gamma)\\) and intersecting the parabola \\(z^2 = 4ax, y = 0\\) is", options: ["\\((\\beta z - \\gamma y)^2 = a(\\beta -y)(\\beta x - \\alpha y)\\)", "\\((\\beta z - \\gamma y)^2 = 2a(\\beta +y)(\\beta x - \\alpha y)\\)", "\\((\\beta z - \\gamma y)^3 = 4a(\\beta -y)(\\beta x - \\alpha y)\\)", "\\((\\beta z - \\gamma y)^2 = 2a(\\beta -y)(\\beta x - \\alpha y)\\)"], correct: 2 },
+        { text: "The vertex of the cone \\(4x^2 - y^2 + 2z^2 + 2xy - 3yz + 12x - 11y + 6z + 4 = 0\\) is", options: ["\\((-1, -2,3)\\)", "\\((-1, -2, -3)\\)", "\\((1, -2, -3)\\)", "\\((-1,2, -3)\\)"], correct: 1 },
+        { text: "The equation of the cylinder whose generators are parallel to z-axis, and whose guiding curve is \\(x^2 + y^2 + z^2 = 1; x + y + z = 1\\), will be", options: ["\\(x^2 +y^2 +xy - x - y = 0\\)", "\\(x^2 +y^2 +xy + x + y = 0\\)", "\\(x^2 +y^2 -xy - x - y = 0\\)", "\\(x^2 +y^2 -xy + x + y = 0\\)"], correct: 0 },
+        { text: "The equation of the circular cylinder, whose generating lines have the direction cosines \\(l,m,n\\) and which passes through the circle \\(x^2 + z^2 = a^2\\) lying in zx plane will be", options: ["\\((nx - lz)^2 + (mz - ny)^2 = \\frac{l^2}{n^2}\\)", "\\((mx - ly)^2 + (nx - lz)^2 = \\frac{m^2}{n^2}\\)", "\\((mx - ly)^2 + (mz - ny)^2 + (nx - lz)^2 = 1\\)", "\\((mx - ly)^2 + (mz - ny)^2 = a^2m^2\\)"], correct: 3 },
+        { text: "The equation of right circular cylinder having axis \\(x = 2y = -z\\) and radius 4 is equal to", options: ["\\(5x^2 + 8y^2 + 5z^2 + 4yz + 8zx + 4xy = 144\\)", "\\(5x^2 + 8y^2 + 5z^2 + 4yz + 8zx - 4xy = 144\\)", "\\(5x^2 + 5y^2 + 5z^2 + 4yz + 4zx + 4xy = 144\\)", "\\(5x^2 + 8y^2 + 5z^2 + 8yz + 4zx - 4xy = 144\\)"], correct: 1 },
+        { text: "The locus of the centres of the sections of \\(ax^2 + by^2 + cz^2 = 1\\), which touches \\(\\alpha x^2 + \\beta y^2 + \\gamma z^2 = 1\\), will be", options: ["\\(\\frac{a^2x^2}{\\alpha} + \\frac{b^2y^2}{\\beta} + \\frac{c^2z^2}{\\gamma} = (ax^2 + by^2 + cz^2)^2\\)", "\\(\\frac{a^2x^2}{\\alpha} + \\frac{b^2y^2}{\\beta} + \\frac{c^2z^2}{\\gamma} = \\frac{1}{2}(ax^2 + by^2 + cz^2)^2\\)", "\\(\\frac{ax}{\\alpha} + \\frac{by}{\\beta} + \\frac{cz}{\\gamma} = (ax^2 + by^2 + cz^2)^2\\)", "\\(\\frac{ax}{\\alpha} + \\frac{by}{\\beta} + \\frac{cz}{\\gamma} = (a^2x^2 + b^2y^2 + c^2z^2)\\)"], correct: 0 },
+        { text: "The tangent planes to the ellipsoid \\(\\frac{x^2}{a^2} + \\frac{y^2}{b^2} + \\frac{z^2}{c^2} = 1\\) meets the co-ordinate axes at points A, B and C, then the locus of the centroid of the triangle ABC will be", options: ["\\(\\frac{a^2}{x^2} + \\frac{b^2}{y^2} + \\frac{c^2}{z^2} = 3\\)", "\\(\\left(\\frac{a}{x}\\right)^2 + \\left(\\frac{b}{y}\\right)^2 + \\left(\\frac{c}{z}\\right)^2 = 3\\)", "\\(\\frac{a^2}{x^2} + \\frac{b^2}{y^2} + \\frac{c^2}{z^2} = 9\\)", "\\(\\frac{a^2}{x^2} + \\frac{b^2}{y^2} + \\frac{c^2}{z^2} = 1\\)"], correct: 2 },
+        { text: "The locus of the mid-points of the chords of the conicoid \\(ax^2 + by^2 + cz^2 = 1\\), which passes through \\((\\alpha,\\beta,\\gamma)\\) will be", options: ["\\(ax^2 + by^2 + cz^2 = a\\alpha^2 + b\\beta^2 + c\\gamma^2\\)", "\\(ax(x - \\alpha) + by(y - \\beta) + cz(z - \\gamma) = 0\\)", "\\(a\\alpha x^2 + b\\beta y^2 + c\\gamma z^2 = a\\alpha x + b\\beta y + c\\gamma z\\)", "\\(ax(x - \\alpha) + by(y - b) + \\gamma z(z - c) = 0\\)"], correct: 1 },
+        { text: "The locus of the point of intersection of three mutually perpendicular tangent planes to a central conicoid \\(ax^{2} + by^{2} + cz^{2} = 1\\) is", options: ["\\(x^{2} + y^{2} + z^{2} = 1 + \\frac{1}{a} +\\frac{1}{b} +\\frac{1}{c}\\)", "\\(x^{2} + y^{2} + z^{2} = a + b + c\\)", "\\(x^{2} + y^{2} + z^{2} = \\frac{1}{a} +\\frac{1}{b} +\\frac{1}{c}\\)", "\\(x^{2} + y^{2} + z^{2} = (a + b + c)^{2}\\)"], correct: 2 },
+        { text: "If \\(\\vec{r} = r\\hat{r}\\), where \\(\\hat{r}\\) is a unit vector, then \\(\\int \\vec{r}\\times \\frac{d\\vec{r}}{dt} dt\\) is equal to", options: ["\\(\\int r^{2}\\left(\\hat{r}\\times \\frac{d\\hat{r}}{dt}\\right)dt\\)", "\\(\\int \\left(\\hat{r}\\times \\frac{d\\hat{r}}{dt}\\right)dt\\)", "\\(\\left(\\hat{r}\\times \\frac{d\\hat{r}}{dt}\\right)dt\\)", "\\(\\int r\\left(\\hat{r}\\times \\frac{d\\hat{r}}{dt}\\right)dt\\)"], correct: 0 },
+        { text: "If \\(\\lambda \\vec{p} +\\vec{p}\\times \\frac{d\\vec{p}}{dt} = \\vec{p}\\times \\vec{a}\\), where \\(\\vec{a}\\) is a constant vector and \\(\\vec{p}\\) has constant magnitude but variable direction, then which of the following is true?", options: ["\\(\\lambda\\) is a variable", "\\(\\lambda\\) is a vector function", "\\(\\lambda\\) is a constant scalar", "\\(\\lambda\\) is a constant vector"], correct: 2 },
+        { text: "The directional derivative of \\(f(x,y,z) = x^{3} - xy^{2} - z\\) at point \\((1, - 1,0)\\) in the direction of vector \\(2\\hat{i} - 3\\hat{j} +6\\hat{k}\\) is equal to", options: ["\\(-\\frac{8}{7}\\)", "\\(\\frac{1}{7}\\)", "\\(-\\frac{10}{7}\\)", "\\(\\frac{10}{7}\\)"], correct: 1 },
+        { text: "If \\(\\vec{f}\\) and \\(\\vec{g}\\) be differentiable vector point functions, then which of the following is true?", options: ["\\(\\nabla(\\vec{f}\\cdot\\vec{g}) = \\vec{f}\\times(\\nabla\\times\\vec{g}) - \\vec{g}\\times(\\nabla\\times\\vec{f}) + (\\vec{f}\\cdot\\nabla)\\vec{g} - (\\vec{g}\\cdot\\nabla)\\vec{f}\\)", "\\(\\nabla(\\vec{f}\\cdot\\vec{g}) = \\vec{f}\\times(\\nabla\\times\\vec{g}) + \\vec{g}\\times(\\nabla\\times\\vec{f}) - (\\vec{f}\\cdot\\nabla)\\vec{g} + (\\vec{g}\\cdot\\nabla)\\vec{f}\\)", "\\(\\nabla\\times(\\vec{f}\\times\\vec{g}) = \\vec{f}(\\nabla\\cdot\\vec{g}) + \\vec{g}(\\nabla\\cdot\\vec{f}) - (\\vec{g}\\cdot\\nabla)\\vec{f} + (\\vec{f}\\cdot\\nabla)\\vec{g}\\)", "\\(\\nabla\\times(\\vec{f}\\times\\vec{g}) = \\vec{f}(\\nabla\\cdot\\vec{g}) - \\vec{g}(\\nabla\\cdot\\vec{f}) + (\\vec{g}\\cdot\\nabla)\\vec{f} - (\\vec{f}\\cdot\\nabla)\\vec{g}\\)"], correct: 3 },
+        { text: "If \\(\\vec{a}\\) is a constant vector and \\(\\vec{r}\\) is a position vector, then \\(\\operatorname{curl}(\\vec{a}\\times\\vec{r})\\) is equal to", options: ["\\(0\\)", "\\(\\vec{a}\\)", "\\(2\\vec{a}\\)", "\\(\\vec{r}\\)"], correct: 2 },
+        { text: "For the function \\(f(x,y) = \\frac{y}{x^2+y^2}\\), the directional derivative making an angle \\(30^{\\circ}\\) with the positive x-axis at the point \\((0,1)\\) is", options: ["\\(-\\frac{1}{2}\\)", "\\(\\frac{1}{2}\\)", "\\(-\\frac{\\sqrt{3}}{2}\\)", "\\(\\frac{\\sqrt{3}}{2}\\)"], correct: 0 },
+        { text: "If \\(V\\) is the volume enclosed by any closed surface \\(S\\) then which of the following is true?", options: ["\\(\\iint_{S}\\vec{r}\\cdot\\hat{n}\\,dS = V\\)", "\\(\\iint_{S}\\vec{r}\\cdot\\hat{n}\\,dS = 2V\\)", "\\(\\iint_{S}\\vec{r}\\cdot\\hat{n}\\,dS = 3V\\)", "\\(\\iint_{S}\\vec{r}\\cdot\\hat{n}\\,dS = 0\\)"], correct: 2 },
+        { text: "If \\(S\\) is the curved surface of the cylinder \\(x^2 + y^2 = a^2, 0 \\leq z \\leq b\\), then \\(\\iint_{S}\\vec{r}\\cdot d\\vec{S}\\) is equal to", options: ["\\(2\\pi ab\\)", "\\(2\\pi a^2b\\)", "\\(\\pi a^2b\\)", "\\(\\pi ab\\)"], correct: 1 },
+        { text: "\\(\\iiint_{V} z\\,dV\\), where \\(V\\) is the region bounded by a solid hemisphere of a radius \\(a\\) and \\(z \\geq 0\\), is equal to", options: ["\\(\\frac{3\\pi a^{4}}{4}\\)", "\\(\\frac{\\pi a^{4}}{4}\\)", "\\(\\frac{3\\pi a^{3}}{5}\\)", "\\(\\frac{3\\pi a^{4}}{8}\\)"], correct: 1 },
+        { text: "If \\(\\vec{a}\\) is a constant vector and \\(V\\) is the volume enclosed by the closed surface \\(S\\), then \\(\\iint_{S} \\hat{n} \\times (\\vec{a} \\times \\vec{r})\\,dS\\) is equal to", options: ["\\(V \\vec{a}\\)", "\\(V \\vec{a}^{2}\\)", "\\(2 V \\vec{a}\\)", "\\(3 V \\vec{a}\\)"], correct: 2 },
+        { text: "If \\(V\\) is the region bounded by planes \\(x = 0, y = 0, z = 0\\) and \\(2x + 2y + z = 4\\), then \\(\\iiint_{V} \\nabla \\cdot \\vec{F}\\,dV\\) is equal to [where \\(\\vec{F} = (2x^{2} - 3z)\\hat{i} - 2xy\\hat{j} - 4x\\hat{k}\\)]", options: ["\\(\\frac{8}{3}\\)", "\\(\\frac{8}{5}\\)", "\\(\\frac{4}{3}\\)", "\\(\\frac{4}{5}\\)"], correct: 3 },
+
+        // ==================== MATHS Q91–Q150 (from first file) ====================
+        { text: "Which of the following two statements is/are correct?<br>1. If the system of coplanar forces be in equilibrium then the algebraic sum of their moments about any point in their plane is constant.<br>2. If the algebraic sum of the moments of a system of forces about any point in their plane be constant, then either resultant is constant or the line of action of the resultant passes through that point.", options: ["1 only", "2 only", "Both 1 and 2", "Neither 1 nor 2"], correct: 1 },
+        { text: "The value of \\(\\int_{S} \\frac{\\vec{F}}{r^{3}} \\cdot \\hat{n} ds\\), where \\(S\\) denotes the sphere of radius \\(b\\) with centre at the origin, is—", options: ["\\(3\\pi\\)", "\\(4\\pi\\)", "\\(2\\pi\\)", "\\(d\\pi\\)"], correct: 1 },
+        { text: "The area of the section of a right circular cylinder of radius 4 and axis \\(x = 2y = -z\\) by the plane \\(XOY\\) is—", options: ["\\(16\\pi\\)", "\\(8\\pi\\)", "\\(24\\pi\\)", "\\(32\\pi\\)"], correct: 2 },
+        { text: "If \\(E, N\\) and \\(C\\) denote envelope locus, Nodal-locus and cuspidal locus respectively, then \\(C\\)-discriminant is—", options: ["\\(EN^{2}C^{3}\\)", "\\(E^{2}N^{3}C\\)", "\\(EN^{3}C^{2}\\)", "\\(ENC\\)"], correct: 0 },
+        { text: "In finding a part complementary function (C.F.) for the differential equation \\(\\frac{d^{2}y}{dx^{2}} + P\\frac{dy}{dx} + Qy = R\\), where \\(P, Q, R\\) are the function of \\(x\\), which one rule is correct?", options: ["If \\(m(m - 1) + mPx + Qx^{2} = 0\\), then C.F. is \\(e^{mx}\\)", "If \\(1 + P + Q = 0\\), then C.F. is \\(e^{x}\\)", "If \\(1 - P + Q = 0\\), then C.F. is \\(e^{-x}\\)", "None of these"], correct: 1 },
+        { text: "The value of \\(\\int_{C} \\frac{z^{2}}{z^{2} - 1} dz\\), where \\(C\\) is \\(|z + 1| = 1\\) & \\(z = x + iy, x, y \\in \\mathbb{R}\\) & \\(i = \\sqrt{-1}\\), is—", options: ["\\(\\frac{3\\pi i}{2}\\)", "\\(\\pi i\\)", "\\(-\\frac{\\pi i}{2}\\)", "\\(2\\pi i\\)"], correct: 2 },
+        { text: "The centre of the circle of curvature of the curve \\(y = x^{3} + 2x^{2} + x + 1\\) at the point \\((0,1)\\) is—", options: ["\\((-1 / 2,1 / 2)\\)", "\\((-1 / 2,3 / 2)\\)", "\\((1, - 2)\\)", "\\((-2,1)\\)"], correct: 1 },
+        { text: "Change of order of integration in \\(\\int_{0}^{\\infty} \\int_{x}^{\\infty} \\frac{e^{-y}}{y} dy dx\\) gives the value—", options: ["-1", "1", "2", "-2"], correct: 1 },
+        { text: "Asymptotes of the conic \\(r = \\frac{1}{1 + \\sqrt{2}\\cos\\theta}\\) are—", options: ["\\(\\frac{1}{r} = \\cos \\theta \\pm \\sin \\theta\\)", "\\(\\frac{1}{r} = \\cos \\theta - \\sin \\theta\\)", "\\(\\frac{\\sqrt{2}}{r} = \\cos \\theta \\pm \\sin \\theta\\)", "\\(\\frac{\\sqrt{2}}{r} = \\cos \\theta + \\sin \\theta\\)"], correct: 2 },
+        { text: "\\(f(z) = \\frac{1}{(z - 1)(z - 2)}\\) in the region \\(|z|< 1\\) can be expressed as—", options: ["\\(f(z) = \\frac{1}{2} +\\frac{3}{4} z + \\frac{7}{8} z^2 +\\frac{15}{16} z^3 +\\ldots\\)", "\\(f(z) = -\\frac{1}{2} -\\frac{3}{4} z - \\frac{7}{8} z^2 -\\frac{15}{16} z^3 -\\ldots\\)", "\\(f(z) = -(z - 1) + [1 + (z - 1) + (z - 1)^2 +(z - 1)^3 +\\ldots ]\\)", "\\(f(z) = \\dots +7z^3 +3z^2 +2z + \\dots\\)"], correct: 0 },
+        { text: "The matrix of quadratic form \\(q\\) on \\(\\mathbb{R}^3\\) given by \\(q(x_1, x_2, x_3) = x_1^2 - x_3^2 + 3x_1x_2 - 6x_1x_3\\) is—", options: ["Option A", "Option B", "Option C", "Option D"], correct: 2 },
+        { text: "In the integration of the partial differential equation \\(Rr + Ss + Tt + U(rt - s^2) = V\\), where \\(R, S, T, U\\) and \\(V\\) are the functions of \\(x, y, z, p\\) and \\(q\\), equation is given by—", options: ["\\(\\lambda^2 (UV + RT) + \\lambda SV + V^2 = 0\\)", "\\(\\lambda (UV + RT) - \\lambda SV + V^2 = 0\\)", "\\(\\lambda^2 (UV + RT) + \\lambda SV + U^2 = 0\\)", "\\(\\lambda (UV + RT) - \\lambda SV + U = 0\\)"], correct: 2 },
+        { text: "General solution of differential equation \\(x^2 \\frac{d^2 y}{dx^2} - 2x \\frac{dy}{dx} - 4y = 0\\) is—", options: ["\\(y = c_1 x^4 + c_2 x\\)", "\\(y = c_1 e^{4x} + c_2 e^{-x}\\)", "\\(y = c_1 x^4 + c_2 x^{-1}\\)", "\\(y = c_1 e^{4x} + c_2 x^{-1}\\)"], correct: 2 },
+        { text: "The length of the latus rectum of the conic \\(r = 3 \\sec^2 \\frac{\\theta}{2}\\) is—", options: ["9 units", "12 units", "3 units", "6 units"], correct: 1 },
+        { text: "The residue of the function \\(f(z) = \\frac{1}{(z+2)^2(z-2)}\\) at \\(z = 2\\) is—", options: ["\\(-\\frac{1}{16}\\)", "\\(\\frac{1}{32}\\)", "\\(-\\frac{1}{32}\\)", "\\(\\frac{1}{16}\\)"], correct: 3 },
+        { text: "The equation \\(ax^2 + by^2 + cz^2 + 2ux + 2vy + 2wz + d = 0\\) represents a cone if—", options: ["\\(\\frac{u^2}{a} + \\frac{v^2}{b} + \\frac{w^2}{c} = d\\)", "\\(-\\frac{u^2}{a} - \\frac{v^2}{b} - \\frac{w^2}{c} = d\\)", "\\(\\frac{u^2}{a^2} + \\frac{v^2}{b^2} + \\frac{w^2}{c^2} = d\\)", "\\(\\frac{u^2}{a} + \\frac{v^2}{b} + \\frac{w^2}{c} = -d\\)"], correct: 0 },
+        { text: "The enveloping cylinder of the conicoid \\(ax^2 + by^2 + cz^2 = 1\\) with generators perpendicular to \\(z\\)-axis meet the plane \\(z = 0\\) in—", options: ["Hyperbolas", "Rectangular hyperbolas", "Parabolas", "Ellipses"], correct: 3 },
+        { text: "A uniform rod rests wholly within a smooth hemispherical bowl. Reactions at both ends of the rod—", options: ["meet at some point on the rim of the bowl", "are perpendicular to the rod", "are parallel", "pass though the centre of the sphere of hemispherical bowl"], correct: 3 },
+        { text: "If \\(\\alpha = (1,2,3)\\) and \\(\\beta = (2,3,4,5)\\) are permutations, the valve of \\(\\alpha^{-1}\\beta \\alpha\\) is—", options: ["(1 2 3 4)", "(3 1 5 4)", "(3 2 4 5)", "(3 1 4 5)"], correct: 3 },
+        { text: "A particle is projected with velocity \\(u\\) along a smooth horizontal plane in a medium whose resistance per unit mass is equal to \\(k\\) (velocity) \\(^1\\), then the distance 's' covered in time \\(t\\) is given by—", options: ["\\(\\frac{u}{k} (1 - e^{kt})\\)", "\\(\\frac{u}{k} (1 + e^{-kt})\\)", "\\(\\frac{u}{k} (1 + e^{kt})\\)", "\\(\\frac{u}{k} (1 - e^{-kt})\\)"], correct: 3 },
+        { text: "A particle moves in a straight line under an attractive force varying as (distance) \\(^{-4 / 3}\\). The velocity falling from rest at infinity to a distance 'a' is equal to that acquired in falling from rest at a distance 'a' to a distance \\(x\\), then \\(x\\) is equal to—", options: ["\\(\\frac{a}{8}\\)", "2", "6", "4"], correct: 0 },
+        { text: "The length of the arc of the curve \\(r = ae^{\\theta /\\sqrt{2}}\\) from \\(r = 1\\) to \\(r = 2\\) is—", options: ["\\(\\sqrt{3}\\)", "\\(\\sqrt{2}\\)", "\\(2\\sqrt{3}\\)", "\\(2\\sqrt{2}\\)"], correct: 0 },
+        { text: "The equation of the auxiliary circle of the conic \\(\\frac{l}{r} = 1 + e\\cos \\theta\\) is—", options: ["\\(r^{2}(1 - e^{2}) - 2elr\\cos \\theta +2l^{2} = 0\\)", "\\(r^{2}(e^{2} - 1) - 2elr\\cos \\theta +l^{2} = 0\\)", "\\(r^{2}(1 - e^{2}) + 2elr\\cos \\theta -2l^{2} = 0\\)", "\\(r^{2}(e^{2} - 1) + 2elr\\cos \\theta -l^{2} = 0\\)"], correct: 1 },
+        { text: "Evaluate \\(\\int_{C} \\frac{z - 3}{z^{2} + 2z + 5} dz\\), here \\(C\\) is the circle \\(|z| = 1\\) is—", options: ["0", "\\(2\\pi i\\)", "\\(-\\pi i\\)", "\\(\\pi i\\)"], correct: 0 },
+        { text: "A body is placed on a rough plane inclined to the horizon at an angle \\(\\alpha\\). If a body be on the point of sliding down under its own weight, (where \\(\\lambda\\) being angle of friction), then—", options: ["\\(\\alpha = \\lambda\\)", "\\(\\alpha > \\lambda\\)", "\\(\\alpha < \\lambda\\)", "\\(\\alpha = 2\\lambda\\)"], correct: 0 },
+        { text: "The value of \\(\\int_{C} \\frac{e^{z}}{z^{2} + 1} dz\\), where \\(C\\) is \\(|z| = 2\\), is—", options: ["\\(2\\pi i \\sin 1\\)", "\\(\\pi i \\sin 1\\)", "\\(2\\pi i \\cos 1\\)", "\\(\\pi i \\cos 1\\)"], correct: 0 },
+        { text: "The equation of the sphere with centre \\((1, -1, 2)\\) and radius 3 is—", options: ["\\(x^2 + y^2 + z^2 - 2x + 2y - 4z - 3 = 0\\)", "\\(x^2 + y^2 + z^2 + 2x - 2y + 4z - 3 = 0\\)", "\\(x^2 + y^2 + z^2 - 2x + 2y - 4z + 3 = 0\\)", "\\(x^2 + y^2 + z^2 + 2x - 2y + 4z + 3 = 0\\)"], correct: 0 },
+        { text: "The order and degree of the differential equation \\(\\left[1 + \\left(\\frac{dy}{dx}\\right)^2\\right]^{3/2} = k \\frac{d^2y}{dx^2}\\) are—", options: ["2, 3", "2, 2", "2, 1", "1, 2"], correct: 1 },
+        { text: "One of the solution of the partial differential equation \\((D^{2} + 3DD^{\\prime} + 2D^{\\prime 2})z = x + y\\) \\((D = \\frac{\\partial}{\\partial x},D^{\\prime} = \\frac{\\partial}{\\partial y})\\) is—", options: ["\\(z = \\phi_{1}(y - x) + \\phi_{2}(y - 2x) + \\frac{1}{6} x^{3} + \\frac{1}{2} x^{2}y\\)", "\\(z = \\phi_{1}(y - x) + \\phi_{2}(y - 2x) + \\frac{1}{3} x^{3} + x^{2}y\\)", "\\(z = \\phi_{1}(y - x) + \\phi_{2}(y - 2x) + \\frac{1}{2} x^{3} + \\frac{1}{6} x^{2}y\\)", "\\(z = \\phi_{1}(y - x) + \\phi_{2}(2y - x) + \\frac{1}{6} x^{3} + x^{2}y\\)"], correct: 0 },
+        { text: "The polar equation of the hyperbola having the line \\(r \\cos \\theta = 4\\) as the directrix corresponding to the focus at the pole and eccentricity \\(3 / 2\\), is—", options: ["\\(r = \\frac{6}{2 + 3\\cos\\theta}\\)", "\\(r = \\frac{12}{2 + 3\\sin\\theta}\\)", "\\(r = \\frac{12}{2 + 3\\cos\\theta}\\)", "\\(r = \\frac{6}{2 + 3\\sin\\theta}\\)"], correct: 2 },
+        { text: "A uniform ladder of length 7 metre rests against a vertical wall with which it makes an angle of \\(45^{\\circ}\\). The coefficient of friction between the ladder and the wall, ladder and ground respectively being \\(1 / 3\\) and \\(1 / 2\\). A man whose weight is one half of the ladder ascends the ladder. When the ladder is about to slip, the vertical distance of the man from horizon is?", options: ["\\(2\\sqrt{2}\\) metre", "\\(4\\sqrt{2}\\) metre", "\\(\\frac{3}{5}\\) metre", "5 metre"], correct: 3 },
+        { text: "The equation of the cone whose vertex is \\((0,0,0)\\) and guiding curve is \\(x^{2} + y^{2} = 4; z = 3\\), is—", options: ["\\(x^{2} + y^{2} - z^{2} = 0\\)", "\\(9(x^{2} + y^{2}) - z^{2} = 0\\)", "\\(9x^{2} + 9y^{2} - 4z^{2} = 0\\)", "\\(4(x^{2} + y^{2}) - 9z^{2} = 0\\)"], correct: 2 },
+        { text: "If \\(G\\) is an abelian group, then its order may be—", options: ["55", "27", "143", "125"], correct: 2 },
+        { text: "Maximum number of normals can be drawn from any point to the ellipsoid \\(\\frac{x^2}{a^2} +\\frac{y^2}{b^2} +\\frac{z^2}{c^2} = 1\\) is—", options: ["6", "2", "4", "8"], correct: 0 },
+        { text: "If \\(S\\) is the surface of the sphere \\(x^{2} + y^{2} + z^{2} = 1\\) and \\(\\vec{F} = x\\vec{i} +y\\vec{j} +z\\vec{k}\\) then, the value of \\(\\int_{S}\\vec{F}\\cdot \\hat{n} ds\\) is—", options: ["\\(3\\pi\\)", "\\(2\\pi\\)", "\\(\\pi\\)", "\\(4\\pi\\)"], correct: 3 },
+        { text: "If \\(u = x^{2} + y^{2} + z^{2}\\) and \\(\\vec{r} = x\\vec{i} +y\\vec{j} +z\\vec{k}\\), then \\(\\operatorname {div}(u\\vec{r}) =\\)", options: ["7u", "u", "3u", "5u"], correct: 3 },
+        { text: "From a point on the ground at a distance \\(x\\) from the foot of a vertical wall, a ball is thrown at an angle of \\(45^{\\circ}\\), which just clears the top of the wall and after wards strike the ground at a distance \\(y\\) on the other side. The height of the wall is—", options: ["\\(\\frac{xy}{x + y}\\)", "\\(\\frac{2x}{x + y}\\)", "\\(\\frac{2xy}{x + y}\\)", "\\(\\frac{2y}{x + y}\\)"], correct: 0 },
+        { text: "The conic \\(\\frac{5}{r} = 3 - 4\\cos \\theta\\) represents—", options: ["Ellipse", "Parabola", "Hyperbola", "Circle"], correct: 2 },
+        { text: "The radius of the circle \\(x^{2} + y^{2} + z^{2} - 2y - 4z - 11 = 0; x + 2y + 2z - 15 = 0\\) is—", options: ["5", "4", "3", "\\(\\sqrt{7}\\)"], correct: 3 },
+        { text: "Consider the following statements—<br>1. The cylinder is a surface generated by a variable straight line which is parallel to a fixed line and touches a given surface.<br>2. A relation between any two of the three variable coordinates always represents a cylinder.<br>Which of the above statement/s is/are correct?", options: ["Neither 1 nor 2", "Both 1 and 2", "1 only", "2 only"], correct: 2 },
+        { text: "For the function \\(f(z) = \\frac{e^{z} - 1}{z}\\), \\(z = 0\\) is—", options: ["Pole of order 2", "Non-isolated essential singularity", "Removable singularity", "Isolated essential singularity"], correct: 2 },
+        { text: "The envelope of the family of lines \\(y = mx + am^p\\), where \\(m\\) is the parameter, is—", options: ["\\(ap^p y^{1 - p} + (p - 1)^{p - 1}x^p = 0\\)", "\\((p - 1)^{p - 1}y^{1 - p} + ap^p x^p = 0\\)", "\\(ap^p x^p + (p - 1)^{p - 1}y^{p - 1} = 0\\)", "\\(ap^p y^p + (p + 1)^{p - 1}x^{p - 1} = 0\\)"], correct: 0 },
+        { text: "The curve \\(yx = x^2 +1\\) has two asymptotes that are—", options: ["parallel", "intersecting at an angle of \\(45^{\\circ}\\)", "perpendicular", "intersecting at an angle of \\(60^{\\circ}\\)"], correct: 2 },
+        { text: "The distance between the points of intersection of the line \\(\\frac{x + 5}{-3} = y - 4 = \\frac{z - 11}{7}\\) and the surface \\(12x^{2} - 17y^{2} + 7z^{2} = 7\\) is—", options: ["\\(\\sqrt{29}\\)", "\\(\\sqrt{59}\\)", "\\(\\sqrt{17}\\)", "\\(\\sqrt{19}\\)"], correct: 1 },
+        { text: "The eccentricity of the hyperbola which passes through the origin and whose asymptotes are \\(3x - 4y + 7 = 0\\) and \\(4x + 3y + 1 = 0\\), is—", options: ["2", "\\(\\frac{3}{2}\\)", "\\(\\sqrt{2}\\)", "\\(\\sqrt{3}\\)"], correct: 2 },
+        { text: "If \\(\\mu\\) is a constant of proportion for Simple Harmonic Motion, then Frequency of motion is equal to—", options: ["\\(\\frac{\\pi}{\\sqrt{\\mu}}\\)", "\\(\\frac{\\sqrt{\\mu}}{\\pi}\\)", "\\(\\frac{2\\pi}{\\sqrt{\\mu}}\\)", "\\(\\frac{\\sqrt{\\mu}}{2\\pi}\\)"], correct: 3 },
+        { text: "If the vector field \\(\\vec{F} = z\\hat{i} +x\\hat{j} +y\\hat{k}\\) is defined on the surface \\(S\\) of hemisphere \\(z = \\sqrt{1 - x^{2} - y^{2}}\\) bounded by unit circle \\(C\\) in the plane \\(z = 0\\), then \\(\\int_{S}(\\nabla \\times \\vec{F})\\cdot \\hat{n} ds =\\)", options: ["\\(\\frac{\\pi}{2}\\)", "\\(\\pi\\)", "\\(4\\pi\\)", "\\(2\\pi\\)"], correct: 1 },
+        { text: "The equation of the conic referred to the centre of the conic \\(x^{2} - 3xy + y^{2} + 10x - 10y + 21 = 0\\) as origin, is—", options: ["\\(x^{2} + 3xy + y^{2} + 1 = 0\\)", "\\(x^{2} - 3xy + y^{2} - 1 = 0\\)", "\\(x^{2} - 3xy + y^{2} + 1 = 0\\)", "\\(x^{2} - 3xy + y^{2} = 0\\)"], correct: 2 },
+        { text: "A circle of radius 2 and centre \\((2,3,0)\\) lies in the plane \\(z = 0\\). The equation of the sphere containing this circle and passing through the point \\((1,1,1)\\) is—", options: ["\\(x^{2} + y^{2} + z^{2} - 4x - 6y - 2z + 9 = 0\\)", "\\(x^{2} + y^{2} + z^{2} + 4x + 6y + 2z + 9 = 0\\)", "\\(x^{2} + y^{2} + z^{2} + 4x - 6y - 2z + 9 = 0\\)", "\\(x^{2} + y^{2} + z^{2} + 4x + 6y - 2z + 9 = 0\\)"], correct: 0 },
+        { text: "The expression of the vector \\(\\mathbf{a} = (0,4,21)\\in V_{3}(\\mathbb{R})\\) as linear combination of the vectors \\(\\mathbf{a}_{1} = (2,1,0)\\), \\(\\mathbf{a}_{2} = (-1,0,3)\\), \\(\\mathbf{a}_{3} = (0,1,5)\\) is—", options: ["\\(\\mathbf{a} = 3\\mathbf{a}_{1} + 2\\mathbf{a}_{2} + \\mathbf{a}_{3}\\)", "\\(\\mathbf{a} = \\mathbf{a}_{1} + 3\\mathbf{a}_{2} + 2\\mathbf{a}_{3}\\)", "\\(\\mathbf{a} = 2\\mathbf{a}_{1} + \\mathbf{a}_{2} + 3\\mathbf{a}_{3}\\)", "\\(\\mathbf{a} = \\mathbf{a}_{1} + 2\\mathbf{a}_{2} + 3\\mathbf{a}_{3}\\)"], correct: 3 },
+        { text: "If \\(\\vec{a}, \\vec{b}\\) be any two constant vectors and \\(\\vec{r} = x \\hat{i} + y \\hat{j} + z \\hat{k}\\), then \\(\\nabla [\\vec{r} \\cdot (\\vec{a} \\times \\vec{b})] =\\)", options: ["\\((\\vec{a}\\cdot \\vec{b})\\vec{r}\\)", "\\(3(\\vec{a}\\times \\vec{b})\\)", "\\(3(\\vec{a}\\cdot \\vec{b})\\)", "\\(\\vec{a} \\times \\vec{b}\\)"], correct: 3 },
+        { text: "Solution of partial differential equation \\(p \\tan x + q \\tan y = \\tan z\\) is—", options: ["\\(\\phi(\\sin x - \\sin y, \\sin y - \\sin z) = 0\\)", "\\(\\phi \\left( \\frac{\\sin x}{\\sin y}, \\frac{\\sin y}{\\sin z} \\right) = 0\\)", "\\(\\phi(\\sin x \\sin y, \\sin x \\sin y) = 0\\)", "\\(\\phi(\\sin x + \\sin y, \\sin y + \\sin z) = 0\\)"], correct: 1 },
+        { text: "The singular solution of \\(y = px + a(1 + p^{2})^{1/2} \\left( p = \\frac{dy}{dx} \\right)\\) is—", options: ["straight", "circle", "hyperbola", "Parabola"], correct: 1 },
+        { text: "For the scalar field \\(u = \\frac{x^2}{2} + \\frac{y^2}{3}\\), the magnitude of the gradient at the point \\((1,3)\\) is—", options: ["3", "\\(\\sqrt{3}\\)", "2", "\\(\\sqrt{5}\\)"], correct: 3 },
+        { text: "The complete integral of the partial differential equation \\(x - q = (y - p)^{1/3}\\) is—", options: ["\\(z = xy - s^2x - ay + c\\)", "\\(z = \\frac{1}{2}xy + a^2x + ay + c\\)", "\\(z = \\frac{1}{2}xy + a^2x - ay + c\\)", "\\(z = xy + s^2x + ay + c\\)"], correct: 0 },
+        { text: "The length of the latus-rectum of the parabola whose focus is \\((\\frac{1}{4}, \\frac{3}{4})\\) and directrix is \\(2x - 2y + 3 = 0\\), is—", options: ["\\(\\frac{1}{4}\\)", "\\(\\frac{1}{2}\\)", "\\(\\frac{1}{\\sqrt{2}}\\)", "\\(\\frac{1}{\\sqrt{8}}\\)"], correct: 2 },
+        { text: "Consider the following statements. Which is/are correct?<br>1. If \\(f(z)\\) has a pole of order \\(m\\) at \\(z = a\\), then the residue at \\(a\\) is \\(\\frac{1}{m!} \\frac{d^{m-1}}{dz^{m-1}}\\{(z - a)^m f(z)\\}\\), as \\(z \\to a\\).<br>2. If a function \\(f(z)\\) is analytic except at finite number of singularities including at infinity, then sum of residues of these singularities is zero.", options: ["Neither 1 nor 2", "1 only", "2 only", "Both 1 and 2"], correct: 2 },
+        { text: "The value of \\(\\int_{C} \\frac{\\cos(2\\pi z)}{(2z - 1)(z - 3)} dz\\), where \\(C\\) is \\(|z| = 1\\), is—", options: ["\\(\\pi i\\)", "\\(-\\pi i\\)", "\\(\\frac{2\\pi i}{5}\\)", "\\(\\frac{\\pi i}{5}\\)"], correct: 2 },
+        { text: "The radius of convergence of power series \\(\\sum_{n = 0}^{\\infty} \\frac{12n}{(n!)^2} (2 - 3i)^n\\) is—", options: ["1", "\\(\\frac{1}{4}\\)", "\\(\\frac{1}{2}\\)", "\\(\\frac{1}{3}\\)"], correct: 0 },
+        { text: "The Charpit's auxiliary equation for the partial differential equation \\(p^2 + q^2 - 2px - 2qy + 2xy = 0\\) is—", options: ["\\(\\frac{dp}{y - p} = \\frac{dq}{x - q} = \\frac{dx}{x - p} = \\frac{dy}{y - q} = \\frac{dz}{px + qy + p^2}\\)", "\\(\\frac{dp}{y - p} = \\frac{dq}{x - q} = \\frac{dx}{x - p} = \\frac{dy}{y - q} = \\frac{dz}{px + qy - p^2 - q^2}\\)", "\\(\\frac{dp}{y - p} = \\frac{dq}{x - q} = \\frac{dx}{x - p} = \\frac{dy}{y - q} = \\frac{dz}{px + qy - q^2}\\)", "\\(\\frac{dp}{y - p} = \\frac{dq}{x - q} = \\frac{dx}{x - p} = \\frac{dy}{y - q} = \\frac{dz}{px + qy}\\)"], correct: 1 }
+    ];
+
+    // ============================================================
+    // 2. STATE
+    // ============================================================
+    const TOTAL = questions.length; // 120
+    let currentIndex = 0;
+    let userAnswers = new Array(TOTAL).fill(null);
+    let marked = new Array(TOTAL).fill(false);
+    let visited = new Array(TOTAL).fill(false);
+
+    let timerInterval = null;
+    let timeLeft = 120 * 60; // 120 minutes
+    let testSubmitted = false;
+
+    // ============================================================
+    // 3. DOM ELEMENTS
+    // ============================================================
+    const qNumberLabel = document.getElementById('qNumberLabel');
+    const qStatusLabel = document.getElementById('qStatusLabel');
+    const questionText = document.getElementById('questionText');
+    const optionsContainer = document.getElementById('optionsContainer');
+    const prevBtn = document.getElementById('prevBtn');
+    const nextBtn = document.getElementById('nextBtn');
+    const clearBtn = document.getElementById('clearBtn');
+    const markBtn = document.getElementById('markBtn');
+    const submitTopBtn = document.getElementById('submitTopBtn');
+    const submitBottomBtn = document.getElementById('submitBottomBtn');
+    const timerDisplay = document.getElementById('timerDisplay');
+    const paletteGrid = document.getElementById('paletteGrid');
+    const paletteProgress = document.getElementById('paletteProgress');
+    const statAnswered = document.getElementById('statAnswered');
+    const statNotAnswered = document.getElementById('statNotAnswered');
+    const statMarked = document.getElementById('statMarked');
+    const statNotVisited = document.getElementById('statNotVisited');
+    const resultOverlay = document.getElementById('resultOverlay');
+    const resultSummary = document.getElementById('resultSummary');
+    const resultReview = document.getElementById('resultReview');
+    const closeOverlayBtn = document.getElementById('closeOverlayBtn');
+    const downloadBtn = document.getElementById('downloadBtn');
+
+    // ============================================================
+    // 4. RENDER
+    // ============================================================
+    function renderQuestion() {
+        if (testSubmitted) return;
+        const q = questions[currentIndex];
+        qNumberLabel.textContent = `Question ${currentIndex + 1} of ${TOTAL}`;
+
+        let status = 'Not Visited';
+        if (visited[currentIndex]) {
+            if (userAnswers[currentIndex] !== null) status = 'Answered';
+            else status = 'Not Answered';
+            if (marked[currentIndex]) status = 'Marked for Review';
+            if (userAnswers[currentIndex] !== null && marked[currentIndex]) status = 'Answered & Marked';
+        }
+        qStatusLabel.textContent = status;
+
+        questionText.innerHTML = q.text;
+        optionsContainer.innerHTML = '';
+        const letters = ['A', 'B', 'C', 'D'];
+        q.options.forEach((opt, idx) => {
+            const div = document.createElement('div');
+            div.className = 'option' + (userAnswers[currentIndex] === idx ? ' selected' : '');
+            div.innerHTML = `<span class="opt-label">${letters[idx]}</span><span class="opt-text">${opt}</span>`;
+            div.addEventListener('click', () => selectOption(idx));
+            optionsContainer.appendChild(div);
+        });
+
+        if (window.MathJax && MathJax.typesetPromise) {
+            MathJax.typesetPromise([questionText, optionsContainer]).catch(() => {});
+        }
+
+        if (!visited[currentIndex]) visited[currentIndex] = true;
+        updatePalette();
+        updateNavButtons();
+    }
+
+    function selectOption(idx) {
+        if (testSubmitted) return;
+        if (userAnswers[currentIndex] === idx) userAnswers[currentIndex] = null;
+        else userAnswers[currentIndex] = idx;
+        renderQuestion();
+    }
+
+    function clearResponse() {
+        if (testSubmitted) return;
+        userAnswers[currentIndex] = null;
+        renderQuestion();
+    }
+
+    function toggleMark() {
+        if (testSubmitted) return;
+        marked[currentIndex] = !marked[currentIndex];
+        renderQuestion();
+    }
+
+    function goPrev() { if (currentIndex > 0) { currentIndex--; renderQuestion(); } }
+    function goNext() { if (currentIndex < TOTAL - 1) { currentIndex++; renderQuestion(); } }
+    function goToQuestion(idx) { if (idx >= 0 && idx < TOTAL) { currentIndex = idx; renderQuestion(); } }
+
+    function updateNavButtons() {
+        prevBtn.disabled = currentIndex === 0;
+        nextBtn.disabled = currentIndex === TOTAL - 1;
+        prevBtn.style.opacity = prevBtn.disabled ? 0.5 : 1;
+        nextBtn.style.opacity = nextBtn.disabled ? 0.5 : 1;
+    }
+
+    // ============================================================
+    // 5. PALETTE
+    // ============================================================
+    function buildPalette() {
+        paletteGrid.innerHTML = '';
+        for (let i = 0; i < TOTAL; i++) {
+            const btn = document.createElement('button');
+            btn.className = 'palette-btn';
+            btn.textContent = i + 1;
+            btn.addEventListener('click', () => goToQuestion(i));
+            paletteGrid.appendChild(btn);
+        }
+    }
+
+    function updatePalette() {
+        const buttons = paletteGrid.querySelectorAll('.palette-btn');
+        let answeredCount = 0, notAnsweredCount = 0, markedCount = 0, notVisitedCount = 0;
+
+        buttons.forEach((btn, i) => {
+            btn.classList.remove('not-visited', 'answered', 'not-answered', 'marked', 'answered-marked', 'current');
+            const isAnswered = userAnswers[i] !== null;
+            const isMarked = marked[i];
+            const isVisited = visited[i];
+
+            if (!isVisited) { btn.classList.add('not-visited'); notVisitedCount++; }
+            else if (isAnswered && isMarked) { btn.classList.add('answered-marked'); answeredCount++; markedCount++; }
+            else if (isAnswered) { btn.classList.add('answered'); answeredCount++; }
+            else if (isMarked) { btn.classList.add('marked'); markedCount++; }
+            else if (isVisited) { btn.classList.add('not-answered'); notAnsweredCount++; }
+
+            if (i === currentIndex) btn.classList.add('current');
+        });
+
+        statAnswered.textContent = answeredCount;
+        statNotAnswered.textContent = notAnsweredCount;
+        statMarked.textContent = markedCount;
+        statNotVisited.textContent = notVisitedCount;
+        paletteProgress.textContent = `${currentIndex + 1}/${TOTAL}`;
+    }
+
+    // ============================================================
+    // 6. TIMER
+    // ============================================================
+    function startTimer() {
+        updateTimerDisplay();
+        timerInterval = setInterval(() => {
+            timeLeft--;
+            updateTimerDisplay();
+            if (timeLeft <= 0) { clearInterval(timerInterval); autoSubmit(); }
+        }, 1000);
+    }
+
+    function updateTimerDisplay() {
+        const mins = Math.floor(timeLeft / 60);
+        const secs = timeLeft % 60;
+        timerDisplay.textContent = `${String(mins).padStart(2, '0')}:${String(secs).padStart(2, '0')}`;
+        if (timeLeft < 300) timerDisplay.style.color = '#ff6b6b';
+    }
+
+    function autoSubmit() {
+        if (!testSubmitted) {
+            alert('⏰ Time is up! The test will be submitted automatically.');
+            submitTest();
+        }
+    }
+
+    // ============================================================
+    // 7. SUBMIT & RESULT
+    // ============================================================
+    function submitTest() {
+        if (testSubmitted) return;
+        testSubmitted = true;
+        clearInterval(timerInterval);
+
+        let correct = 0, wrong = 0, skipped = 0;
+        const details = [];
+        for (let i = 0; i < TOTAL; i++) {
+            const ua = userAnswers[i];
+            const ca = questions[i].correct;
+            let status;
+            if (ua === null) { skipped++; status = 'skipped'; }
+            else if (ua === ca) { correct++; status = 'correct'; }
+            else { wrong++; status = 'wrong'; }
+            details.push({ index: i, userAnswer: ua, correctAnswer: ca, status });
+        }
+
+        const score = correct * 3 - wrong * 1;
+        const attempted = correct + wrong;
+        const accuracy = attempted > 0 ? ((correct / attempted) * 100).toFixed(1) : '0.0';
+
+        resultSummary.innerHTML = `
+            <div class="score-summary">
+                <div class="stat"><div class="label">Score</div><div class="value ${score >= 0 ? 'green' : 'red'}">${score}</div></div>
+                <div class="stat"><div class="label">Correct</div><div class="value green">${correct}</div></div>
+                <div class="stat"><div class="label">Wrong</div><div class="value red">${wrong}</div></div>
+                <div class="stat"><div class="label">Skipped</div><div class="value">${skipped}</div></div>
+                <div class="stat"><div class="label">Accuracy</div><div class="value small">${accuracy}%</div></div>
+                <div class="stat"><div class="label">Total</div><div class="value small">${TOTAL}</div></div>
+            </div>
+        `;
+
+        const letters = ['A', 'B', 'C', 'D'];
+        let reviewHTML = '<div class="review-section"><h3 style="color:#0b2a4a; margin-bottom:1rem;">📝 Solution Review</h3>';
+        details.forEach((d, i) => {
+            const q = questions[i];
+            const userChoiceText = d.userAnswer !== null ? `${letters[d.userAnswer]}. ${q.options[d.userAnswer]}` : 'Not Attempted';
+            const correctChoiceText = `${letters[d.correctAnswer]}. ${q.options[d.correctAnswer]}`;
+            let badgeClass = d.status === 'correct' ? 'user-correct' : d.status === 'wrong' ? 'user-wrong' : 'neutral';
+            let statusIcon = d.status === 'correct' ? '✅' : d.status === 'wrong' ? '❌' : '⏭️';
+
+            reviewHTML += `
+                <div class="review-item ${d.status}">
+                    <div class="review-q">
+                        <span>${statusIcon} <strong>Q${i + 1}.</strong> ${q.text}</span>
+                    </div>
+                    <div class="review-choices">
+                        <span>Your answer: <span class="choice-badge ${badgeClass}">${userChoiceText}</span></span>
+                        <span>Correct answer: <span class="choice-badge correct-ans">${correctChoiceText}</span></span>
+                    </div>
+                </div>
+            `;
+        });
+        reviewHTML += '</div>';
+        resultReview.innerHTML = reviewHTML;
+
+        resultOverlay.classList.add('active');
+        if (window.MathJax && MathJax.typesetPromise) {
+            MathJax.typesetPromise([resultSummary, resultReview]).catch(() => {});
+        }
+    }
+
+    // ============================================================
+    // 8. DOWNLOAD
+    // ============================================================
+    function downloadReport() {
+        let correct = 0, wrong = 0, skipped = 0;
+        const details = [];
+        for (let i = 0; i < TOTAL; i++) {
+            const ua = userAnswers[i];
+            const ca = questions[i].correct;
+            let status;
+            if (ua === null) { skipped++; status = 'Skipped'; }
+            else if (ua === ca) { correct++; status = 'Correct'; }
+            else { wrong++; status = 'Wrong'; }
+            details.push({ index: i, userAnswer: ua, correctAnswer: ca, status });
+        }
+        const score = correct * 3 - wrong * 1;
+        const attempted = correct + wrong;
+        const accuracy = attempted > 0 ? ((correct / attempted) * 100).toFixed(1) : '0.0';
+        const letters = ['A', 'B', 'C', 'D'];
+
+        let html = `<!DOCTYPE html>
+<html><head><meta charset="UTF-8"><title>TCS iON Test Report</title>
+<style>
+body { font-family: 'Segoe UI', Roboto, sans-serif; padding: 2rem; background: #f4f7fc; color: #1a2b3c; }
+h1 { color: #0b2a4a; }
+.summary { display: flex; gap: 2rem; background: white; padding: 1.5rem; border-radius: 16px; box-shadow: 0 4px 12px rgba(0,0,0,0.05); margin-bottom: 2rem; flex-wrap: wrap; }
+.stat { text-align: center; }
+.stat .label { font-size: 0.8rem; text-transform: uppercase; color: #4a5c6e; }
+.stat .value { font-size: 2rem; font-weight: 800; }
+.green { color: #1e7e34; } .red { color: #c0392b; }
+.review-item { border-left: 6px solid #dfe8f2; padding: 1rem 1.5rem; margin-bottom: 1rem; border-radius: 0 14px 14px 0; background: white; }
+.review-item.correct { border-left-color: #1e7e34; background: #f0faf2; }
+.review-item.wrong { border-left-color: #c0392b; background: #fdf1f0; }
+.review-item.skipped { border-left-color: #8e9eae; background: #f7f9fc; }
+.q-text { font-weight: 600; margin-bottom: 0.5rem; }
+.choice-badge { display: inline-block; padding: 0.2rem 1rem; border-radius: 40px; font-weight: 600; font-size: 0.85rem; }
+.user-correct { background: #1e7e34; color: white; }
+.user-wrong { background: #c0392b; color: white; }
+.correct-ans { background: #0b2a4a; color: white; }
+.neutral { background: #dce5ef; color: #1a2b3c; }
+</style></head><body>
+<h1>📋 TCS iON Test Report</h1>
+<div class="summary">
+    <div class="stat"><div class="label">Score</div><div class="value ${score >= 0 ? 'green' : 'red'}">${score}</div></div>
+    <div class="stat"><div class="label">Correct</div><div class="value green">${correct}</div></div>
+    <div class="stat"><div class="label">Wrong</div><div class="value red">${wrong}</div></div>
+    <div class="stat"><div class="label">Skipped</div><div class="value">${skipped}</div></div>
+    <div class="stat"><div class="label">Accuracy</div><div class="value">${accuracy}%</div></div>
+    <div class="stat"><div class="label">Total</div><div class="value">${TOTAL}</div></div>
+</div>
+<h2>Solution Review</h2>`;
+
+        details.forEach((d, i) => {
+            const q = questions[i];
+            const userText = d.userAnswer !== null ? `${letters[d.userAnswer]}. ${q.options[d.userAnswer]}` : 'Not Attempted';
+            const correctText = `${letters[d.correctAnswer]}. ${q.options[d.correctAnswer]}`;
+            const cls = d.status.toLowerCase();
+            const badge = d.status === 'Correct' ? 'user-correct' : d.status === 'Wrong' ? 'user-wrong' : 'neutral';
+            html += `<div class="review-item ${cls}">
+                <div class="q-text">Q${i + 1}. ${q.text}</div>
+                <div>Your answer: <span class="choice-badge ${badge}">${userText}</span></div>
+                <div>Correct answer: <span class="choice-badge correct-ans">${correctText}</span></div>
+            </div>`;
+        });
+
+        html += `</body></html>`;
+        const blob = new Blob([html], { type: 'text/html' });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = 'TCS_iON_Test_Report.html';
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+        URL.revokeObjectURL(url);
+    }
+
+    // ============================================================
+    // 9. EVENTS
+    // ============================================================
+    prevBtn.addEventListener('click', goPrev);
+    nextBtn.addEventListener('click', goNext);
+    clearBtn.addEventListener('click', clearResponse);
+    markBtn.addEventListener('click', toggleMark);
+    submitTopBtn.addEventListener('click', () => { if (confirm('Submit the test?')) submitTest(); });
+    submitBottomBtn.addEventListener('click', () => { if (confirm('Submit the test?')) submitTest(); });
+    closeOverlayBtn.addEventListener('click', () => resultOverlay.classList.remove('active'));
+    downloadBtn.addEventListener('click', downloadReport);
+
+    document.addEventListener('keydown', (e) => {
+        if (testSubmitted) return;
+        if (e.key === 'ArrowLeft') goPrev();
+        if (e.key === 'ArrowRight') goNext();
+    });
+
+    // ============================================================
+    // 10. INIT
+    // ============================================================
+    function init() {
+        buildPalette();
+        renderQuestion();
+        startTimer();
+    }
+    init();
+</script>
+</body>
+</html>
