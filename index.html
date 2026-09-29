@@ -1,0 +1,485 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>✨ 45 Test Links · Interactive Index</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,400;14..32,500;14..32,600;14..32,700;14..32,800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: #0b1420;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 1.5rem;
+            overflow-x: hidden;
+            position: relative;
+        }
+
+        /* Animated gradient background blobs */
+        body::before,
+        body::after {
+            content: '';
+            position: fixed;
+            border-radius: 50%;
+            filter: blur(100px);
+            z-index: 0;
+            opacity: 0.55;
+            pointer-events: none;
+        }
+
+        body::before {
+            width: 500px;
+            height: 500px;
+            background: radial-gradient(circle, #3b82f6, #8b5cf6);
+            top: -150px;
+            left: -150px;
+            animation: floatBlob1 14s ease-in-out infinite;
+        }
+
+        body::after {
+            width: 600px;
+            height: 600px;
+            background: radial-gradient(circle, #06b6d4, #10b981);
+            bottom: -200px;
+            right: -150px;
+            animation: floatBlob2 18s ease-in-out infinite;
+        }
+
+        @keyframes floatBlob1 {
+            0%, 100% { transform: translate(0, 0) scale(1); }
+            33% { transform: translate(80px, 60px) scale(1.1); }
+            66% { transform: translate(-40px, 30px) scale(0.95); }
+        }
+
+        @keyframes floatBlob2 {
+            0%, 100% { transform: translate(0, 0) scale(1); }
+            50% { transform: translate(-100px, -50px) scale(1.15); }
+        }
+
+        /* Main glass card */
+        .glass-card {
+            position: relative;
+            z-index: 2;
+            background: rgba(17, 25, 40, 0.65);
+            backdrop-filter: blur(20px) saturate(180%);
+            -webkit-backdrop-filter: blur(20px) saturate(180%);
+            border-radius: 2.5rem;
+            padding: 2.5rem 2rem;
+            box-shadow: 
+                0 30px 60px -20px rgba(0, 0, 0, 0.6),
+                0 0 0 1px rgba(255, 255, 255, 0.08),
+                inset 0 1px 1px rgba(255, 255, 255, 0.1);
+            width: 100%;
+            max-width: 1200px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            animation: cardIn 0.8s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+
+        @keyframes cardIn {
+            from { opacity: 0; transform: translateY(30px) scale(0.97); }
+            to { opacity: 1; transform: translateY(0) scale(1); }
+        }
+
+        .header {
+            display: flex;
+            flex-wrap: wrap;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 2rem;
+            padding: 0 0.25rem;
+            gap: 1rem;
+        }
+
+        .header h1 {
+            font-weight: 800;
+            font-size: 2rem;
+            letter-spacing: -0.03em;
+            background: linear-gradient(135deg, #67e8f9, #a78bfa, #f472b6);
+            background-size: 200% 200%;
+            animation: gradientShift 5s ease infinite;
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            cursor: default;
+        }
+
+        @keyframes gradientShift {
+            0%, 100% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+        }
+
+        .header h1 i {
+            font-size: 2rem;
+            background: linear-gradient(135deg, #22d3ee, #c084fc);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            animation: pulseIcon 2.5s ease-in-out infinite;
+        }
+
+        @keyframes pulseIcon {
+            0%, 100% { transform: scale(1) rotate(0deg); }
+            50% { transform: scale(1.15) rotate(-8deg); }
+        }
+
+        .badge {
+            background: rgba(255, 255, 255, 0.06);
+            backdrop-filter: blur(8px);
+            padding: 0.55rem 1.3rem;
+            border-radius: 40px;
+            font-weight: 600;
+            font-size: 0.9rem;
+            color: #c7e5f5;
+            border: 1px solid rgba(255, 255, 255, 0.12);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            white-space: nowrap;
+        }
+
+        .badge i {
+            color: #22d3ee;
+            font-size: 0.95rem;
+            animation: blink 2s infinite;
+        }
+
+        @keyframes blink {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.4; }
+        }
+
+        /* Grid – 45 links */
+        .link-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(165px, 1fr));
+            gap: 1rem;
+            margin: 1.5rem 0 0.5rem;
+        }
+
+        /* Each link styled as a neon glass tile */
+        .test-link {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            background: rgba(255, 255, 255, 0.03);
+            padding: 1rem 1.15rem;
+            border-radius: 1.2rem;
+            text-decoration: none;
+            color: #e2e8f0;
+            font-weight: 500;
+            font-size: 0.95rem;
+            box-shadow: 
+                0 4px 12px -6px rgba(0, 0, 0, 0.5),
+                inset 0 1px 1px rgba(255, 255, 255, 0.06);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            transition: all 0.3s cubic-bezier(0.2, 0.9, 0.4, 1);
+            position: relative;
+            overflow: hidden;
+            backdrop-filter: blur(4px);
+            opacity: 0;
+            animation: linkIn 0.5s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+        }
+
+        @keyframes linkIn {
+            from { opacity: 0; transform: translateY(16px) scale(0.96); }
+            to { opacity: 1; transform: translateY(0) scale(1); }
+        }
+
+        .test-link::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            border-radius: inherit;
+            padding: 1px;
+            background: linear-gradient(135deg, rgba(56, 189, 248, 0.5), rgba(168, 85, 247, 0.4), rgba(236, 72, 153, 0.3));
+            -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+            -webkit-mask-composite: xor;
+            mask-composite: exclude;
+            opacity: 0;
+            transition: opacity 0.35s;
+            pointer-events: none;
+        }
+
+        .test-link:hover::before {
+            opacity: 1;
+        }
+
+        .test-link:hover {
+            transform: translateY(-4px) scale(1.02);
+            background: rgba(255, 255, 255, 0.07);
+            box-shadow: 
+                0 20px 30px -12px rgba(34, 211, 238, 0.25),
+                0 8px 20px -8px rgba(168, 85, 247, 0.2),
+                inset 0 1px 2px rgba(255, 255, 255, 0.1);
+            color: #ffffff;
+        }
+
+        .test-link:active {
+            transform: translateY(-2px) scale(0.99);
+        }
+
+        /* Left part: icon + name */
+        .link-text {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            min-width: 0;
+        }
+
+        .link-text .icon-wrap {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 30px;
+            height: 30px;
+            border-radius: 10px;
+            background: rgba(56, 189, 248, 0.12);
+            color: #38bdf8;
+            font-size: 0.85rem;
+            transition: all 0.3s;
+            flex-shrink: 0;
+        }
+
+        .test-link:hover .icon-wrap {
+            background: rgba(168, 85, 247, 0.2);
+            color: #c084fc;
+            transform: rotate(-8deg) scale(1.1);
+        }
+
+        .link-name {
+            font-weight: 600;
+            letter-spacing: -0.01em;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            background: linear-gradient(135deg, #e0f2fe, #f0e7ff);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+        }
+
+        /* Right arrow icon */
+        .test-link > .fa-arrow-right {
+            font-size: 0.9rem;
+            color: #475569;
+            transition: all 0.3s;
+            flex-shrink: 0;
+        }
+
+        .test-link:hover > .fa-arrow-right {
+            color: #22d3ee;
+            transform: translateX(4px);
+        }
+
+        /* floating number badge on top-right corner? let's do a subtle dot indicator */
+        .test-link::after {
+            content: '';
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            width: 6px;
+            height: 6px;
+            border-radius: 50%;
+            background: #22d3ee;
+            opacity: 0.6;
+            box-shadow: 0 0 8px #22d3ee;
+            transition: opacity 0.3s, transform 0.3s;
+        }
+
+        .test-link:hover::after {
+            opacity: 1;
+            transform: scale(1.4);
+        }
+
+        /* Footer note */
+        .footer-note {
+            margin-top: 2rem;
+            text-align: center;
+            color: #94a3b8;
+            font-size: 0.88rem;
+            font-weight: 500;
+            letter-spacing: 0.02em;
+            border-top: 1px solid rgba(255, 255, 255, 0.06);
+            padding-top: 1.6rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+
+        .footer-note i {
+            color: #22d3ee;
+            font-size: 0.95rem;
+            animation: floatArrow 2s ease-in-out infinite;
+        }
+
+        @keyframes floatArrow {
+            0%, 100% { transform: translateX(0); }
+            50% { transform: translateX(6px); }
+        }
+
+        /* Responsive tweaks */
+        @media (max-width: 640px) {
+            .glass-card {
+                padding: 1.8rem 1.2rem;
+                border-radius: 1.8rem;
+            }
+            .header h1 {
+                font-size: 1.5rem;
+            }
+            .header h1 i {
+                font-size: 1.5rem;
+            }
+            .badge {
+                font-size: 0.78rem;
+                padding: 0.4rem 1rem;
+            }
+            .link-grid {
+                grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+                gap: 0.75rem;
+            }
+            .test-link {
+                padding: 0.8rem 0.9rem;
+                font-size: 0.85rem;
+            }
+            .link-text .icon-wrap {
+                width: 26px;
+                height: 26px;
+                font-size: 0.75rem;
+            }
+        }
+
+        @media (max-width: 400px) {
+            .link-grid {
+                grid-template-columns: 1fr 1fr;
+                gap: 0.6rem;
+            }
+            .link-name {
+                font-size: 0.8rem;
+            }
+            .test-link > .fa-arrow-right {
+                font-size: 0.75rem;
+            }
+        }
+
+        /* Custom scrollbar for whole page just in case */
+        ::-webkit-scrollbar {
+            width: 10px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #0b1420;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #1e3a5f;
+            border-radius: 20px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #2d5a8a;
+        }
+    </style>
+</head>
+<body>
+    <div class="glass-card">
+        <div class="header">
+            <h1>
+                <i class="fas fa-flask"></i> 
+                Test Index
+            </h1>
+            <div class="badge">
+                <i class="fas fa-circle"></i> 45 test links
+            </div>
+        </div>
+
+        <!-- Grid for 45 links -->
+        <div class="link-grid" id="testGrid"></div>
+
+        <div class="footer-note">
+            <i class="fas fa-hand-pointer"></i>
+            Click any test to open
+            <i class="fas fa-arrow-right"></i>
+        </div>
+    </div>
+
+    <script>
+        (function() {
+            const TOTAL_LINKS = 45;
+
+            // Icons array for variety
+            const ICONS = [
+                'fa-vial', 'fa-flask', 'fa-microscope', 'fa-dna', 'fa-atom',
+                'fa-chart-line', 'fa-chart-bar', 'fa-chart-pie', 'fa-calculator', 'fa-ruler',
+                'fa-cog', 'fa-gear', 'fa-wrench', 'fa-screwdriver', 'fa-tools',
+                'fa-laptop-code', 'fa-code', 'fa-terminal', 'fa-database', 'fa-cloud',
+                'fa-mobile-alt', 'fa-tablet-alt', 'fa-desktop', 'fa-server', 'fa-wifi',
+                'fa-shield-alt', 'fa-lock', 'fa-key', 'fa-user-secret', 'fa-fingerprint',
+                'fa-bolt', 'fa-fire', 'fa-star', 'fa-heart', 'fa-rocket',
+                'fa-puzzle-piece', 'fa-cube', 'fa-cubes', 'fa-layer-group', 'fa-th',
+                'fa-check-circle', 'fa-times-circle', 'fa-exclamation-triangle', 'fa-info-circle', 'fa-question-circle'
+            ];
+
+            // Names for the links
+            const NAMES = [
+                'Alpha', 'Beta', 'Gamma', 'Delta', 'Epsilon', 'Zeta', 'Eta', 'Theta', 'Iota', 'Kappa',
+                'Lambda', 'Mu', 'Nu', 'Xi', 'Omicron', 'Pi', 'Rho', 'Sigma', 'Tau', 'Upsilon',
+                'Phi', 'Chi', 'Psi', 'Omega', 'Prime', 'Nova', 'Orion', 'Vega', 'Lyra', 'Andromeda',
+                'Titan', 'Phoenix', 'Pegasus', 'Cygnus', 'Draco', 'Aquila', 'Centaurus', 'Cassiopeia',
+                'Hydra', 'Perseus', 'Hercules', 'Auriga', 'Corvus', 'Lupus', 'Vulpecula'
+            ];
+
+            const grid = document.getElementById('testGrid');
+            if (!grid) return;
+
+            for (let i = 1; i <= TOTAL_LINKS; i++) {
+                const iconClass = ICONS[(i - 1) % ICONS.length];
+                const name = NAMES[(i - 1) % NAMES.length];
+                const label = `${name} ${i}`;   // e.g., Alpha 1, Beta 2
+
+                const a = document.createElement('a');
+                a.href = `test${i}.html`;       // test1.html, test2.html, ...
+                a.className = 'test-link';
+                // Remove target="_blank" if you want same-tab navigation.
+                // I'll keep it blank for better UX while testing.
+                a.target = '_blank';
+                a.rel = 'noopener noreferrer';
+                a.setAttribute('title', `Open ${label} test page`);
+                a.style.animationDelay = `${(i * 0.025)}s`;  // staggered entrance
+
+                a.innerHTML = `
+                    <span class="link-text">
+                        <span class="icon-wrap">
+                            <i class="fas ${iconClass}"></i>
+                        </span>
+                        <span class="link-name">${label}</span>
+                    </span>
+                    <i class="fas fa-arrow-right"></i>
+                `;
+
+                grid.appendChild(a);
+            }
+
+            // Optional: add a tiny "click" sound effect? no, not needed.
+        })();
+    </script>
+
+    <noscript>
+        <div style="padding: 2rem; text-align: center; color: #cbd5e1;">Please enable JavaScript to see the 45 test links.</div>
+    </noscript>
+</body>
+</html>
