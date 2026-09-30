@@ -1,0 +1,1502 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Mock Test – 120 MCQs (Mathematics + GK)</title>
+<style id="appCss">
+:root{
+  --navy:#0b2a5b;--navy-2:#143c80;--orange:#f7941d;--orange-2:#e0800a;
+  --bg:#eef2f8;--card:#ffffff;--card-2:#f6f8fc;--text:#1b2437;--muted:#5b6983;--line:#d8e0ee;
+  --ok:#1f9d4f;--ok-bg:#e5f6ea;--bad:#d64545;--bad-bg:#fdeaea;--mk:#7b4fd0;--na:#e2504a;
+  --nv:#dfe5f0;--nv-t:#33415c;--sel-bg:#fff4e4;--brand-text:#143c80;--tag-bg:#e8effc;
+  --shadow:0 1px 3px rgba(16,32,64,.08),0 4px 14px rgba(16,32,64,.06);
+  box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px);
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --bg:#0c1220;--card:#151d30;--card-2:#111828;--text:#e7ecf6;--muted:#93a1bd;--line:#26314b;
+    --ok:#3cc272;--ok-bg:#12301d;--bad:#ef6a6a;--bad-bg:#3a1b1e;--nv:#25304a;--nv-t:#c9d3e8;
+    --sel-bg:#3a2a12;--brand-text:#8fb4ff;--tag-bg:#1c2a4a;--shadow:0 1px 3px rgba(0,0,0,.4);
+  }
+}
+:root[data-theme="dark"]{
+  --bg:#0c1220;--card:#151d30;--card-2:#111828;--text:#e7ecf6;--muted:#93a1bd;--line:#26314b;
+  --ok:#3cc272;--ok-bg:#12301d;--bad:#ef6a6a;--bad-bg:#3a1b1e;--nv:#25304a;--nv-t:#c9d3e8;
+  --sel-bg:#3a2a12;--brand-text:#8fb4ff;--tag-bg:#1c2a4a;--shadow:0 1px 3px rgba(0,0,0,.4);
+}
+html{height:100%;scroll-padding-top:env(safe-area-inset-top,0px)}
+*{box-sizing:border-box}
+body{margin:0;height:100%;overflow:hidden;background:var(--bg);color:var(--text);
+  font-family:system-ui,-apple-system,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif;font-size:15px}
+button{font-family:inherit}
+[hidden]{display:none!important}
+
+/* ---------- layout ---------- */
+.app{height:100%;display:flex;flex-direction:column;min-height:0}
+.hdr{flex:none;background:var(--navy);color:#fff;border-bottom:3px solid var(--orange);
+  display:flex;align-items:center;justify-content:space-between;gap:12px;padding:8px 16px}
+.brand{display:flex;align-items:center;gap:12px;min-width:0}
+.logo{background:var(--orange);color:#fff;font-weight:800;border-radius:6px;padding:6px 9px;letter-spacing:.5px;flex:none}
+.brand b{display:block;font-size:15px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.brand small{opacity:.78;font-size:12px;display:block}
+.hdr-right{display:flex;align-items:center;gap:10px;flex:none}
+.timer{background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.22);border-radius:8px;padding:4px 12px;text-align:center;min-width:118px}
+.timer span{display:block;font-size:10px;text-transform:uppercase;letter-spacing:.08em;opacity:.8}
+.timer b{font-size:20px;font-variant-numeric:tabular-nums;letter-spacing:.03em}
+.timer.low{background:var(--bad);animation:blink 1s steps(2,start) infinite}
+@keyframes blink{50%{opacity:.6}}
+.pal-toggle{display:none;background:var(--orange);color:#fff;border:0;border-radius:8px;padding:9px 12px;font-weight:700;cursor:pointer}
+
+.subbar{flex:none;background:var(--card);border-bottom:1px solid var(--line);display:flex;gap:4px;padding:0 12px;overflow-x:auto}
+.stab{background:none;border:0;border-bottom:3px solid transparent;color:var(--muted);font-weight:700;font-size:14px;padding:11px 14px;cursor:pointer;white-space:nowrap}
+.stab small{font-weight:600;opacity:.8;margin-left:4px}
+.stab.on{color:var(--brand-text);border-bottom-color:var(--orange)}
+
+.main{flex:1;min-height:0;display:flex;gap:14px;padding:14px}
+.qpane{flex:1;min-width:0;display:flex;flex-direction:column;background:var(--card);border:1px solid var(--line);border-radius:12px;box-shadow:var(--shadow);overflow:hidden}
+.qscroll{flex:1;min-height:0;overflow:auto;padding:18px 22px}
+.qhead{display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin-bottom:14px;padding-bottom:12px;border-bottom:1px solid var(--line)}
+.qno{font-weight:800;font-size:16px;color:var(--brand-text)}
+.pill{background:var(--tag-bg);color:var(--brand-text);font-size:12px;font-weight:700;border-radius:99px;padding:3px 10px}
+.marks{margin-left:auto;font-size:12px;font-weight:700;color:var(--muted)}
+.marks .p{color:var(--ok)}.marks .n{color:var(--bad)}
+.qtext{font-size:17px;line-height:1.85;margin-bottom:18px;overflow-wrap:anywhere}
+.opt{display:flex;gap:12px;align-items:center;width:100%;text-align:left;background:var(--card);color:var(--text);
+  border:1.5px solid var(--line);border-radius:10px;padding:10px 14px;margin:0 0 10px;font-size:16px;cursor:pointer;transition:border-color .12s,background .12s}
+.opt:hover{border-color:var(--orange)}
+.opt.sel{border-color:var(--orange);background:var(--sel-bg)}
+.bul{flex:none;width:30px;height:30px;border-radius:50%;border:1.5px solid var(--line);display:grid;place-items:center;font-weight:800;font-size:13px;color:var(--muted)}
+.opt.sel .bul{background:var(--orange);border-color:var(--orange);color:#fff}
+.otxt{min-width:0;overflow-wrap:anywhere;line-height:1.8}
+.hint{font-size:12px;color:var(--muted);margin-top:4px}
+
+.actions{flex:none;display:flex;flex-wrap:wrap;gap:8px;align-items:center;padding:10px 14px;border-top:1px solid var(--line);background:var(--card-2)}
+.spacer{flex:1}
+.btn{font-weight:700;font-size:14px;padding:9px 16px;border-radius:8px;border:1.5px solid var(--line);background:var(--card);color:var(--text);cursor:pointer}
+.btn:hover:not(:disabled){border-color:var(--navy-2)}
+.btn:disabled{opacity:.45;cursor:not-allowed}
+.btn.primary{background:var(--orange);border-color:var(--orange);color:#fff}
+.btn.primary:hover:not(:disabled){background:var(--orange-2);border-color:var(--orange-2)}
+.btn.navy{background:var(--navy-2);border-color:var(--navy-2);color:#fff}
+.btn.mk.on{background:var(--mk);border-color:var(--mk);color:#fff}
+.btn.submit{background:var(--ok);border-color:var(--ok);color:#fff}
+
+/* ---------- palette ---------- */
+.palette{width:322px;flex:none;display:flex;flex-direction:column;min-height:0;background:var(--card);border:1px solid var(--line);border-radius:12px;box-shadow:var(--shadow);overflow:hidden}
+.cand{display:flex;gap:10px;align-items:center;padding:12px 14px;background:var(--navy);color:#fff}
+.avatar{width:38px;height:38px;border-radius:50%;background:var(--orange);display:grid;place-items:center;font-weight:800}
+.cand small{display:block;opacity:.75;font-size:12px}
+.legend{display:grid;grid-template-columns:1fr 1fr;gap:8px 10px;padding:10px 14px;font-size:12px;border-bottom:1px solid var(--line);color:var(--muted)}
+.lg{display:flex;align-items:center;gap:7px}
+.lg .pb{width:28px;height:28px;font-size:12px;pointer-events:none;flex:none}
+.pal-scroll{flex:1;min-height:0;overflow:auto;padding:8px 14px 12px}
+.pal-sec{font-size:12px;font-weight:800;color:var(--muted);text-transform:uppercase;letter-spacing:.06em;margin:10px 0 8px;display:flex;justify-content:space-between}
+.pgrid{display:grid;grid-template-columns:repeat(5,1fr);gap:8px}
+.pb{aspect-ratio:1;min-width:0;border-radius:8px;border:0;font-weight:800;font-size:13px;cursor:pointer;color:#fff;position:relative;padding:0}
+.pb.nv{background:var(--nv);color:var(--nv-t)}
+.pb.na{background:var(--na)}
+.pb.an{background:var(--ok)}
+.pb.mk,.pb.am{background:var(--mk);border-radius:50%}
+.pb.am::after{content:"";position:absolute;right:0;bottom:0;width:11px;height:11px;border-radius:50%;background:var(--ok);border:2px solid var(--card)}
+.pb.cur{outline:3px solid var(--orange);outline-offset:1px}
+.pal-foot{padding:10px 14px;border-top:1px solid var(--line);background:var(--card-2)}
+.pal-foot .btn{width:100%}
+.backdrop{position:fixed;inset:0;background:rgba(0,0,0,.45);z-index:35;display:none}
+.backdrop.show{display:block}
+
+/* ---------- overlays ---------- */
+.overlay{position:fixed;inset:0;z-index:100;background:rgba(8,20,45,.7);display:grid;place-items:center;padding:16px}
+.dialog{background:var(--card);color:var(--text);border-radius:14px;max-width:580px;width:100%;max-height:100%;overflow:auto;padding:22px 24px;border-top:5px solid var(--orange);box-shadow:0 20px 60px rgba(0,0,0,.4)}
+.dialog h2{margin:0 0 6px;font-size:20px;color:var(--brand-text)}
+.dialog p,.dialog li{line-height:1.6;color:var(--muted)}
+.dialog ul{padding-left:20px;margin:8px 0 14px}
+.dlg-actions{display:flex;gap:10px;justify-content:flex-end;flex-wrap:wrap;margin-top:16px}
+.sumtbl{width:100%;border-collapse:collapse;margin:12px 0}
+.sumtbl td{padding:8px 10px;border-bottom:1px solid var(--line)}
+.sumtbl td:last-child{text-align:right;font-weight:800}
+
+/* ---------- results ---------- */
+.res-overlay{position:fixed;inset:0;z-index:120;background:var(--bg);overflow:auto;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+.res-head{background:var(--navy);color:#fff;border-bottom:3px solid var(--orange)}
+.res-head-in{max-width:1000px;margin:0 auto;padding:12px 16px;display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap}
+.res-actions{display:flex;gap:8px;flex-wrap:wrap}
+.res-inner{max-width:1000px;margin:0 auto;padding:0 16px 48px}
+.banner{margin-top:16px;background:var(--bad-bg);color:var(--bad);border:1px solid var(--bad);border-radius:10px;padding:10px 14px;font-weight:700}
+.hero{display:grid;grid-template-columns:250px 1fr;gap:16px;margin:18px 0 14px}
+.scorebox{background:linear-gradient(135deg,var(--navy),var(--navy-2));color:#fff;border-radius:14px;padding:18px;text-align:center;border-bottom:4px solid var(--orange);display:flex;flex-direction:column;justify-content:center}
+.scorebox small{opacity:.8;text-transform:uppercase;letter-spacing:.08em;font-size:12px}
+.scorebox b{font-size:56px;line-height:1.1;display:block}
+.scorebox span{opacity:.85}
+.tiles{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
+.tile{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:12px 14px;box-shadow:var(--shadow)}
+.tile small{color:var(--muted);font-size:12px;display:block}
+.tile b{font-size:24px;display:block;margin:2px 0}
+.tile em{font-style:normal;font-size:12px;color:var(--muted)}
+.tile.ok b{color:var(--ok)}.tile.bad b{color:var(--bad)}.tile.acc b{color:var(--orange-2)}
+.dist{display:flex;height:12px;border-radius:99px;overflow:hidden;background:var(--nv);margin:6px 0 4px}
+.dist i{display:block;height:100%}
+.dist .c{background:var(--ok)}.dist .w{background:var(--bad)}.dist .s{background:#9aa6bd}
+.tbl{width:100%;border-collapse:collapse;background:var(--card);border:1px solid var(--line);border-radius:12px;overflow:hidden;margin:12px 0}
+.tbl th,.tbl td{padding:9px 12px;text-align:center;border-bottom:1px solid var(--line);font-size:14px}
+.tbl th{background:var(--card-2);color:var(--muted);font-size:12px;text-transform:uppercase;letter-spacing:.05em}
+.tbl td:first-child,.tbl th:first-child{text-align:left}
+.tbl tr:last-child td{border-bottom:0}
+.filters{position:sticky;top:0;z-index:5;background:var(--bg);padding:10px 0 6px;display:flex;flex-direction:column;gap:8px}
+.chips{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
+.chips .lbl{font-size:12px;font-weight:800;color:var(--muted);text-transform:uppercase;letter-spacing:.06em;margin-right:2px}
+.chip{font-size:13px;font-weight:700;padding:7px 14px;border-radius:99px;border:1.5px solid var(--line);background:var(--card);color:var(--text);cursor:pointer}
+.chip b{margin-left:4px;opacity:.75}
+.chip.active{background:var(--navy-2);border-color:var(--navy-2);color:#fff}
+.chip[data-fs="correct"].active{background:var(--ok);border-color:var(--ok)}
+.chip[data-fs="incorrect"].active{background:var(--bad);border-color:var(--bad)}
+.chip[data-fs="unattempted"].active{background:#69768f;border-color:#69768f}
+.empty{text-align:center;color:var(--muted);padding:30px}
+.rv{background:var(--card);border:1px solid var(--line);border-left:5px solid #9aa6bd;border-radius:12px;padding:16px 18px;margin:12px 0;box-shadow:var(--shadow)}
+.rv.correct{border-left-color:var(--ok)}.rv.incorrect{border-left-color:var(--bad)}
+.rv-h{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin-bottom:10px}
+.rv-h .marks{margin-left:auto}
+.badge{font-size:12px;font-weight:800;padding:3px 10px;border-radius:99px}
+.badge.correct{background:var(--ok-bg);color:var(--ok)}
+.badge.incorrect{background:var(--bad-bg);color:var(--bad)}
+.badge.unattempted{background:var(--nv);color:var(--nv-t)}
+.rv .qtext{font-size:16px;margin-bottom:12px}
+.ropts{list-style:none;padding:0;margin:0}
+.ro{display:flex;align-items:center;gap:10px;border:1.5px solid var(--line);border-radius:9px;padding:8px 12px;margin:7px 0}
+.ro .bul{width:26px;height:26px;font-size:12px}
+.ro.is-correct{border-color:var(--ok);background:var(--ok-bg)}
+.ro.is-correct .bul{background:var(--ok);border-color:var(--ok);color:#fff}
+.ro.is-wrong{border-color:var(--bad);background:var(--bad-bg)}
+.ro.is-wrong .bul{background:var(--bad);border-color:var(--bad);color:#fff}
+.flag{margin-left:auto;font-size:11px;font-weight:800;white-space:nowrap;padding:2px 9px;border-radius:99px;color:#fff;flex:none}
+.flag.g{background:var(--ok)}.flag.r{background:var(--bad)}
+.ans-line{margin-top:10px;font-size:13.5px;color:var(--muted)}
+.ans-line b{color:var(--text)}
+.ans-line b.ok{color:var(--ok)}.ans-line b.bad{color:var(--bad)}
+body.report{height:auto;overflow:auto}
+
+/* ---------- LaTeX (mini renderer) ---------- */
+.math{font-family:"Cambria Math","STIX Two Math","Latin Modern Math","Times New Roman",serif;font-size:1.1em}
+.math i{font-style:italic}
+.math .rm{font-style:normal}.math .bf{font-weight:700}
+.math .op{margin:0 .2em}
+.math .fn{margin-right:.14em}
+.math .cm{margin-right:.22em}
+.math .bigop{font-size:1.45em;line-height:.8;vertical-align:-.1em;font-style:normal}
+.math sup,.math sub{font-size:.72em;line-height:0}
+.math .ss{display:inline-flex;flex-direction:column;vertical-align:middle;font-size:.72em;line-height:1.05;margin-left:.05em}
+.math .ss sup,.math .ss sub{font-size:1em;line-height:1.05;vertical-align:baseline;position:static}
+.math .frac{display:inline-flex;flex-direction:column;vertical-align:middle;text-align:center;margin:0 .15em}
+.math .num{border-bottom:1px solid currentColor;padding:0 .25em .05em;line-height:1.3}
+.math .den{padding:.05em .25em 0;line-height:1.3}
+.math .sqrt{display:inline-flex;align-items:stretch}
+.math .rad{font-size:1.15em;line-height:1;margin-right:-.04em}
+.math .rc{border-top:1px solid currentColor;margin-top:.12em;padding:0 .12em}
+.math .vec{position:relative;display:inline-block}
+.math .vec::after{content:"→";position:absolute;left:0;right:0;top:-.6em;font-size:.7em;text-align:center;font-style:normal}
+.math .ov{border-top:1px solid currentColor}
+.math .dl.big{font-size:1.9em;font-weight:300;vertical-align:middle;line-height:.5}
+.math .mat{display:inline-block;vertical-align:middle;margin:0 .25em;padding:0 .3em;border-left:1.5px solid currentColor;border-right:1.5px solid currentColor}
+.math .mat.pmatrix{border-radius:.9em/50%}
+.math .mat.vmatrix{border-left-width:1.5px}
+.math .mat table{border-collapse:collapse}
+.math .mat td{padding:.08em .5em;text-align:center}
+
+/* ---------- responsive ---------- */
+@media (max-width:900px){
+  .main{padding:8px;gap:0}
+  .pal-toggle{display:inline-block}
+  .palette{position:fixed;top:0;bottom:0;right:0;width:min(88vw,340px);z-index:40;border-radius:0;
+    transform:translateX(105%);transition:transform .25s;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+  .palette.open{transform:none;box-shadow:-8px 0 30px rgba(0,0,0,.35)}
+  .brand small{display:none}
+  .timer{min-width:96px;padding:3px 8px}.timer b{font-size:17px}
+  .qscroll{padding:14px}
+  .qtext{font-size:16px}.opt{font-size:15px;padding:9px 11px}
+  .btn{padding:9px 12px;font-size:13px}
+  .hero{grid-template-columns:1fr}
+  .tiles{grid-template-columns:repeat(2,1fr)}
+  .rv{padding:14px}
+}
+@media (max-width:520px){
+  .brand b{font-size:13px}
+  .actions .spacer{display:none}
+  .actions .btn{flex:1 1 44%}
+}
+</style>
+</head>
+<body>
+
+<div class="app" id="app">
+  <header class="hdr">
+    <div class="brand">
+      <span class="logo">iON</span>
+      <div><b>Mock Test · Mathematics &amp; General Knowledge</b><small>120 Questions · 120 Minutes · +3 / −1</small></div>
+    </div>
+    <div class="hdr-right">
+      <div class="timer" id="timerBox"><span>Time Left</span><b id="tv">02:00:00</b></div>
+      <button class="pal-toggle" id="palBtn" type="button">☰ Palette</button>
+    </div>
+  </header>
+  <nav class="subbar" id="tabs" aria-label="Sections"></nav>
+  <main class="main">
+    <section class="qpane">
+      <div class="qscroll" id="qscroll">
+        <div class="qhead">
+          <span class="qno" id="qno"></span>
+          <span class="pill" id="qsec"></span>
+          <span class="pill" id="qtag" hidden></span>
+          <span class="marks"><span class="p">+3</span> correct · <span class="n">−1</span> wrong</span>
+        </div>
+        <div class="qtext" id="qtext"></div>
+        <div id="opts" role="radiogroup" aria-label="Options"></div>
+        <div class="hint">Click an option to select it; click it again to deselect. Shortcuts: A–D select, ← → navigate.</div>
+      </div>
+      <div class="actions">
+        <button class="btn mk" id="markBtn" type="button">Mark for Review</button>
+        <button class="btn" id="clearBtn" type="button">Clear Response</button>
+        <span class="spacer"></span>
+        <button class="btn navy" id="prevBtn" type="button">◀ Previous</button>
+        <button class="btn primary" id="nextBtn" type="button">Next ▶</button>
+        <button class="btn submit" id="submitBtn" type="button">Submit</button>
+      </div>
+    </section>
+    <aside class="palette" id="palette" aria-label="Question palette">
+      <div class="cand"><div class="avatar">C</div><div><b>Candidate</b><small>Question Palette</small></div></div>
+      <div class="legend">
+        <div class="lg"><span class="pb an" id="c-an">0</span>Answered</div>
+        <div class="lg"><span class="pb na" id="c-na">0</span>Not Answered</div>
+        <div class="lg"><span class="pb nv" id="c-nv">0</span>Not Visited</div>
+        <div class="lg"><span class="pb mk" id="c-mk">0</span>Marked for Review</div>
+        <div class="lg" style="grid-column:1/-1"><span class="pb am" id="c-am">0</span>Answered &amp; Marked for Review</div>
+      </div>
+      <div class="pal-scroll" id="palGrid"></div>
+      <div class="pal-foot"><button class="btn submit" id="submitBtn2" type="button">Submit Test</button></div>
+    </aside>
+  </main>
+</div>
+<div class="backdrop" id="backdrop"></div>
+
+<!-- Instructions -->
+<div class="overlay" id="intro">
+  <div class="dialog">
+    <h2>General Instructions</h2>
+    <p>Mock test with <b>120 questions</b>: Q1–90 Mathematics and Q91–120 General Knowledge.</p>
+    <ul>
+      <li>Duration: <b>120 minutes</b>. The test is auto-submitted when the timer reaches zero.</li>
+      <li>Marking: <b>+3</b> for a correct answer, <b>−1</b> for a wrong answer, <b>0</b> if not attempted.</li>
+      <li>Click an option to select it. Click the same option again to deselect it.</li>
+      <li>Use <b>Mark for Review</b> to flag a question; marked questions still count if answered.</li>
+      <li>The palette shows: <span style="color:var(--ok);font-weight:700">Answered</span>, <span style="color:var(--na);font-weight:700">Not Answered</span>, <span style="color:var(--mk);font-weight:700">Marked</span> and <b>Not Visited</b>.</li>
+    </ul>
+    <div class="dlg-actions"><button class="btn primary" id="startBtn" type="button">Start Test ▶</button></div>
+  </div>
+</div>
+
+<!-- Submit confirmation -->
+<div class="overlay" id="confirm" hidden>
+  <div class="dialog">
+    <h2>Submit test?</h2>
+    <p>Please review your summary. You cannot change answers after submitting.</p>
+    <table class="sumtbl" id="sumTbl"></table>
+    <div class="dlg-actions">
+      <button class="btn" id="backBtn" type="button">Go Back</button>
+      <button class="btn submit" id="yesBtn" type="button">Yes, Submit</button>
+    </div>
+  </div>
+</div>
+
+<!-- Results -->
+<div class="res-overlay" id="result" hidden></div>
+
+<script>
+/* ============================================================
+   DATA  — edit questions here.
+   Format per question:  @ text   /  a) … d)  /  = <correct letter>
+   Math is written in LaTeX inside \( ... \)
+   ============================================================ */
+const RAW_MATH = String.raw`
+@ If \(C\) is the boundary of the region enclosed by the circles \(x^{2} + y^{2} = 4\) and \(x^{2} + y^{2} = 16\), then \(\oint_{C} \frac{- y\,dx + x\,dy}{x^{2} + y^{2}}\) is equal to
+a) 0
+b) \(2 \pi\)
+c) \(4 \pi\)
+d) \(16 \pi\)
+= a
+@ If \(C\) is the circle \(x^{2} + y^{2} = 1\), then \(\int_{C}[(\cos x \sin y - xy)dx + \sin x \cos y\,dy]\) is equal to
+a) 0
+b) 1
+c) \(2\pi\)
+d) \(\frac{\pi}{2}\)
+= a
+@ If \(\phi\) be a scalar point function and \(\vec{f}\) be vector point function, then \(\nabla \times (\phi \vec{f})\) is equal to
+a) \(\phi (\nabla \times \vec{f}) + \vec{f} \times (\nabla \phi)\)
+b) \(\phi (\nabla \times \vec{f}) - \vec{f} \times (\nabla \phi)\)
+c) \(\phi (\nabla \cdot \vec{f}) + \vec{f} \cdot (\nabla \phi)\)
+d) \(\vec{f} \times (\nabla \phi) - \phi (\nabla \times \vec{f})\)
+= a
+@ \(\nabla \cdot (\vec{f} \times \vec{g})\) is equal to
+a) \(\vec{g}\cdot (\nabla \times \vec{f}) + \vec{f}\cdot (\nabla \times \vec{g})\)
+b) \(\vec{f}\cdot (\nabla \times \vec{g}) - \vec{g}\cdot (\nabla \times \vec{f})\)
+c) \(\vec{g}\cdot (\nabla \times \vec{f}) - \vec{f}\cdot (\nabla \times \vec{g})\)
+d) \(\vec{g}\cdot (\nabla \cdot \vec{f}) - \vec{f}\cdot (\nabla \cdot \vec{g})\)
+= c
+@ The solution of differential equation \(xp^{2} - yp + 2 = 0\left(p = \frac{dy}{dx}\right)\) is
+a) \(y = cx + \frac{2}{c}\)
+b) \(y = c\sqrt{x} + c\)
+c) \(y = cx + \frac{2}{c}\)
+d) \(y = cx^{2} + \frac{2}{c}\)
+= c
+@ Solution of differential equation \(p^{2} + (x - e^{x})p = xe^{x};p = \frac{dy}{dx}\) is equal to
+a) \((y - e^{x} + c)(2y + x^{2} + c) = 0\)
+b) \((y + e^{x} - c)(2y + x^{2} + c) = 0\)
+c) \((y - e^{x} + c)(2y + x^{2} + c) = 0\)
+d) \((y + e^{x} - c)(2y + x^{2} - c) = 0\)
+= a
+@ The singular solution of differential equation \(y = px + \frac{2}{p}; p = \frac{dy}{dx}\) is equal to
+a) \(y^2 = 2x\)
+b) \(y^2 = 8x\)
+c) \(x^2 = 2y\)
+d) \(x^2 = 8y\)
+= b
+@ The singular solution of \((x^2 - 1)p^2 - 2xyp + y^2 - 1 = 0\) is
+a) \(x^2 + y^2 = 1\)
+b) \(x^2 + y^2 = 4\)
+c) \(x^2 - y^2 = 1\)
+d) \(x^2 - y^2 = 4\)
+= a
+@ For the differential equation \(y = -px + p^2x^3; p = \frac{dy}{dx}, x = 0\) is
+a) Cusp-locus
+b) Tac-locus
+c) Node-locus
+d) Envelope-locus
+= b
+@ The particular integral of differential equation \((D^2 - a^2)y = \cosh ax\) is equal to
+a) \(\frac{x}{2a}\cosh ax\)
+b) \(\frac{1}{2a}\cosh ax\)
+c) \(\frac{x}{2a}\sinh ax\)
+d) \(\frac{1}{2a}\sinh ax\)
+= c
+@ If \(V\) be any function of \(x\) then \(\frac{1}{f(D)}xV\) is equal to
+a) \(x\frac{1}{f(D)}V + \frac{f'(D)}{(f(D))^2}V\)
+b) \(x\frac{1}{f(D)}V - \frac{f'(D)}{(f(D))^2}V\)
+c) \(\frac{x}{f(D)}V + \frac{1}{f(D)}V\)
+d) \(\frac{x}{f(D)}V - \frac{1}{f(D)}V\)
+= b
+@ Particular Integral of differential equation \((D - 2)^{2}y = 8x^{2}e^{2x}\sin 2x\) is equal to
+a) \(e^{2x}[2x^{2}\sin 2x - 3\sin 2x - 4x\cos 2x]\)
+b) \(e^{2x}[-2x^{2}\sin 2x + 3\sin 2x - 4x\cos 2x]\)
+c) \(e^{2x}[2x^{2}\sin 2x - 2\sin 2x + 4x\cos 2x]\)
+d) \(e^{2x}[-2x^{2}\sin 2x + 2\sin 2x - 4\cos 2x]\)
+= b
+@ The complementary solution of differential equation \((1 + x)^{2}\frac{d^{2}y}{dx^{2}} + (1 + x)\frac{dy}{dx} + y = y\cos \log (1 + x)\) is
+a) \(y = c_{1}\cos [c_{2} - \log (1 + x)]\)
+b) \(y = c_{1}\sin [c_{2} + \log (1 + x)]\)
+c) \(y = c_{1}\cos [c_{2} + \log (1 + x)]\)
+d) \(y = c_{1}\cos \log (1 + x)\)
+= c
+@ If \(D\equiv \frac{d}{dx}\) and \(z = \log_{e}x\), then the differential equation \(x^{2}\frac{d^{2}y}{dx^{2}} + 2x\frac{dy}{dx} = 6x^{2}\) is equivalent to
+a) \(D(D - 1)y = 6e^{z}\)
+b) \(D(D - 1)y = 6e^{2z}\)
+c) \(D(D + 1)y = 6e^{z}\)
+d) \(D(D + 1)y = 6e^{2z}\)
+= d
+@ Complementary function of differential equation \((1 - x)\frac{d^{2}y}{dx^{2}} + x\frac{dy}{dx} - y = (1 - x)^{2}\) is
+a) C.F. \(= c_{1}x + c_{2}e^{x}\)
+b) C.F. \(= c_{1}x^{2} + c_{2}e^{x}\)
+c) C.F. \(= c_{1}x + c_{2}e^{-x}\)
+d) C.F. \(= c_{1}x^{2} + c_{2}e^{-x}\)
+= a
+@ If \(\frac{d^{2}x}{dt^{2}} - 3x - 4y = 0\); \(\frac{d^{2}y}{dt^{2}} + x + y = 0\), then \(x\) is equal to
+a) \(c_1 e^{2t} + c_2 e^{-2t} + c_3 \cos t + c_4 \sin t\)
+b) \(c_1 e^{t} + c_2 e^{-t} + c_3 \cos 2t + c_4 \sin 2t\)
+c) \(c_1 e^{2t} + c_2 e^{-2t} + c_3 \cos 2t + c_4 \sin 2t\)
+d) \(c_1 e^{t} + c_2 e^{-t} + c_3 \cos t + c_4 \sin t\)
+= a
+@ If \(\frac{dx}{y^2x - 2x^4} = \frac{dy}{2y^4 - x^2y^3} = \frac{dz}{9z(x^3 - y^3)}\), then relation between \(x, y\) and \(z\) will be equal to
+a) \(x^3 y^3 z = c\)
+b) \(x^2 yz = c\)
+c) \(xy^2 z = c\)
+d) \(x^3 y^3 z^2 = c\)
+= d
+@ The solution of differential equation \((e^{xy} y + e^z) dx + (e^{xz} + e^z) dy + (e^z - e^{xy} - e^z) dz = 0\) is equal to
+a) \(e^{xz} + e^z + e^y = ce^z\)
+b) \(xe^x + ye^y + ze^z = ce^z\)
+c) \(e^{xy} + e^z + e^z = ce^z\)
+d) \(e^{xy} + e^z + ye^z = ce^z\)
+= c
+@ The solution of differential equation \(z^2 dx + (z^2 - 2yz) dy + (2y^2 - yz - zx) dz = 0\) is equal to
+a) \(zx + yz + xy = cz^2\)
+b) \(zx + yz - z^2 = cy^2\)
+c) \(zx + yz - x^2 = cy^2\)
+d) \(zx + yz - y^2 = cz\)
+= d
+@ The general solution of partial differential equation \(z(xp - yq) = y^2 - x^2\) is
+a) \(f(x - y, x^2 + y^2 + z^2) = 0\)
+b) \(f(x + y, x^2 - y^2 - z^2) = 0\)
+c) \(f(xy, x^2 + y^2 + z^2) = 0\)
+d) \(f(x/y, x^2 + y^2 + z^2) = 0\)
+= c
+@ The solution of partial differential equation \(y - p = (x - q)^2\) is equal to
+a) \(z = ax + \sqrt{a}y + b\)
+b) \(z = ax + \sqrt{a}y - b\)
+c) \(z = ax - \sqrt{a}y + b\)
+d) \(z = ax - \sqrt{a}y - b\)
+= a
+@ The complete integral of partial differential equation \((y - x)(qy - px) = (p - q)^2\) is equal to
+a) \(z = a(x + y) + axy + b\)
+b) \(z = a(x + y) + \sqrt{a} xy + b\)
+c) \(z = a(x - y) + axy + b\)
+d) \(z = a(x - y) + \sqrt{a} xy + b\)
+= c
+@ The solution of partial differential equation \(z = pq\) is equal to
+a) \(z = ab\)
+b) \(\sqrt{az} = ax + y + b\)
+c) \(2\sqrt{az} = ax + y + b\)
+d) \(\sqrt{az} = x + ay + b\)
+= c
+@ The solution of partial differential equation \(px + qy = \frac{1}{p + q}\) is equal to
+a) \(z = \frac{2}{\sqrt{1 + a}}\sqrt{ax + y} +b\)
+b) \(z = ax + y + b\)
+c) \(z = \sqrt{\frac{1}{a}}\sqrt{x + ay} +b\)
+d) \(z = \sqrt{x + ay} +b\)
+= a
+@ The solution of partial differential equation \(2xz + pq = px^2 + 2qxy\) is equal to
+a) \(z - ay = b(x^2 + a)\)
+b) \(z + ay^2 = b(x^2 - a^2)\)
+c) \(z + ay = b(x^2 + a^2)\)
+d) \(z - ay = b(x^2 - a)\)
+= d
+@ Particular Integral of partial differential equation \((D^{2} + 3DD^{\prime} + 2D^{\prime 2})z = x + y\) is equal to
+a) \(\frac{x^{3}}{6} +\frac{x^{2}y}{2}\)
+b) \(\frac{x^{3}}{6} -\frac{x^{2}y}{2}\)
+c) \(\frac{x^{3}}{6} +\frac{x^{2}y}{3}\)
+d) \(\frac{x^{3}}{3} -\frac{x^{2}y}{2}\)
+= b
+@ Particular Integral of partial differential equation \(\frac{\partial^{2}z}{\partial x\partial y} +\frac{\partial z}{\partial y} -\frac{\partial z}{\partial y} = 5\cos (3x - 2y)\) is equal to
+a) \(\frac{1}{10} [3\cos (3x + 2y) + 4\sin (3x + 2y)]\)
+b) \(\frac{1}{10} [4\cos (3x - 2y) + 3\sin (3x - 2y)]\)
+c) \(\frac{1}{10} [3\cos (3x - 2y) + 4\cos (3x - 2y)]\)
+d) \(\frac{1}{20} [3\cos (3x - 2y) - 4\cos (3x - 2y)]\)
+= b
+@ The solution of partial differential equation \(x\frac{\partial^{2}z}{\partial x\partial y} -\frac{\partial z}{\partial y} = x\) is equal to
+a) \(z = ax + y + f(x) + g(x - y)\)
+b) \(z = ax + \log y + f(y) + g(x + y)\)
+c) \(z = x + a\log y + f(x) + g(x^{2} + y^{2})\)
+d) \(z = x + a\log y + f(x) + b\)
+= c
+@ The solution of partial differential equation \(\frac{\partial z}{\partial y} +\frac{\partial^{2}z}{\partial y^{2}} +\frac{\partial^{2}z}{\partial y\partial y} = 0\) is equal to
+a) \(z = \int f(x)e^{x}dx + c\)
+b) \(ze^{x} = -\int f(x)dx + c\)
+c) \(ze^{y} = \int f(x)e^{y}dx + c\)
+d) \(z = \int f(x)dx + ce^{x}\)
+= c
+@ The solution of partial differential equation \(y\frac{\partial^{2}z}{\partial x\partial y} +\frac{\partial z}{\partial x} = \cos (x + y) - y\sin (x + y)\) is equal to
+a) \(yz = y\sin (x + y) + f(x) + g(y)\)
+b) \(yz = -y\sin (x + y) + f(x) + g(y)\)
+c) \(yz = y\cos (x + y) + f(x) + g(y)\)
+d) \(yz = -y\cos (x + y) + f(x) + g(y)\)
+= a
+@ For \(Rr + Ss + Tt + U(rt - s^2) = V\), Monge's subsidiary equations are
+a) \(Rdpdy + Tdqdx + Udpdq + Vdxdy = 0\) and \(Rdy^2 - Sdxdy + Tdx^2 + Udpdx - Udqdy = 0\)
+b) \(Rdpdx + Tdpdy + Udxdy + Vdpdq = 0\) and \(Rdx^2 - Sdxdy + Tdy^2 + Udpdx - Udqdy = 0\)
+c) \(Rdpdy + Tdpdx + Udpdq - Vdxdy = 0\) and \(Rdy^2 - Sdxdy + Tdx^2 + Udpdx + Udqdy = 0\)
+d) \(Rdpdy - Tdxdy + Udpdq - Vdqdx = 0\) and \(Rdx^2 + Sdxdy + Tdy^2 + Udxdy + Udpdq = 0\)
+= c
+@ Complete integral of partial differential equation \(qy^2 = z(z - px)\) is equal to
+a) \(\log z = a\log x + a\log y + b\)
+b) \(\log z = \sqrt{1 - a}\log x + \log y + b\)
+c) \(\log z = a\log x + \sqrt{1 + a}\log y + b\)
+d) \(\log z = a\log x + \sqrt{1 - a}\log y + b\)
+= d
+@ Complete integral of partial differential equation \(pz^2 + q^2 = 1\) is equal to
+a) \(z\sqrt{z^2 - a^2} + a\cosh^{-1}\left(\frac{z}{a}\right) = x + ay + b\)
+b) \(z\sqrt{z^2 - a^2} + a^2\sinh^{-1}\left(\frac{z}{a}\right) = x + ay + b\)
+c) \(z\sqrt{z^2 - a^2} + a^2\sinh\left(\frac{z}{a}\right) = x + ay + b\)
+d) \(z\sqrt{z^2 + a^2} + a^2\cosh\left(\frac{z}{a}\right) = x + ay + b\)
+= c
+@ For partial differential equation \(16p^2z + 9q^2z + 4z = 4\), which of the following is true?
+a) \(dz = \frac{(x - a)dx}{2z} + \frac{1}{3}\sqrt{4(1 - z) - (x - a)^2}dy\)
+b) \(dz = \frac{(x - a)dx}{4z} + \frac{1}{3z}\sqrt{4(1 - z) - (x - a)^2}dy\)
+c) \(dz = \frac{(x - a)dx}{4z} + \frac{1}{3z}\sqrt{4(1 - z)^2 - (x - a)^2}dy\)
+d) \(dz = \frac{(x - a)dx}{4z} + \frac{1}{3z}\sqrt{4(1 - z)^2 - (x - a)^2}dy\)
+= b
+@ Three forces \(P,Q,R\) respectively act along the sides of a triangle formed by the lines \(x + y = 1,y - x = 1\) and \(y = 2\). The equation of the line of action of their resultant is
+a) \(x(Q - P) - y(P + Q - R\sqrt{2}) = 2\sqrt{2} R - P - Q\)
+b) \(x(P + Q) - y(P + Q - R\sqrt{2}) = 2\sqrt{2} R + P + Q\)
+c) \(x(P + Q) + y(P - Q + R\sqrt{2}) = 2\sqrt{2} R + P - Q\)
+d) \(x(P - Q) + y(P + Q + \sqrt{2}) = 2\sqrt{2} R + P + Q\)
+= c
+@ A rod rests wholly within a smooth hemispherical bowl of radius \(r\), its centre of gravity dividing the rod into two portions \(a\) and \(b\). If \(\theta\) be the inclination of the rod to the horizon in the position of equilibrium, then \(\sin \theta\) is equal to
+a) \(\frac{a + b}{2\sqrt{r^2 - ab}}\)
+b) \(\frac{b - a}{2\sqrt{r^2 - ab}}\)
+c) \(\frac{b - a}{2\sqrt{r^2 + ab}}\)
+d) \(\frac{a + b}{2\sqrt{r^2 + ab}}\)
+= b
+@ Three forces \(P,Q,R\) act along the sides \(BC,CA\) and \(AB\) of a triangle \(ABC\), taken in order. If their resultant passes through incentre, then which of the following is true?
+a) \(P\cos A + Q\cos B + R\cos C = 0\)
+b) \(P + Q + R = 0\)
+c) \(P\sec A + Q\sec B + R\sec C = 0\)
+d) \(P\csc A + Q\csc B + R\csc C = 0\)
+= b
+@ A particle of mass \(m\) is projected with velocity \(u\) making an angle \(\alpha\) with the horizon then maximum horizontal range is equal to
+a) \(\frac{u^2\sin 2\alpha}{2g}\)
+b) \(\frac{u^2\sin\alpha}{2g}\)
+c) \(\frac{u^2\cos 2\alpha}{2g}\)
+d) \(\frac{u^2}{g}\)
+= d
+@ A sphere, whose radius is \(a\) and whose centre of gravity is at a distance \(c\) from the centre, rests in equilibrium on a rough plane inclined at an angle \(\alpha\) to the horizon. It may be turned through an angle \(\theta\) and still be in limiting equilibrium, then \(\theta\) is equal to
+a) \(\cos^{-1}\left(\frac{a\sin\alpha}{c}\right)\)
+b) \(\cos^{-1}\left(\frac{c\sin\alpha}{a}\right)\)
+c) \(2\cos^{-1}\left(\frac{c\sin\alpha}{a}\right)\)
+d) \(2\cos^{-1}\left(\frac{a\sin\alpha}{c}\right)\)
+= c
+@ For common catenary, which of the following is true?
+a) \(y = c\log \left(\frac{x}{s}\right)\)
+b) \(x = c\log \left(\frac{y + s}{c}\right)\)
+c) \(y = c\tan \left(\frac{x}{c}\right)\)
+d) \(y^{2} + s^{2} = c^{2}\)
+= b
+@ Three forces acting at a point are in equilibrium. If they make angles of \(90^{\circ}\), \(120^{\circ}\) and \(150^{\circ}\) with one another and the largest of three forces is 3 lbs weight, then the remaining forces are equal to the weights of
+a) \(\sqrt{3}\) lbs, \(\frac{3}{2}\) lbs
+b) \(\frac{3\sqrt{3}}{2}\) lbs, \(\frac{1}{2}\) lbs
+c) \(\frac{3\sqrt{3}}{2}\) lbs, \(\frac{3}{2}\) lbs
+d) \(\frac{\sqrt{3}}{2}\) lbs, \(\frac{3}{2}\) lbs
+= c
+@ If the end links of a uniform inextensible string of length \(l\) hanging freely under gravity slide along a fixed rough horizontal rod whose coefficient of friction is \(\mu\), then they can rest almost at a distance equal to
+a) \(\mu l\log \left(\frac{1 + \sqrt{1 + \mu^{2}}}{\mu}\right)\)
+b) \(\mu l\log \left(\frac{1 - \sqrt{1 + \mu^{2}}}{2\mu}\right)\)
+c) \(\mu l\log \left(\frac{1 + \sqrt{1 + \mu^{2}}}{2\mu}\right)\)
+d) \(\mu l\log \left(\frac{1 + \sqrt{1 - \mu^{2}}}{\mu}\right)\)
+= a
+@ A particle moving with simple harmonic motion has a period of oscillation \(\frac{\pi}{2}\) sec, and its greatest acceleration is \(8 \mathrm{cm/sec}^2\). The amplitude of the particle is equal to
+a) 1 cm
+b) \(\frac{1}{2}\) cm
+c) \(\frac{1}{4}\) cm
+d) 2 cm
+= b
+@ A particle of mass \(m\) executes simple harmonic motion in the line joining the points \(A\) and \(B\) on the smooth table and is connected with these points by elastic strings whose tensions in equilibrium are each \(T\). If \(l\) and \(l'\) are the extensions of the strings beyond the natural lengths, then the time of an oscillation is equal to
+a) \(2\pi \sqrt{\frac{mll'}{T(l + l')}}\)
+b) \(2\pi \sqrt{\frac{T(l + l')}{mll'}}\)
+c) \(\pi \sqrt{\frac{T(l + l')}{mll'}}\)
+d) \(2\pi \sqrt{\frac{m(l + l')}{Tll'}}\)
+= d
+@ If \(h\) be the height due to the velocity \(v\) at the earth's surface supposing its attraction constant and \(H\) be the corresponding height when the variation of gravity is taken into account. If \(R\) is the radius of the earth, then which of the following is true?
+a) \(\frac{1}{H} = \frac{1}{h} -\frac{1}{R}\)
+b) \(\frac{1}{h} = \frac{1}{H} -\frac{1}{R}\)
+c) \(\frac{1}{h} - \frac{1}{H} = \frac{1}{R}\)
+d) \(\frac{1}{H} +\frac{1}{h} = \frac{1}{R}\)
+= c
+@ A particle falls from rest under gravity in a medium whose resistance varies as the square of the velocity. Let \(v\) be its velocity and \(v_0\) be the velocity which would be acquired if there was no resisting medium. If \(V\) is the terminal velocity, then \(\frac{v^2}{v_0^2}\) is equal to
+a) \(1 - e^{-2gx/V^2}\)
+b) \(1 + e^{-2gx/V^2}\)
+c) \(1 - e^{2gx/V^2}\)
+d) \(1 + e^{2gx/V^2}\)
+= a
+@ A particle is projected vertically upwards with velocity \(u\) in a medium whose resistance is \(k\) times the velocity. The greatest height reached is
+a) \(\frac{u}{k} - \frac{g}{k^2}\log\left(1 + \frac{ku}{g}\right)\)
+b) \(\frac{u}{k} + \frac{g}{k^2}\log\left(1 + \frac{ku}{g}\right)\)
+c) \(\frac{u}{k} - \frac{g}{k^2}\log\left(1 - \frac{ku}{g}\right)\)
+d) \(\frac{u}{k} + \frac{g}{k^2}\log\left(1 - \frac{ku}{g}\right)\)
+= a
+@ The time of flight of a projectile in a medium whose resistance varies as the velocity is
+a) \(\frac{1}{k}\log\left(1 + \frac{kv\sin\alpha}{g}\right)\)
+b) \(\frac{1}{k}\log\left(1 - \frac{kv\sin\alpha}{g}\right)\)
+c) \(\frac{1}{k}\log\left(1 + \frac{kv\cos\alpha}{g}\right)\)
+d) \(\frac{1}{k}\log\left(1 - \frac{kv\cos\alpha}{g}\right)\)
+= a
+@ The horizontal range of a projectile in a medium whose resistance varies as the velocity is
+a) \(\frac{u^2\sin 2\alpha}{g} - \frac{ku^3\sin\alpha\sin 2\alpha}{g^2}\)
+b) \(\frac{u^2\sin 2\alpha}{g} + \frac{ku^3\sin\alpha\sin 2\alpha}{g^2}\)
+c) \(\frac{u^2\sin 2\alpha}{g} - \frac{ku^3\cos\alpha\sin 2\alpha}{g^2}\)
+d) \(\frac{u^2\sin 2\alpha}{g} + \frac{ku^3\cos\alpha\sin 2\alpha}{g^2}\)
+= a
+@ A particle moves in a straight line under an attraction \(\mu x\) directed towards the origin. If it starts from rest at a distance \(a\) from the origin, the velocity at a distance \(x\) is
+a) \(\mu(a^2 - x^2)\)
+b) \(\sqrt{\mu(a^2 - x^2)}\)
+c) \(\mu(a^2 + x^2)\)
+d) \(\sqrt{\mu(a^2 + x^2)}\)
+= b
+@ If \(H\) and \(K\) be two subgroups of a group \(G\) such that \(H\) is normal in \(G\) then which of the following is true?
+a) \(HK\) is normal in \(H\).
+b) \(H\cap K\) is normal in \(K\).
+c) \(HK\) is normal in \(H\).
+d) \(H\cap K\) is normal in \(K\).
+= d
+@ A homomorphism \(f\) of a group \(G\) into a group \(G^{\prime}\) is a monomorphism if and only if
+a) \(\operatorname{Ker}\{f\} = \{e^{\prime}\}; e^{\prime}\) is the identity of \(G^{\prime}\)
+b) \(\operatorname{Ker}\{f\} = \{e\}; e\) is the identity of \(G\)
+c) \(\operatorname{Ker}\{f\} = \{0\}\)
+d) \(\operatorname{Ker}\{f\} = \{1\}\)
+= b
+@ If \(f\) is a homomorphism of a group \(G\) to a group \(G^{\prime}\), then the Kernel of \(f\) is
+a) permutation subgroup of \(G\)
+b) quotient subgroup of \(G\)
+c) normal subgroup of \(G\)
+d) cyclic subgroup of \(G\)
+= c
+@ In an Abelian group \(G\), the mapping \(f:G\to G\) such that \(f(x) = x^{-1}\ \forall x\in G\) is equal to
+a) automorphism only
+b) monomorphism only
+c) epimorphism only
+d) homomorphism only
+= d
+@ The inverse of the permutation \(\begin{pmatrix}1 & 2 & 3 & 4\\ 3 & 1 & 4 & 2\end{pmatrix}\) is equal to
+a) \(\begin{pmatrix}1 & 2 & 3 & 4\\ 2 & 4 & 1 & 3\end{pmatrix}\)
+b) \(\begin{pmatrix}1 & 2 & 3 & 4\\ 3 & 1 & 4 & 2\end{pmatrix}\)
+c) \(\begin{pmatrix}1 & 2 & 3 & 4\\ 4 & 2 & 1 & 3\end{pmatrix}\)
+d) \(\begin{pmatrix}1 & 2 & 3 & 4\\ 2 & 3 & 1 & 4\end{pmatrix}\)
+= a
+@ The ring \((\mathbb{Z}_5, +_5, \times_5)\) is
+a) commutative ring without unity
+b) ring with zero divisors
+c) non-commutative ring without zero divisors
+d) integral domain
+= d
+@ Every commutative ring is a field if it is
+a) finite and with zero divisors
+b) infinite and with zero divisors
+c) finite and without zero divisors
+d) infinite and without zero divisors
+= c
+@ Which of the following statements is not true?
+a) The ring of integers \((\mathbb{Z}, +, \cdot)\) is not a field.
+b) Every field is an integral domain.
+c) Every field has proper ideals.
+d) Every finite integral domain is a field.
+= c
+@ If \(R\) and \(S\) be two rings and \(\phi :R\to S\) be a ring homomorphism, then \(\phi\) is a monomorphism if and only if
+a) \(\operatorname{Ker}(\phi) = \{0\}\)
+b) \(\operatorname{Ker}(\phi) = \{1\}\)
+c) \(\operatorname{Ker}(\phi) = \{e\}\)
+d) \(\operatorname{Ker}(\phi) = \{\}\)
+= a
+@ The ring of Gaussian integers is
+a) non-commutative ring
+b) ring with zero divisors
+c) Euclidean ring
+d) Ring without zero divisors
+= c
+@ If \(a,b,c\) are elements of an Euclidean ring \(R\) such that H.C.F. \((a,b) = 1\) and \(a\mid bc\), then which of the following is true?
+a) \(a\mid b\)
+b) \(a\mid c\)
+c) \(c\mid b\)
+d) \(b\mid c\)
+= b
+@ The characteristic of an integral domain is
+a) 0 or prime number
+b) 4
+c) 6
+d) any composite number
+= a
+@ If \(a\) and \(b\) are elements of commutative ring \(R\) with unity, then smallest ideal containing \(a\) and \(b\) is equal to
+a) \(I = \{(x + y)(a + b)\mid x,y\in R\}\)
+b) \(I = \{(x - y)(a - b)\mid x,y\in R\}\)
+c) \(I = \{xa + yb\mid x,y\in R\}\)
+d) \(I = \{xab\mid x\in R\}\)
+= c
+@ If \(U\) is an ideal of a ring \(R\) with unity and \(1 \in U\), then which of the following is true?
+a) \(U\subset R\) only
+b) \(R\subset U\) only
+c) \(R = U\)
+d) \(R\cap U = \phi\)
+= c
+@ Which of the following statements is not true?
+a) Any list of vectors in a vector space \(V\) containing the zero vector is always linearly dependent.
+b) A void set is always linearly independent set.
+c) Any superset of a linearly independent set of vectors in a vector space is linearly independent.
+d) A set containing a single non-zero vector is always linearly independent.
+= c
+@ If \(V\) be a finite dimensional vector space over a field \(F\) and \(S\) and \(T\) be its two subspaces, then \(\dim (S + T)\) is equal to
+a) \(\dim (S) + \dim (T) - \dim (S\cap T)\)
+b) \(\dim (S) + \dim (T)\)
+c) \(\dim (S\cup T) - (\dim S + \dim T)\)
+d) \(\dim (S\cup T) - \dim (S\cap T)\)
+= a
+@ If \(V\) and \(V^{\prime}\) be two vector spaces over the same field \(F\) and \(t:V\to V^{\prime}\) be a linear transformation, then \(t\) is a monomorphism if and only if
+a) \(\mathrm{Ker}(t)\) is a subspace of \(V^{\prime}\)
+b) \(\mathrm{Ker}(t) = e^{\prime}\), where \(e^{\prime}\) is identity in \(V^{\prime}\)
+c) \(\mathrm{Ker}(t) = 0\)
+d) \(\mathrm{Ker}(t) = 1\)
+= c
+@ If \(V\) and \(V^{\prime}\) be two vector spaces of dimension \(m\) and \(n\) respectively and \(t:V\to V^{\prime}\) be a linear transformation of rank \(r\), then which of the following is true?
+a) \(r = \max (m,n)\)
+b) \(r\leq \min (m,n)\)
+c) \(r\geq \max (m,n)\)
+d) \(r > \min (m,n)\)
+= b
+@ Let \(V\) be a vector space over a field \(F\). If \(t\) is the linear transformation, then for any subspace \(S\) of \(V\), which of the following is true?
+a) \(\dim (t(S))\geq \dim S - \mathrm{nullity}(t)\)
+b) \(\dim (t(S))\leq \dim S + \mathrm{nullity}(t)\)
+c) \(\dim (t(S))\geq \dim S + \mathrm{nullity}(t)\)
+d) \(\dim (t(S))\leq \dim S - \mathrm{nullity}(t)\)
+= a
+@ If \(t:\mathbb{R}^{2}\to \mathbb{R}^{2}\) be a linear transformation defined by \(t(a,b) = (2a - 3b, a + b)\) for all \((a,b)\in \mathbb{R}^{2}\), then the matrix of \(t\) relative to the bases \(B = \{(1,0),(0,1)\}\), \(B^{\prime} = \{(2,3),(1,2)\}\) is equal to
+a) \(\begin{bmatrix}25 & -18\\ 15 & -11\end{bmatrix}\)
+b) \(\begin{bmatrix}-25 & -18\\ 15 & 11\end{bmatrix}\)
+c) \(\begin{bmatrix}-25 & 18\\ -15 & 11\end{bmatrix}\)
+d) \(\begin{bmatrix}25 & 18\\ -15 & -11\end{bmatrix}\)
+= a
+@ For any two vectors \(u\) and \(v\) in an inner product space \(V\), which of the following is not true?
+a) \(\| u + v\| \leq \| u\| +\| v\|\)
+b) \(\| u + v\|^{2} + \| u - v\|^{2} = 4\langle u,v\rangle\)
+c) \(|\langle u,v\rangle| \leq \| u\| \| v\|\)
+d) \(|\| u\| -\| v\| | \leq \| u - v\|\)
+= b
+@ The symmetric matrix associated with quadratic form \((x^2 + 2xy + 4xz + 3y^2 + yz + 7z^2)\) over the field \(\mathbb{Q}\) of rational numbers, is
+a) \(\begin{bmatrix}1 & 1 & 2\\ 1 & 3 & 1/2\\ 2 & 1/2 & 7\end{bmatrix}\)
+b) \(\begin{bmatrix}1 & 2 & 4\\ 2 & 3 & 1\\ 4 & 1 & 7\end{bmatrix}\)
+c) \(\begin{bmatrix}1 & 1 & 4\\ 1 & 3 & 1\\ 4 & 1 & 7\end{bmatrix}\)
+d) \(\begin{bmatrix}1 & 2 & 2\\ 2 & 3 & 1/2\\ 2 & 1/2 & 7\end{bmatrix}\)
+= a
+@ The Eigen values of the matrix \(\begin{bmatrix}-1 & 2 & 2\\ 2 & 2 & 2\\ -3 & -6 & -6\end{bmatrix}\) are
+a) \(0, 2, -3\)
+b) \(0, -2, 3\)
+c) \(0, 2, 3\)
+d) \(0, -2, -3\)
+= d
+@ If \(S = \{v_1, v_2, \ldots, v_n\}\) be an orthogonal set of non-zero vectors in an inner product space \(V\) and \(u \in [S]\), then \(u\) is equal to
+a) \(\sum_{i=1}^{n} \frac{\langle u, v_i\rangle}{\|v_i\|} v_i\)
+b) \(\sum_{i=1}^{n} \frac{\langle u, v_i\rangle}{\|v_i\|}\)
+c) \(\sum_{i=1}^{n} \frac{\langle u, v_i\rangle}{\|v_i\|^2} v_i\)
+d) \(\sum_{i=1}^{n} \frac{\langle u, v_i\rangle}{\|v_i\|^2}\)
+= c
+@ If \(v = (1, k, 5)\) is an element of vector space \(V = V_3(\mathbb{R})\), then for which value of \(k\), the vector \(v\) is a linear combination of vectors \(v_1 = (1, -3, 2)\) and \(v_2 = (2, -1, 1)\)?
+a) \(-8\)
+b) \(8\)
+c) \(-10\)
+d) \(10\)
+= a
+@ If \(V\) and \(V^{\prime}\) be inner product spaces, then linear transformation \(t:V\to V^{\prime}\) is orthogonal if and only if
+a) \(\| t(v)\| = \| v\|^{2}\quad \forall v\in V\)
+b) \(\| t(v)\| = \sqrt{\| v\|}\quad \forall v\in V\)
+c) \(\| t(v)\| = \| v\| \quad \forall v\in V\)
+d) \(\| t(v)\| = \frac{1}{\| v\|}\quad \forall v\in V\)
+= c
+@ If \(V\) and \(V^{\prime}\) be finite dimensional vector spaces over the same field \(F\), then \(\dim \operatorname{Hom}(V,V^{\prime})\) is equal to
+a) \(\dim V + \dim V^{\prime}\)
+b) \(\dim V + \dim V^{\prime} - \dim (V\cap V^{\prime})\)
+c) \(\dim V\times \dim V^{\prime}\)
+d) \(\dim (V\cup V^{\prime}) - \dim (V\cap V^{\prime})\)
+= c
+@ For \(t_{1},t_{2}\in \operatorname{Hom}(V,V^{\prime})\), where \(V\) and \(V^{\prime}\) are finite dimensional vector spaces over the field \(F\), which of the following is not true?
+a) \(\operatorname{rank}(t_{1} + t_{2})\leq \operatorname{rank}(t_{1}) + \operatorname{rank}(t_{2})\)
+b) \(\operatorname{nullity}(t_{1} + t_{2})\geq \operatorname{nullity}(t_{1}) + \operatorname{nullity}(t_{2}) - \dim V\)
+c) \(\operatorname{rank}(t_{1}t_{2})\leq \min (\operatorname{rank}(t_{1}),\operatorname{rank}(t_{2}))\)
+d) \(\operatorname{rank}(t_{1} + t_{2}) = \operatorname{rank}(t_{1}) + \operatorname{rank}(t_{2})\)
+= d
+@ Let \(t_{1}\in \operatorname{Hom}(V,V^{\prime})\) and \(t_{2}\in \operatorname{Hom}(V^{\prime \prime},V)\) where \(V,V^{\prime},V^{\prime \prime}\) are finite dimensional vector spaces over the same field \(F\), then \(\operatorname{rank}(t_{1}) + \operatorname{rank}(t_{2})\leq\)
+a) \(\min [\operatorname{rank}(t_{1}),\operatorname{rank}(t_{2})] + \dim V\)
+b) \(\min [\operatorname{rank}(t_{1}),\operatorname{rank}(t_{2})] - \dim V\)
+c) \(-\max [\operatorname{rank}(t_{1}),\operatorname{rank}(t_{2})] + \dim V\)
+d) \(-\max [\operatorname{rank}(t_{1}),\operatorname{rank}(t_{2})] - \dim V\)
+= a
+@ The conjugate harmonic of function \(u(x,y) = \frac{1}{2}\log(x^2+y^2)\) is equal to
+a) \(\cot^{-1} \left(\frac{x}{y}\right) + c\)
+b) \(\log(x^2 + y^2) + c\)
+c) \(\tan^{-1} \left(\frac{y}{x}\right) + c\)
+d) \(\tan^{-1} \left(\frac{x}{y}\right) + c\)
+= c
+@ Cauchy-Riemann equations are equal to
+a) \(\frac{\partial u}{\partial r} = \frac{\partial v}{\partial \theta}, \frac{\partial u}{\partial \theta} = -\frac{\partial v}{\partial r}\)
+b) \(\frac{\partial u}{\partial r} = \frac{1}{r}\frac{\partial v}{\partial \theta}, \frac{\partial u}{\partial \theta} = -r\frac{\partial v}{\partial r}\)
+c) \(\frac{\partial u}{\partial r} = r\frac{\partial v}{\partial \theta}, \frac{\partial u}{\partial \theta} = -\frac{1}{r}\frac{\partial v}{\partial r}\)
+d) \(\frac{\partial u}{\partial r} = \frac{\partial v}{\partial \theta}, \frac{\partial u}{\partial \theta} = \frac{\partial v}{\partial r}\)
+= b
+@ Function \(f(z)\) is analytic in a domain \(D\) and \(D\) contains the interior and the boundary of circle \(C; |z - z_0| = r\). If \(|f(z)|\leq M\) on \(C\), then which of the following is true?
+a) \(|f^{(n)}(z_0)| \leq \frac{M}{r^n}\)
+b) \(|f^{(n)}(z_0)| \leq \ln \frac{M}{r^n}\)
+c) \(|f^{(n)}(z_0)| \leq \frac{M}{n!}\)
+d) \(|f^{(n)}(z_0)| \leq \frac{r^n M}{n!}\)
+= a
+@ If \(C\) is the circle \(|z - 1| = 4\), then value of \(\int_{C} \frac{e^{3z}}{z - \pi i} dz\) is equal to
+a) \(0\)
+b) \(2\pi i\)
+c) \(-2\pi i\)
+d) \(\pi i\)
+= c
+@ The Laurent's expansion of the function \(f(z) = \frac{z}{(z-1)(z-3)}\) valid in the region \(0 < |z - 1| < 2\) is
+a) \(\frac{1}{z-1} + \frac{3}{4}\sum_{n=0}^{\infty} \left[\frac{z-1}{2}\right]^n\)
+b) \(\frac{1}{2(z-1)} + \frac{3}{4}\sum_{n=0}^{\infty} \left[\frac{z-1}{2}\right]^n\)
+c) \(\frac{1}{z-1} - \frac{3}{4}\sum_{n=0}^{\infty} \left[\frac{z-1}{2}\right]^n\)
+d) \(\frac{1}{2(z-1)} - \frac{3}{4}\sum_{n=0}^{\infty} \left[\frac{z-1}{2}\right]^n\)
+= a
+@ The residue of \(f(z) = \frac{z^2}{(z-1)(z-2)^2}\) at \(z = 2\) is
+a) 0
+b) 1
+c) 4
+d) 8
+= c
+@ The value of \(\int_{0}^{2\pi} \frac{d\theta}{5 + 4\cos\theta}\) is
+a) \(\frac{\pi}{3}\)
+b) \(\frac{2\pi}{3}\)
+c) \(\frac{\pi}{6}\)
+d) \(\frac{2\pi}{5}\)
+= b
+@ The value of \(\int_{-\infty}^{\infty} \frac{x^2}{x^4 + 1} dx\) is
+a) \(\frac{\pi}{2}\)
+b) \(\frac{\pi}{\sqrt{2}}\)
+c) \(\frac{\pi}{2\sqrt{2}}\)
+d) \(\pi\sqrt{2}\)
+= b
+@ The value of \(\int_{0}^{\infty} \frac{\cos x}{x^2 + a^2} dx\) is
+a) \(\frac{\pi}{2a} e^{-a}\)
+b) \(\frac{\pi}{a} e^{-a}\)
+c) \(\frac{\pi}{2a} e^{a}\)
+d) \(\frac{\pi}{a} e^{a}\)
+= a
+@ The value of \(\int_{0}^{\infty} \frac{x^{m-1}}{1 + x^n} dx\) is
+a) \(\frac{\pi}{n}\csc\left(\frac{m\pi}{n}\right)\)
+b) \(\frac{\pi}{n}\sec\left(\frac{m\pi}{n}\right)\)
+c) \(\frac{\pi}{m}\csc\left(\frac{n\pi}{m}\right)\)
+d) \(\frac{\pi}{m}\sec\left(\frac{n\pi}{m}\right)\)
+= a
+@ The number of zeroes of the polynomial \(f(z) = z^8 - 4z^5 + z^2 - 1\) that lies inside the circle \(|z| = 1\), is equal to
+a) 8
+b) 6
+c) 5
+d) 2
+= c
+`;
+
+const RAW_GK = String.raw`
+~ Unit 1 · National/International Events
+@ The Human Development Index (HDI), a critical measure of global well-being, is published annually by which organization?
+a) World Bank
+b) United Nations Development Programme (UNDP)
+c) World Health Organization (WHO)
+d) International Monetary Fund (IMF)
+= b
+~ Unit 1 · Sports News
+@ The term "Grand Slam" is most prominently associated with which of the following sports?
+a) Golf and Tennis
+b) Cricket and Football
+c) Chess and Badminton
+d) Boxing and Wrestling
+= a
+~ Unit 1 · Current Research in Science
+@ What is the primary objective of the Indian Space Research Organisation's (ISRO) Gaganyaan mission?
+a) Deep-sea exploration
+b) Sending a rover to Mars
+c) Launching a human spaceflight module into Low Earth Orbit
+d) Establishing a permanent lunar base
+= c
+~ Unit 1 · Personalities in News
+@ Who among the following is affectionately known as the "Missile Man of India" for his work on the development of ballistic missile technology?
+a) Homi J. Bhabha
+b) Vikram Sarabhai
+c) A.P.J. Abdul Kalam
+d) Satish Dhawan
+= c
+~ Unit 1 · International Affairs
+@ Which of the following countries recently became the 32nd member of the NATO (North Atlantic Treaty Organization) alliance in 2024?
+a) Finland
+b) Ukraine
+c) Sweden
+d) Switzerland
+= c
+~ Unit 2 · Teaching Methods
+@ Which teaching method involves students working together in small, structured groups to achieve a common learning goal?
+a) Direct instruction
+b) Rote learning
+c) Cooperative learning
+d) Programmed instruction
+= c
+~ Unit 2 · Research Methods
+@ A research study that repeatedly observes or measures the same group of individuals over an extended period of time is known as a:
+a) Cross-sectional study
+b) Longitudinal study
+c) Retrospective study
+d) Experimental study
+= b
+~ Unit 2 · Data Source and Collection
+@ Which of the following is considered an example of qualitative data?
+a) The temperature of a room in degrees Celsius
+b) The number of students in a classroom
+c) A transcript of an in-depth interview with a participant
+d) The average test score of a class
+= c
+~ Unit 2 · Role of UGC
+@ To promote academic integrity and prevent plagiarism, the UGC mandates the use of specific software tools in universities. It also maintains a reference list of quality journals known as the:
+a) UGC-NET list
+b) UGC-CARE list
+c) NAAC-Approved list
+d) INFLIBNET directory
+= b
+~ Unit 2 · Factors Affecting Teaching / Evaluation
+@ A diagnostic test administered by a teacher is primarily intended to:
+a) Rank students for final grading
+b) Identify specific learning difficulties or gaps in a student's prior knowledge
+c) Evaluate the overall effectiveness of the school's curriculum
+d) Determine eligibility for college admissions
+= b
+~ Unit 3 · General Abbreviation
+@ In the context of digital documents, what does the abbreviation 'PDF' stand for?
+a) Printable Document Format
+b) Portable Document Format
+c) Public Data File
+d) Personal Document File
+= b
+~ Unit 3 · Basics of Internet
+@ Every device connected to the internet is assigned a unique numerical label essential for routing data. This is known as a(n):
+a) MAC address
+b) HTML tag
+c) IP address
+d) URL string
+= c
+~ Unit 3 · ICT Meaning
+@ Which of the following best represents a "synchronous" mode of e-learning?
+a) Watching a pre-recorded lecture on YouTube
+b) Reading an article on a blog
+c) Participating in a live, interactive Zoom webinar
+d) Downloading a PDF assignment to complete later
+= c
+~ Unit 3 · E-mailing
+@ What is the primary purpose of the "Spam" or "Junk" folder in an email client?
+a) To store important messages permanently
+b) To temporarily hold drafts before sending
+c) To automatically filter out unwanted, dangerous, or unsolicited bulk emails
+d) To archive emails older than a year
+= c
+~ Unit 3 · Terminology
+@ Malicious software that is designed to block access to a computer system or encrypt its files until a sum of money is paid is called:
+a) Adware
+b) Ransomware
+c) Spyware
+d) A Trojan Horse
+= b
+~ Unit 4 · Environmental Control
+@ In India, the Air (Prevention and Control of Pollution) Act was enacted by the Parliament in the year:
+a) 1974
+b) 1981
+c) 1986
+d) 2000
+= b
+~ Unit 4 · Environmental Depredation Cause
+@ The harmful phenomenon known as "acid rain" is primarily caused by atmospheric emissions of which two chemical compounds?
+a) Carbon dioxide and Carbon monoxide
+b) Sulfur dioxide and Nitrogen oxides
+c) Methane and Ozone
+d) Chlorofluorocarbons and Halons
+= b
+~ Unit 4 · International Affairs for Better Environment
+@ The Ramsar Convention is an international treaty specifically dedicated to the conservation and sustainable use of:
+a) Tropical rainforests
+b) Coral reefs
+c) Wetlands
+d) Desert ecosystems
+= c
+~ Unit 4 · People & Environment Interaction
+@ The famous "Chipko Movement," characterized by people hugging trees to prevent them from being felled, originated in which present-day Indian state?
+a) Madhya Pradesh
+b) Kerala
+c) Uttarakhand
+d) Gujarat
+= c
+~ Unit 4 · National and International Affairs
+@ The United Nations' Sustainable Development Goal (SDG) 13 specifically calls for urgent action to combat:
+a) Poverty
+b) Gender inequality
+c) Climate change and its impacts
+d) Hunger
+= c
+~ Unit 5 · Salient Features of Indian Culture
+@ The "Hornbill Festival," often called the 'Festival of Festivals,' is a vibrant cultural celebration held annually in which state?
+a) Nagaland
+b) Sikkim
+c) Meghalaya
+d) Arunachal Pradesh
+= a
+~ Unit 5 · Indian National Movement (1857–1950)
+@ Who among the following founded the socio-religious reform movement known as the 'Brahmo Samaj' in 1828?
+a) Swami Vivekananda
+b) Raja Ram Mohan Roy
+c) Dayananda Saraswati
+d) Ishwar Chandra Vidyasagar
+= b
+~ Unit 5 · Origin of Universe
+@ The prevailing cosmological model explaining the early development and expansion of the universe from a high-density, high-temperature state is called the:
+a) Steady State Theory
+b) Big Bang Theory
+c) Pulsating Universe Theory
+d) String Theory
+= b
+~ Unit 5 · Indian Geography (General)
+@ Which type of soil, formed primarily by the deposition of silt by rivers like the Ganges and Brahmaputra, is the most widespread and fertile in India?
+a) Black soil (Regur)
+b) Red soil
+c) Laterite soil
+d) Alluvial soil
+= d
+~ Unit 5 · Indian National Movement (1857–1950)
+@ The historic Dandi March, which initiated the Civil Disobedience Movement over the salt tax, took place in the year:
+a) 1920
+b) 1925
+c) 1930
+d) 1942
+= c
+~ Unit 6 · Preamble
+@ The terms "Socialist", "Secular", and "Integrity" were officially added to the Preamble of the Indian Constitution by the:
+a) 42nd Amendment Act (1976)
+b) 44th Amendment Act (1978)
+c) 73rd Amendment Act (1992)
+d) 86th Amendment Act (2002)
+= a
+~ Unit 6 · Poverty / Planning
+@ The Tendulkar Committee, constituted by the Government of India in 2005, was tasked with reviewing the methodology for the estimation of:
+a) National Income
+b) Population growth
+c) The Poverty line
+d) Industrial output
+= c
+~ Unit 6 · Election Commission
+@ Article 324 of the Indian Constitution formally establishes the powers and responsibilities of the:
+a) Finance Commission
+b) Supreme Court
+c) Election Commission of India
+d) Comptroller and Auditor General
+= c
+~ Unit 6 · Indian Political System
+@ Under the structure of the Indian Parliament, who serves as the ex-officio Chairman of the Rajya Sabha (Council of States)?
+a) The President of India
+b) The Vice-President of India
+c) The Prime Minister of India
+d) The Speaker of the Lok Sabha
+= b
+~ Unit 6 · Agriculture / Economy
+@ The 'Green Revolution' in India, which led to a massive increase in agricultural production, was primarily associated with the introduction of high-yielding varieties of:
+a) Cotton and Jute
+b) Pulses and Oilseeds
+c) Wheat and Rice
+d) Sugarcane and Tea
+= c
+`;
+
+/* ---- bank parser: turns the text blocks above into the QUESTIONS array ---- */
+function parseBank(raw, section, secId){
+  const out=[]; let cur=null, tag='';
+  raw.split('\n').forEach(function(line){
+    line=line.trim(); if(!line) return;
+    const c=line.charAt(0);
+    if(c==='~'){ tag=line.slice(1).trim(); return; }
+    if(c==='@'){ cur={text:line.slice(1).trim(),options:[],correct:-1,section:section,secId:secId,tag:tag}; tag=''; out.push(cur); return; }
+    if(c==='='){ if(cur) cur.correct=line.slice(1).trim().toLowerCase().charCodeAt(0)-97; return; }
+    const m=line.match(/^([a-d])\)\s?([\s\S]*)$/);
+    if(m&&cur){ cur.options[m[1].charCodeAt(0)-97]=m[2].trim(); }
+  });
+  return out;
+}
+/* QUESTIONS: [{text, options:[4], correct:0-3, section, secId, tag}] — Q1–90 Mathematics, Q91–120 GK */
+const QUESTIONS = parseBank(RAW_MATH,'Mathematics','math').concat(parseBank(RAW_GK,'General Knowledge','gk'));
+
+/* ============================================================
+   MINI LaTeX RENDERER (no external libraries)
+   ============================================================ */
+const esc = s => String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+const SYM = Object.assign(Object.create(null),{
+  pi:'π',alpha:'α',beta:'β',theta:'θ',phi:'φ',mu:'μ',lambda:'λ',sigma:'σ',omega:'ω',
+  nabla:'∇',partial:'∂',infty:'∞',times:'×',cdot:'⋅',leq:'≤',le:'≤',geq:'≥',ge:'≥',neq:'≠',ne:'≠',
+  in:'∈',cap:'∩',cup:'∪',to:'→',rightarrow:'→',Rightarrow:'⇒',equiv:'≡',subset:'⊂',forall:'∀',
+  mid:'∣',pm:'±',ldots:'…',dots:'…',cdots:'⋯',prime:'′',approx:'≈',sim:'∼',circ:'∘',
+  int:'∫',oint:'∮',sum:'∑',prod:'∏',langle:'⟨',rangle:'⟩'
+});
+const REL = new Set(['times','cdot','leq','le','geq','ge','neq','ne','in','cap','cup','to','rightarrow','Rightarrow','equiv','subset','approx','sim','pm','mid','circ']);
+const GREEK = new Set(['pi','alpha','beta','theta','phi','mu','lambda','sigma','omega']);
+const BIGOP = new Set(['int','oint','sum','prod']);
+const FUNC = new Set(['log','ln','sin','cos','tan','cot','sec','csc','sinh','cosh','tanh','max','min','dim','lim','exp','det','rank']);
+const SPACE = Object.assign(Object.create(null),{',':'.17em',';':'.28em',':':'.22em','!':'0',' ':'.3em',quad:'1em',qquad:'2em'});
+const BB = {R:'ℝ',Z:'ℤ',Q:'ℚ',C:'ℂ',N:'ℕ'};
+
+function texToHtml(src){
+  let i=0; const n=src.length;
+  const RIGHT=/\\right(?![A-Za-z])/y, END=/\\end(?![A-Za-z])/y;
+  const at=re=>{re.lastIndex=i;return re.test(src);};
+  const isL=c=>c!==undefined&&/[A-Za-z]/.test(c);
+  const ws=()=>{while(i<n&&/\s/.test(src[i]))i++;};
+  const op=s=>'<wbr><span class="op">'+s+'</span>';
+  const dl=(d,big)=>d?'<span class="dl'+(big?' big':'')+'">'+esc(d)+'</span>':'';
+
+  function chr(c){
+    if(/[A-Za-z]/.test(c)) return '<i>'+c+'</i>';
+    if(/[0-9]/.test(c)) return c;
+    switch(c){
+      case '+': return op('+'); case '-': return op('−'); case '=': return op('=');
+      case '<': return op('&lt;'); case '>': return op('&gt;');
+      case ',': return '<span class="cm">,</span><wbr>';
+      case ';': return '<span class="cm">;</span><wbr>';
+      case "'": return '′'; case '*': return '∗';
+      default: return esc(c);
+    }
+  }
+  function seq(){
+    let out='';
+    for(;;){
+      ws(); if(i>=n) break;
+      const c=src[i];
+      if(c==='}'||c==='&') break;
+      if(src.startsWith('\\\\',i)||at(END)||at(RIGHT)) break;
+      if(out===''&&(c==='-'||c==='+')){ i++; out+=(c==='-'?'−':'+'); continue; }   // unary sign
+      out+=scripted();
+    }
+    return out;
+  }
+  function scripted(){
+    const base=atom(); let sup=null, sub=null;
+    for(;;){
+      ws();
+      if(src[i]==='^'){ i++; sup=arg(); }
+      else if(src[i]==='_'){ i++; sub=arg(); }
+      else break;
+    }
+    if(sup!==null&&sub!==null) return base+'<span class="ss"><sup>'+sup+'</sup><sub>'+sub+'</sub></span>';
+    if(sup!==null) return base+'<sup>'+sup+'</sup>';
+    if(sub!==null) return base+'<sub>'+sub+'</sub>';
+    return base;
+  }
+  function arg(){ ws(); return atom(); }
+  function grp(){ ws(); return atom(); }
+  function atom(){
+    if(i>=n) return '';
+    const c=src[i];
+    if(c==='{'){ i++; const h=seq(); if(src[i]==='}') i++; return h; }
+    if(c==='\\') return cmd();
+    i++; return chr(c);
+  }
+  function raw(){
+    ws(); if(src[i]!=='{'){ return i<n?src[i++]:''; }
+    i++; let d=1, t='';
+    while(i<n){ const c=src[i++]; if(c==='{')d++; else if(c==='}'){ d--; if(d===0)break; } t+=c; }
+    return t;
+  }
+  function delim(){
+    ws(); const c=src[i]; if(c===undefined) return '';
+    if(c==='.'){ i++; return ''; }
+    if(c==='\\'){
+      i++; let nm='';
+      if(isL(src[i])){ while(i<n&&isL(src[i])) nm+=src[i++]; } else nm=src[i++]||'';
+      return ({'{':'{','}':'}','|':'‖',langle:'⟨',rangle:'⟩'})[nm]||'';
+    }
+    i++; return c;
+  }
+  function env(){
+    let name=raw();
+    const rows=[]; let row=[];
+    while(i<n){
+      row.push(seq()); ws();
+      if(src[i]==='&'){ i++; continue; }
+      if(src.startsWith('\\\\',i)){ i+=2; rows.push(row); row=[]; continue; }
+      if(at(END)){ i+=4; raw(); rows.push(row); row=[]; break; }
+      i++;
+    }
+    if(row.length) rows.push(row);
+    const body=rows.filter(r=>r.some(c=>c!=='')).map(r=>'<tr>'+r.map(c=>'<td>'+c+'</td>').join('')+'</tr>').join('');
+    return '<span class="mat '+esc(name)+'"><table>'+body+'</table></span>';
+  }
+  function cmd(){
+    i++; let name='';
+    if(isL(src[i])){ while(i<n&&isL(src[i])) name+=src[i++]; } else name=src[i++]||'';
+    switch(name){
+      case 'frac': case 'dfrac': case 'tfrac': { const a=grp(), b=grp(); return '<span class="frac"><span class="num">'+a+'</span><span class="den">'+b+'</span></span>'; }
+      case 'sqrt': { const a=grp(); return '<span class="sqrt"><span class="rad">√</span><span class="rc">'+a+'</span></span>'; }
+      case 'vec': return '<span class="vec">'+grp()+'</span>';
+      case 'overline': case 'bar': return '<span class="ov">'+grp()+'</span>';
+      case 'mathrm': case 'operatorname': case 'text': case 'textrm': return '<span class="rm">'+esc(raw())+'</span>';
+      case 'mathbf': return '<span class="rm bf">'+esc(raw())+'</span>';
+      case 'mathbb': { const t=raw(); return '<span class="rm">'+(BB[t]||esc(t))+'</span>'; }
+      case 'left': {
+        const d=delim(); const inner=seq(); let r='';
+        if(at(RIGHT)){ i+=6; r=delim(); }
+        const big=/class="(frac|sqrt|mat)/.test(inner);
+        return dl(d,big)+inner+dl(r,big);
+      }
+      case 'right': delim(); return '';
+      case 'begin': return env();
+      case 'end': raw(); return '';
+      case '{': return '{';
+      case '}': return '}';
+      case '|': return '‖';
+      case '\\': return '';
+    }
+    if(name in SPACE) return '<span style="display:inline-block;width:'+SPACE[name]+'"></span>';
+    if(name in SYM){
+      const s=SYM[name];
+      if(BIGOP.has(name)) return '<span class="bigop">'+s+'</span>';
+      if(REL.has(name)) return op(s);
+      if(GREEK.has(name)) return '<i>'+s+'</i>';
+      return s;
+    }
+    if(FUNC.has(name)) return '<span class="fn">'+name+'</span>';
+    return '<span class="rm">'+esc(name)+'</span>';
+  }
+  let out='';
+  while(i<n){ out+=seq(); if(i<n){ if(src.startsWith('\\\\',i)) i+=2; else i++; } }
+  return out;
+}
+/* text with inline \( ... \) math → HTML */
+function fmt(s){
+  let out='', last=0, m; const re=/\\\(([\s\S]+?)\\\)/g;
+  while((m=re.exec(s))){
+    out+=esc(s.slice(last,m.index));
+    out+='<span class="math">'+texToHtml(m[1])+'</span>';
+    last=re.lastIndex;
+  }
+  return out+esc(s.slice(last));
+}
+
+/* ==== APP ==== */
+(function(){
+'use strict';
+const $=id=>document.getElementById(id);
+const TOTAL=QUESTIONS.length, DURATION=120*60, POS=3, NEG=1, LET=['A','B','C','D'];
+const SECS=[]; QUESTIONS.forEach((q,i)=>{ let s=SECS[SECS.length-1]; if(!s||s.id!==q.secId){ s={id:q.secId,name:q.section,from:i,to:i}; SECS.push(s);} s.to=i; });
+
+const st={cur:0,ans:[],mark:[],vis:[],deadline:0,remaining:DURATION,timer:null,started:false,submitted:false,elapsed:0,auto:false};
+let lastResult=null;
+function resetState(){
+  st.cur=0; st.ans=Array(TOTAL).fill(null); st.mark=Array(TOTAL).fill(false); st.vis=Array(TOTAL).fill(false);
+  st.remaining=DURATION; st.started=false; st.submitted=false; st.elapsed=0; st.auto=false;
+  clearInterval(st.timer); $('tv').textContent=fmtHMS(DURATION); $('timerBox').classList.remove('low');
+}
+const pad=n=>String(n).padStart(2,'0');
+function fmtHMS(s){ return pad(Math.floor(s/3600))+':'+pad(Math.floor(s%3600/60))+':'+pad(s%60); }
+
+function status(i){
+  if(!st.vis[i]) return 'nv';
+  const a=st.ans[i]!==null, m=st.mark[i];
+  if(a&&m) return 'am'; if(m) return 'mk'; if(a) return 'an'; return 'na';
+}
+function counts(){
+  const c={an:0,na:0,nv:0,mk:0,am:0};
+  for(let i=0;i<TOTAL;i++) c[status(i)]++;
+  c.answered=c.an+c.am; c.notAnswered=c.na+c.mk; c.marked=c.mk+c.am; c.notVisited=c.nv;
+  return c;
+}
+
+/* ---------- build static parts ---------- */
+function buildTabs(){
+  $('tabs').innerHTML=SECS.map(s=>'<button type="button" class="stab" data-id="'+s.id+'">'+esc(s.name)+'<small>Q'+(s.from+1)+'–'+(s.to+1)+'</small></button>').join('');
+}
+function buildPalette(){
+  let h='';
+  SECS.forEach(s=>{
+    h+='<div class="pal-sec"><span>'+esc(s.name)+'</span><span>Q'+(s.from+1)+'–'+(s.to+1)+'</span></div><div class="pgrid">';
+    for(let i=s.from;i<=s.to;i++) h+='<button type="button" class="pb nv" data-i="'+i+'" aria-label="Question '+(i+1)+'">'+(i+1)+'</button>';
+    h+='</div>';
+  });
+  $('palGrid').innerHTML=h;
+}
+let pbs=[];
+function refreshPalette(){
+  if(!pbs.length) pbs=Array.prototype.slice.call($('palGrid').querySelectorAll('.pb'));
+  pbs.forEach(b=>{ const i=+b.dataset.i; b.className='pb '+status(i)+(i===st.cur?' cur':''); });
+  const c=counts();
+  ['an','na','nv','mk','am'].forEach(k=>$('c-'+k).textContent=c[k]);
+  const cs=QUESTIONS[st.cur].secId;
+  Array.prototype.forEach.call($('tabs').children,b=>b.classList.toggle('on',b.dataset.id===cs));
+}
+
+/* ---------- question view ---------- */
+function renderQuestion(){
+  const q=QUESTIONS[st.cur], i=st.cur;
+  $('qno').textContent='Question '+(i+1)+' of '+TOTAL;
+  $('qsec').textContent=q.section;
+  const tg=$('qtag'); tg.hidden=!q.tag; tg.textContent=q.tag||'';
+  $('qtext').innerHTML=fmt(q.text);
+  $('opts').innerHTML=q.options.map((o,k)=>
+    '<button type="button" class="opt'+(st.ans[i]===k?' sel':'')+'" data-k="'+k+'" role="radio" aria-checked="'+(st.ans[i]===k)+'"><span class="bul">'+LET[k]+'</span><span class="otxt">'+fmt(o)+'</span></button>').join('');
+  syncButtons();
+  $('qscroll').scrollTop=0;
+  refreshPalette();
+}
+function syncOptions(){
+  Array.prototype.forEach.call($('opts').children,(b,k)=>{ const on=st.ans[st.cur]===k; b.classList.toggle('sel',on); b.setAttribute('aria-checked',on); });
+}
+function syncButtons(){
+  const m=st.mark[st.cur], mb=$('markBtn');
+  mb.classList.toggle('on',m); mb.textContent=m?'Unmark Review':'Mark for Review';
+  $('prevBtn').disabled=st.cur===0; $('nextBtn').disabled=st.cur===TOTAL-1;
+}
+function goTo(i){ if(i<0||i>=TOTAL) return; st.cur=i; st.vis[i]=true; renderQuestion(); }
+function choose(k){
+  if(st.submitted||!st.started) return;
+  st.ans[st.cur]=(st.ans[st.cur]===k)?null:k;      // click again to deselect
+  syncOptions(); refreshPalette();
+}
+
+/* ---------- timer ---------- */
+function tick(){
+  st.remaining=Math.max(0,Math.ceil((st.deadline-Date.now())/1000));
+  $('tv').textContent=fmtHMS(st.remaining);
+  $('timerBox').classList.toggle('low',st.remaining<=300);
+  if(st.remaining<=0) finish(true);
+}
+function startTest(){
+  $('intro').hidden=true; st.started=true; st.vis[0]=true;
+  st.deadline=Date.now()+DURATION*1000; clearInterval(st.timer); st.timer=setInterval(tick,500);
+  renderQuestion();
+}
+
+/* ---------- submit ---------- */
+function openConfirm(){
+  const c=counts();
+  $('sumTbl').innerHTML=
+    '<tr><td>Total questions</td><td>'+TOTAL+'</td></tr>'+
+    '<tr><td>Answered</td><td style="color:var(--ok)">'+c.answered+'</td></tr>'+
+    '<tr><td>Not answered</td><td style="color:var(--na)">'+(TOTAL-c.answered)+'</td></tr>'+
+    '<tr><td>Marked for review</td><td style="color:var(--mk)">'+c.marked+'</td></tr>'+
+    '<tr><td>Not visited</td><td>'+c.notVisited+'</td></tr>'+
+    '<tr><td>Time left</td><td>'+fmtHMS(st.remaining)+'</td></tr>';
+  $('confirm').hidden=false;
+}
+function evaluate(){
+  const r={correct:0,wrong:0,skipped:0,score:0,sec:{}};
+  SECS.forEach(s=>r.sec[s.id]={name:s.name,total:s.to-s.from+1,c:0,w:0,s:0,score:0});
+  QUESTIONS.forEach((q,i)=>{
+    const a=st.ans[i], b=r.sec[q.secId];
+    if(a===null){ r.skipped++; b.s++; }
+    else if(a===q.correct){ r.correct++; b.c++; b.score+=POS; }
+    else { r.wrong++; b.w++; b.score-=NEG; }
+  });
+  r.score=r.correct*POS-r.wrong*NEG;
+  r.attempted=r.correct+r.wrong;
+  r.accuracy=r.attempted?r.correct/r.attempted*100:0;
+  r.max=TOTAL*POS; r.auto=st.auto; r.time=st.elapsed;
+  return r;
+}
+function finish(auto){
+  if(st.submitted) return;
+  st.submitted=true; st.auto=!!auto; clearInterval(st.timer);
+  st.elapsed=DURATION-st.remaining;
+  $('confirm').hidden=true; closePalette();
+  lastResult=evaluate();
+  const el=$('result'); el.innerHTML=resultHTML(lastResult,true); el.hidden=false; el.scrollTop=0;
+  bindReportFilters();
+}
+
+/* ---------- results ---------- */
+function reviewItem(i){
+  const q=QUESTIONS[i], a=st.ans[i];
+  const s=a===null?'unattempted':(a===q.correct?'correct':'incorrect');
+  const pts=s==='correct'?'+'+POS:s==='incorrect'?'−'+NEG:'0';
+  const label=s==='correct'?'Correct':s==='incorrect'?'Incorrect':'Not attempted';
+  const opts=q.options.map((o,k)=>{
+    let cls='ro', flag='';
+    if(k===q.correct){ cls+=' is-correct'; flag=a===k?'<span class="flag g">✓ Your answer · Correct</span>':'<span class="flag g">Correct answer</span>'; }
+    else if(k===a){ cls+=' is-wrong'; flag='<span class="flag r">✗ Your answer</span>'; }
+    return '<li class="'+cls+'"><span class="bul">'+LET[k]+'</span><span class="otxt">'+fmt(o)+'</span>'+flag+'</li>';
+  }).join('');
+  const yours=a===null?'<b>— (not attempted)</b>':'<b class="'+(s==='correct'?'ok':'bad')+'">'+LET[a]+'</b>';
+  return '<article class="rv '+s+'" data-s="'+s+'" data-sec="'+q.secId+'">'+
+    '<div class="rv-h"><span class="qno">Q'+(i+1)+'</span><span class="pill">'+esc(q.section)+'</span>'+(q.tag?'<span class="pill">'+esc(q.tag)+'</span>':'')+
+    '<span class="badge '+s+'">'+label+'</span><span class="marks">Marks: <b>'+pts+'</b></span></div>'+
+    '<div class="qtext">'+fmt(q.text)+'</div><ul class="ropts">'+opts+'</ul>'+
+    '<div class="ans-line">Your choice: '+yours+' &nbsp;·&nbsp; Correct answer: <b class="ok">'+LET[q.correct]+'</b></div></article>';
+}
+function resultHTML(r,actions){
+  const pc=v=>(v/TOTAL*100).toFixed(2);
+  const head='<div class="res-head"><div class="res-head-in"><div class="brand"><span class="logo">iON</span><div><b>Performance &amp; Solutions</b><small>'+esc(new Date().toLocaleString())+'</small></div></div>'+
+    (actions?'<div class="res-actions"><button class="btn primary" id="dlBtn" type="button">⬇ Download Performance &amp; Solutions</button><button class="btn" id="retakeBtn" type="button">↻ Retake Test</button></div>':'')+'</div></div>';
+  const secRows=Object.keys(r.sec).map(k=>{ const s=r.sec[k]; return '<tr><td><b>'+esc(s.name)+'</b></td><td>'+s.total+'</td><td style="color:var(--ok)">'+s.c+'</td><td style="color:var(--bad)">'+s.w+'</td><td>'+s.s+'</td><td><b>'+s.score+'</b></td></tr>'; }).join('');
+  const chipsSec='<button class="chip active" data-fsec="all" type="button">All sections</button>'+SECS.map(s=>'<button class="chip" data-fsec="'+s.id+'" type="button">'+esc(s.name)+' <b>'+(s.to-s.from+1)+'</b></button>').join('');
+  let list=''; for(let i=0;i<TOTAL;i++) list+=reviewItem(i);
+  return head+'<div class="res-inner">'+
+    (r.auto?'<div class="banner">⏰ Time is up — the test was submitted automatically.</div>':'')+
+    '<div class="hero"><div class="scorebox"><small>Total Score</small><b>'+r.score+'</b><span>out of '+r.max+'</span></div>'+
+    '<div class="tiles">'+
+      '<div class="tile ok"><small>Correct</small><b>'+r.correct+'</b><em>+'+POS+' each = +'+(r.correct*POS)+'</em></div>'+
+      '<div class="tile bad"><small>Incorrect</small><b>'+r.wrong+'</b><em>−'+NEG+' each = −'+(r.wrong*NEG)+'</em></div>'+
+      '<div class="tile"><small>Unattempted</small><b>'+r.skipped+'</b><em>0 marks</em></div>'+
+      '<div class="tile acc"><small>Accuracy</small><b>'+r.accuracy.toFixed(1)+'%</b><em>correct ÷ attempted</em></div>'+
+      '<div class="tile"><small>Attempted</small><b>'+r.attempted+' / '+TOTAL+'</b><em>'+(r.attempted/TOTAL*100).toFixed(0)+'% of paper</em></div>'+
+      '<div class="tile"><small>Time Taken</small><b>'+fmtHMS(r.time)+'</b><em>of 02:00:00</em></div>'+
+    '</div></div>'+
+    '<div class="dist" title="Correct / Incorrect / Unattempted"><i class="c" style="width:'+pc(r.correct)+'%"></i><i class="w" style="width:'+pc(r.wrong)+'%"></i><i class="s" style="width:'+pc(r.skipped)+'%"></i></div>'+
+    '<table class="tbl"><thead><tr><th>Section</th><th>Questions</th><th>Correct</th><th>Incorrect</th><th>Skipped</th><th>Score</th></tr></thead><tbody>'+secRows+'</tbody></table>'+
+    '<div class="filters">'+
+      '<div class="chips"><span class="lbl">Show</span>'+
+        '<button class="chip active" data-fs="all" type="button">All <b>'+TOTAL+'</b></button>'+
+        '<button class="chip" data-fs="correct" type="button">Correct <b>'+r.correct+'</b></button>'+
+        '<button class="chip" data-fs="incorrect" type="button">Incorrect <b>'+r.wrong+'</b></button>'+
+        '<button class="chip" data-fs="unattempted" type="button">Unattempted <b>'+r.skipped+'</b></button></div>'+
+      '<div class="chips"><span class="lbl">Section</span>'+chipsSec+'</div>'+
+    '</div>'+
+    '<div id="rvList">'+list+'<div class="empty" id="emptyMsg" style="display:none">No questions match this filter.</div></div>'+
+  '</div>';
+}
+
+/* filter logic — also serialised into the downloaded report */
+function miniReport(){
+  var stt='all', sec='all';
+  function apply(){
+    var vis=0;
+    document.querySelectorAll('.rv').forEach(function(e){
+      var ok=(stt==='all'||e.dataset.s===stt)&&(sec==='all'||e.dataset.sec===sec);
+      e.style.display=ok?'':'none'; if(ok) vis++;
+    });
+    var em=document.getElementById('emptyMsg'); if(em) em.style.display=vis?'none':'';
+  }
+  document.querySelectorAll('[data-fs]').forEach(function(b){ b.addEventListener('click',function(){
+    stt=b.dataset.fs; document.querySelectorAll('[data-fs]').forEach(function(x){ x.classList.toggle('active',x===b); }); apply(); }); });
+  document.querySelectorAll('[data-fsec]').forEach(function(b){ b.addEventListener('click',function(){
+    sec=b.dataset.fsec; document.querySelectorAll('[data-fsec]').forEach(function(x){ x.classList.toggle('active',x===b); }); apply(); }); });
+}
+const MINI='('+miniReport.toString()+')();';
+function bindReportFilters(){ miniReport(); }
+
+function buildReportHTML(){
+  const css=document.getElementById('appCss').textContent;
+  return '<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>Performance &amp; Solutions</title><style>'+css+'</style></head><body class="report">'+
+    resultHTML(lastResult,false)+'<script>'+MINI+'<\/script></body></html>';
+}
+async function downloadReport(){
+  if(!lastResult) return;
+  const html=buildReportHTML(), fname='Performance_and_Solutions.html';
+  try{
+    const d=(window.claude&&window.claude.use)?await window.claude.use('downloads'):null;
+    if(d){ await d.save({filename:fname,data:html}); return; }
+  }catch(e){ if(e&&e.code==='declined') return; }
+  const url=URL.createObjectURL(new Blob([html],{type:'text/html'}));
+  const a=document.createElement('a'); a.href=url; a.download=fname; document.body.appendChild(a); a.click(); a.remove();
+  setTimeout(()=>URL.revokeObjectURL(url),3000);
+}
+function retake(){
+  if(!window.confirm('Start a fresh attempt? Your current results will be cleared.')) return;
+  $('result').hidden=true; $('result').innerHTML=''; lastResult=null;
+  resetState(); renderQuestion(); $('intro').hidden=false;
+}
+
+/* ---------- palette drawer (mobile) ---------- */
+function openPalette(){ $('palette').classList.add('open'); $('backdrop').classList.add('show'); }
+function closePalette(){ $('palette').classList.remove('open'); $('backdrop').classList.remove('show'); }
+
+/* ---------- events ---------- */
+$('opts').addEventListener('click',e=>{ const b=e.target.closest('.opt'); if(b) choose(+b.dataset.k); });
+$('palGrid').addEventListener('click',e=>{ const b=e.target.closest('.pb'); if(b&&st.started&&!st.submitted){ goTo(+b.dataset.i); closePalette(); } });
+$('tabs').addEventListener('click',e=>{ const b=e.target.closest('.stab'); if(!b||!st.started) return; const s=SECS.filter(x=>x.id===b.dataset.id)[0]; goTo(s.from); });
+$('prevBtn').onclick=()=>goTo(st.cur-1);
+$('nextBtn').onclick=()=>goTo(st.cur+1);
+$('clearBtn').onclick=()=>{ st.ans[st.cur]=null; syncOptions(); refreshPalette(); };
+$('markBtn').onclick=()=>{ st.mark[st.cur]=!st.mark[st.cur]; syncButtons(); refreshPalette(); };
+$('submitBtn').onclick=openConfirm; $('submitBtn2').onclick=openConfirm;
+$('backBtn').onclick=()=>{ $('confirm').hidden=true; };
+$('yesBtn').onclick=()=>finish(false);
+$('startBtn').onclick=startTest;
+$('palBtn').onclick=openPalette; $('backdrop').onclick=closePalette;
+$('result').addEventListener('click',e=>{
+  if(e.target.closest('#dlBtn')) downloadReport();
+  else if(e.target.closest('#retakeBtn')) retake();
+});
+document.addEventListener('keydown',e=>{
+  if(!st.started||st.submitted||!$('confirm').hidden) return;
+  if(e.ctrlKey||e.metaKey||e.altKey) return;
+  if(e.key==='ArrowRight') goTo(st.cur+1);
+  else if(e.key==='ArrowLeft') goTo(st.cur-1);
+  else { const k='abcd'.indexOf(e.key.toLowerCase()); if(k>=0&&e.key.length===1) choose(k); }
+});
+window.addEventListener('beforeunload',e=>{ if(st.started&&!st.submitted){ e.preventDefault(); e.returnValue=''; } });
+
+/* ---------- init ---------- */
+resetState(); buildTabs(); buildPalette(); renderQuestion();
+})();
+</script>
+</body>
+</html>
