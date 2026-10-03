@@ -1,0 +1,1040 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MCQ Test · 120 Questions</title>
+    <!-- MathJax for LaTeX rendering -->
+    <script>
+        window.MathJax = {
+            tex: { inlineMath: [['$', '$'], ['\\(', '\\)']] },
+            svg: { fontCache: 'global' }
+        };
+    </script>
+    <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-svg.js" async></script>
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+        body {
+            font-family: 'Segoe UI', Roboto, system-ui, sans-serif;
+            background: #f1f5f9;
+            height: 100vh;
+            display: flex;
+            overflow: hidden;
+        }
+
+        /* ---- left / main panel ---- */
+        .main-panel {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+            padding: 16px 12px 12px 16px;
+        }
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: white;
+            padding: 12px 20px;
+            border-radius: 20px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+            margin-bottom: 16px;
+            flex-shrink: 0;
+        }
+        .header h1 {
+            font-size: 1.3rem;
+            font-weight: 600;
+            color: #0f172a;
+        }
+        .timer {
+            font-size: 1.8rem;
+            font-weight: 700;
+            font-family: 'Courier New', monospace;
+            background: #0f172a;
+            color: #facc15;
+            padding: 4px 18px;
+            border-radius: 40px;
+            letter-spacing: 2px;
+        }
+
+        /* ---- question container ---- */
+        .question-container {
+            background: white;
+            border-radius: 24px;
+            padding: 24px 28px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.03);
+            flex: 1;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+            margin-bottom: 12px;
+        }
+        .q-info {
+            display: flex;
+            justify-content: space-between;
+            color: #64748b;
+            font-size: 0.9rem;
+            margin-bottom: 12px;
+            font-weight: 500;
+        }
+        .q-text {
+            font-size: 1.2rem;
+            line-height: 1.6;
+            font-weight: 500;
+            color: #0f172a;
+            margin-bottom: 24px;
+            min-height: 4rem;
+        }
+        .options {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            flex: 1;
+        }
+        .option {
+            display: flex;
+            align-items: center;
+            padding: 14px 20px;
+            border: 2px solid #e2e8f0;
+            border-radius: 16px;
+            cursor: pointer;
+            transition: all 0.15s ease;
+            background: #ffffff;
+        }
+        .option:hover {
+            background: #f8fafc;
+            border-color: #94a3b8;
+        }
+        .option.selected {
+            border-color: #3b82f6;
+            background: #eff6ff;
+            box-shadow: 0 0 0 2px rgba(59,130,246,0.2);
+        }
+        .option .label {
+            width: 30px;
+            height: 30px;
+            background: #e2e8f0;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 600;
+            margin-right: 16px;
+            color: #1e293b;
+            flex-shrink: 0;
+        }
+        .option.selected .label {
+            background: #3b82f6;
+            color: white;
+        }
+        .option .opt-text {
+            font-size: 1rem;
+            line-height: 1.5;
+        }
+
+        /* ---- action buttons ---- */
+        .actions {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            justify-content: space-between;
+            background: white;
+            padding: 14px 20px;
+            border-radius: 20px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+            flex-shrink: 0;
+        }
+        .btn {
+            border: none;
+            padding: 10px 22px;
+            border-radius: 40px;
+            font-weight: 600;
+            font-size: 0.9rem;
+            cursor: pointer;
+            background: #e2e8f0;
+            color: #1e293b;
+            transition: 0.15s;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            border: 1px solid transparent;
+        }
+        .btn:hover {
+            background: #cbd5e1;
+        }
+        .btn.primary {
+            background: #3b82f6;
+            color: white;
+        }
+        .btn.primary:hover {
+            background: #2563eb;
+        }
+        .btn.success {
+            background: #10b981;
+            color: white;
+        }
+        .btn.success:hover {
+            background: #059669;
+        }
+        .btn.warning {
+            background: #f59e0b;
+            color: white;
+        }
+        .btn.warning:hover {
+            background: #d97706;
+        }
+        .btn.danger {
+            background: #ef4444;
+            color: white;
+        }
+        .btn.danger:hover {
+            background: #dc2626;
+        }
+        .btn.outline {
+            background: white;
+            border: 1px solid #cbd5e1;
+        }
+        .btn.outline:hover {
+            background: #f1f5f9;
+        }
+
+        /* ---- right palette ---- */
+        .palette-panel {
+            width: 300px;
+            background: white;
+            border-radius: 24px 0 0 24px;
+            box-shadow: -4px 0 12px rgba(0,0,0,0.02);
+            display: flex;
+            flex-direction: column;
+            padding: 20px 12px 12px 12px;
+            flex-shrink: 0;
+            overflow: hidden;
+        }
+        .palette-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0 8px 12px 8px;
+            font-weight: 600;
+            color: #0f172a;
+            border-bottom: 1px solid #e2e8f0;
+        }
+        .legend {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px 12px;
+            font-size: 0.7rem;
+            padding: 10px 4px;
+            color: #475569;
+        }
+        .legend-item {
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+        .legend-swatch {
+            width: 14px;
+            height: 14px;
+            border-radius: 4px;
+        }
+        .swatch-answered { background: #10b981; }
+        .swatch-notanswered { background: #ef4444; }
+        .swatch-marked { background: #8b5cf6; }
+        .swatch-notvisited { background: #e2e8f0; border: 1px solid #cbd5e1; }
+
+        .palette-grid {
+            flex: 1;
+            overflow-y: auto;
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 8px;
+            padding: 12px 4px;
+            align-content: start;
+        }
+        .palette-btn {
+            aspect-ratio: 1/1;
+            border-radius: 10px;
+            border: 2px solid transparent;
+            font-weight: 600;
+            font-size: 0.8rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: 0.1s;
+            background: #e2e8f0;
+            color: #1e293b;
+            border-color: #cbd5e1;
+        }
+        .palette-btn:hover {
+            transform: scale(0.95);
+        }
+        .palette-btn.answered {
+            background: #10b981;
+            color: white;
+            border-color: #10b981;
+        }
+        .palette-btn.notanswered {
+            background: #ef4444;
+            color: white;
+            border-color: #ef4444;
+        }
+        .palette-btn.marked {
+            background: #8b5cf6;
+            color: white;
+            border-color: #8b5cf6;
+        }
+        .palette-btn.notvisited {
+            background: #e2e8f0;
+            color: #1e293b;
+            border-color: #cbd5e1;
+        }
+        .palette-btn.current {
+            outline: 3px solid #0f172a;
+            outline-offset: 2px;
+        }
+
+        /* ---- overlay / result ---- */
+        .overlay {
+            position: fixed;
+            inset: 0;
+            background: rgba(15, 23, 42, 0.6);
+            backdrop-filter: blur(4px);
+            display: none;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+            z-index: 1000;
+        }
+        .overlay.active {
+            display: flex;
+        }
+        .result-card {
+            background: white;
+            max-width: 900px;
+            width: 100%;
+            max-height: 90vh;
+            border-radius: 32px;
+            padding: 28px 30px;
+            overflow-y: auto;
+            box-shadow: 0 25px 50px -12px rgba(0,0,0,0.3);
+            display: flex;
+            flex-direction: column;
+        }
+        .result-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+            gap: 12px;
+        }
+        .result-header h2 {
+            font-size: 1.8rem;
+            font-weight: 700;
+            color: #0f172a;
+        }
+        .score-badge {
+            background: #0f172a;
+            color: white;
+            padding: 8px 24px;
+            border-radius: 40px;
+            font-weight: 600;
+            font-size: 1.4rem;
+        }
+        .stats {
+            display: flex;
+            gap: 24px;
+            flex-wrap: wrap;
+            background: #f8fafc;
+            padding: 16px 20px;
+            border-radius: 20px;
+            margin-bottom: 24px;
+        }
+        .stat-item {
+            display: flex;
+            flex-direction: column;
+        }
+        .stat-label {
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            color: #64748b;
+            font-weight: 600;
+        }
+        .stat-value {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: #0f172a;
+        }
+        .filters {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+            margin-bottom: 18px;
+        }
+        .filter-btn {
+            padding: 6px 18px;
+            border-radius: 30px;
+            border: 1px solid #cbd5e1;
+            background: white;
+            font-weight: 500;
+            cursor: pointer;
+            transition: 0.1s;
+        }
+        .filter-btn.active {
+            background: #0f172a;
+            color: white;
+            border-color: #0f172a;
+        }
+        .review-list {
+            display: flex;
+            flex-direction: column;
+            gap: 18px;
+        }
+        .review-item {
+            border-left: 6px solid #cbd5e1;
+            padding: 12px 16px;
+            background: #f8fafc;
+            border-radius: 12px;
+        }
+        .review-item.correct {
+            border-left-color: #10b981;
+            background: #f0fdf4;
+        }
+        .review-item.incorrect {
+            border-left-color: #ef4444;
+            background: #fef2f2;
+        }
+        .review-item.skipped {
+            border-left-color: #94a3b8;
+            background: #f1f5f9;
+        }
+        .review-q {
+            font-weight: 600;
+            margin-bottom: 6px;
+            color: #0f172a;
+        }
+        .review-ans {
+            display: flex;
+            gap: 16px;
+            flex-wrap: wrap;
+            font-size: 0.9rem;
+        }
+        .review-ans span {
+            padding: 2px 12px;
+            border-radius: 40px;
+            background: white;
+            border: 1px solid #e2e8f0;
+        }
+        .review-ans .correct-badge {
+            background: #dcfce7;
+            border-color: #86efac;
+            color: #166534;
+            font-weight: 600;
+        }
+        .review-ans .wrong-badge {
+            background: #fee2e2;
+            border-color: #fca5a5;
+            color: #991b1b;
+            font-weight: 600;
+        }
+        .review-ans .skipped-badge {
+            background: #f1f5f9;
+            border-color: #cbd5e1;
+            color: #475569;
+        }
+
+        .download-btn {
+            margin-top: 24px;
+            align-self: flex-start;
+        }
+
+        /* responsive */
+        @media (max-width: 900px) {
+            body { flex-direction: column; overflow: auto; }
+            .main-panel { padding: 12px; }
+            .palette-panel { width: 100%; border-radius: 24px; max-height: 300px; }
+            .palette-grid { grid-template-columns: repeat(8, 1fr); }
+        }
+    </style>
+</head>
+<body>
+
+<!-- MAIN PANEL -->
+<div class="main-panel">
+    <div class="header">
+        <h1>📝 MCQ Test · 120 Q</h1>
+        <div class="timer" id="timerDisplay">120:00</div>
+    </div>
+
+    <div class="question-container" id="questionContainer">
+        <div class="q-info">
+            <span id="qCounter">Question 1 of 120</span>
+            <span id="qStatusBadge" style="font-weight:600; color:#8b5cf6;">● Not visited</span>
+        </div>
+        <div class="q-text" id="questionText">Loading…</div>
+        <div class="options" id="optionsContainer"></div>
+    </div>
+
+    <div class="actions">
+        <div style="display:flex; gap:8px; flex-wrap:wrap;">
+            <button class="btn outline" id="prevBtn">← Previous</button>
+            <button class="btn outline" id="nextBtn">Next →</button>
+            <button class="btn outline" id="clearBtn">Clear Response</button>
+        </div>
+        <div style="display:flex; gap:8px; flex-wrap:wrap;">
+            <button class="btn warning" id="markBtn">🔖 Mark for Review</button>
+            <button class="btn success" id="submitBtn">✅ Submit Test</button>
+        </div>
+    </div>
+</div>
+
+<!-- PALETTE PANEL -->
+<div class="palette-panel">
+    <div class="palette-header">
+        <span>Question Palette</span>
+        <span id="paletteProgress" style="font-size:0.8rem; color:#64748b;">0 / 120</span>
+    </div>
+    <div class="legend">
+        <div class="legend-item"><span class="legend-swatch swatch-answered"></span> Answered</div>
+        <div class="legend-item"><span class="legend-swatch swatch-notanswered"></span> Not Answered</div>
+        <div class="legend-item"><span class="legend-swatch swatch-marked"></span> Marked</div>
+        <div class="legend-item"><span class="legend-swatch swatch-notvisited"></span> Not Visited</div>
+    </div>
+    <div class="palette-grid" id="paletteGrid"></div>
+</div>
+
+<!-- OVERLAY RESULT -->
+<div class="overlay" id="resultOverlay">
+    <div class="result-card" id="resultCard">
+        <div class="result-header">
+            <h2>📊 Performance & Solutions</h2>
+            <div class="score-badge" id="finalScore">0</div>
+        </div>
+        <div class="stats" id="statsContainer"></div>
+        <div class="filters">
+            <button class="filter-btn active" data-filter="all">All</button>
+            <button class="filter-btn" data-filter="correct">✅ Correct</button>
+            <button class="filter-btn" data-filter="incorrect">❌ Incorrect</button>
+            <button class="filter-btn" data-filter="skipped">⏭️ Unattempted</button>
+            <button class="btn primary download-btn" id="downloadBtn" style="margin-left:auto;">⬇ Download Review</button>
+        </div>
+        <div class="review-list" id="reviewList"></div>
+    </div>
+</div>
+
+<script>
+    // ======================= 120 QUESTIONS =======================
+    // 90 Maths (1-90) + 30 GK (91-120)
+    // Format: { text: "...", options: ["...","...","...","..."], correct: 0-3 }
+    const questions = [];
+
+    // ---- Maths (1-90) ----
+    // Generated with plausible content; LaTeX used where appropriate.
+    const mathsData = [
+        // 1-10 (Calculus / Coordinate)
+        { text: "The curvature of the curve \\(y = e^x\\) at \\(x=0\\) is:", options: ["\\(1/\\sqrt{2}\\)", "\\(1/2\\)", "\\(\\sqrt{2}\\)", "\\(1\\)"], correct: 0 },
+        { text: "The envelope of the family of lines \\(y = mx + a/m\\) is:", options: ["\\(y^2 = 4ax\\)", "\\(y^2 = -4ax\\)", "\\(x^2 = 4ay\\)", "\\(x^2 = -4ay\\)"], correct: 0 },
+        { text: "The asymptote of \\(y = x e^{1/x}\\) is:", options: ["\\(y = x + 1\\)", "\\(y = x\\)", "\\(y = x - 1\\)", "\\(y = 0\\)"], correct: 1 },
+        { text: "The radius of curvature of \\(x = a(\\theta - \\sin\\theta), y = a(1-\\cos\\theta)\\) at \\(\\theta=\\pi\\) is:", options: ["\\(2a\\)", "\\(4a\\)", "\\(a\\)", "\\(8a\\)"], correct: 1 },
+        { text: "The maximum value of \\(f(x,y)=xy\\) subject to \\(x+y=10\\) is:", options: ["25", "20", "50", "100"], correct: 0 },
+        { text: "The curve \\(x^3 + y^3 = 3axy\\) has asymptote:", options: ["\\(x+y+a=0\\)", "\\(x+y-a=0\\)", "\\(x-y+a=0\\)", "\\(x-y-a=0\\)"], correct: 0 },
+        { text: "The evolute of the parabola \\(y^2=4ax\\) is:", options: ["\\(27ay^2 = 4(x-2a)^3\\)", "\\(27ay^2 = 4(x+2a)^3\\)", "\\(27ay^2 = -4(x-2a)^3\\)", "\\(27ay^2 = -4(x+2a)^3\\)"], correct: 0 },
+        { text: "The chord of curvature parallel to x-axis for \\(y = \\log(\\sec x)\\) is:", options: ["\\(2\\sec x\\)", "\\(2\\sec^2 x\\)", "\\(2\\tan x\\)", "\\(2\\sec x \\tan x\\)"], correct: 0 },
+        { text: "If \\(u = x^2 + y^2 + z^2\\), then \\(x u_x + y u_y + z u_z\\) equals:", options: ["\\(u\\)", "\\(2u\\)", "\\(3u\\)", "\\(0\\)"], correct: 1 },
+        { text: "The stationary point of \\(f(x,y)=x^3+y^3-3xy\\) is:", options: ["(0,0)", "(1,1)", "(-1,-1)", "(1,-1)"], correct: 1 },
+        // 11-20
+        { text: "The value of \\(\\int_0^1 \\int_0^x e^{x} dy dx\\) is:", options: ["\\(e-1\\)", "\\(e\\)", "\\(e/2\\)", "\\(1\\)"], correct: 0 },
+        { text: "The area bounded by \\(y^2=4x\\) and \\(x=1\\) is:", options: ["\\(8/3\\)", "\\(4/3\\)", "\\(16/3\\)", "\\(2/3\\)"], correct: 0 },
+        { text: "The volume of solid generated by revolving \\(y=x^2\\) about x-axis from \\(x=0\\) to \\(x=1\\) is:", options: ["\\(\\pi/5\\)", "\\(\\pi/3\\)", "\\(\\pi/2\\)", "\\(\\pi\\)"], correct: 0 },
+        { text: "The length of arc of \\(y = \\log(\\sec x)\\) from \\(x=0\\) to \\(x=\\pi/4\\) is:", options: ["\\(\\log(\\sqrt{2}+1)\\)", "\\(\\log(\\sqrt{2}-1)\\)", "\\(\\sqrt{2}\\)", "\\(1\\)"], correct: 0 },
+        { text: "The surface area of revolution of \\(y=x^2\\) about x-axis from 0 to 1 is:", options: ["\\(\\frac{\\pi}{6}(5\\sqrt{5}-1)\\)", "\\(\\frac{\\pi}{3}(5\\sqrt{5}-1)\\)", "\\(\\frac{\\pi}{6}(5\\sqrt{5}+1)\\)", "\\(\\frac{\\pi}{3}(5\\sqrt{5}+1)\\)"], correct: 0 },
+        { text: "The value of \\(\\int_0^{\\infty} \\frac{x^2}{(1+x^2)^2} dx\\) is:", options: ["\\(\\pi/4\\)", "\\(\\pi/2\\)", "\\(\\pi/8\\)", "\\(\\pi\\)"], correct: 0 },
+        { text: "The Beta function \\(B(m,n)\\) equals:", options: ["\\(\\frac{\\Gamma(m)\\Gamma(n)}{\\Gamma(m+n)}\\)", "\\(\\frac{\\Gamma(m+n)}{\\Gamma(m)\\Gamma(n)}\\)", "\\(\\Gamma(m)\\Gamma(n)\\)", "\\(\\Gamma(m+n)\\)"], correct: 0 },
+        { text: "The value of \\(\\int_0^{\\pi/2} \\sin^3 x \\cos^2 x dx\\) is:", options: ["\\(2/15\\)", "\\(1/15\\)", "\\(4/15\\)", "\\(8/15\\)"], correct: 0 },
+        { text: "The Fourier series of \\(f(x)=x\\) in \\((-\\pi,\\pi)\\) has:", options: ["only sine terms", "only cosine terms", "both sine and cosine", "constant term only"], correct: 0 },
+        { text: "The Laplace transform of \\(t^2\\) is:", options: ["\\(2/s^3\\)", "\\(2/s^2\\)", "\\(1/s^3\\)", "\\(1/s^2\\)"], correct: 0 },
+        // 21-30
+        { text: "The inverse Laplace transform of \\(1/(s^2+4)\\) is:", options: ["\\(\\frac{1}{2}\\sin 2t\\)", "\\(\\sin 2t\\)", "\\(2\\sin 2t\\)", "\\(\\cos 2t\\)"], correct: 0 },
+        { text: "The Laplace transform of \\(e^{at}\\) is:", options: ["\\(1/(s-a)\\)", "\\(1/(s+a)\\)", "\\(1/s\\)", "\\(a/s\\)"], correct: 0 },
+        { text: "The Fourier transform of \\(e^{-|x|}\\) is:", options: ["\\(\\frac{2}{1+\\omega^2}\\)", "\\(\\frac{1}{1+\\omega^2}\\)", "\\(\\frac{2}{1-\\omega^2}\\)", "\\(\\frac{1}{1-\\omega^2}\\)"], correct: 0 },
+        { text: "The residue of \\(f(z)=1/(z^2+1)\\) at \\(z=i\\) is:", options: ["\\(1/(2i)\\)", "\\(1/i\\)", "\\(1/2\\)", "\\(i\\)"], correct: 0 },
+        { text: "The value of \\(\\oint_C \\frac{dz}{z}\\) where C is unit circle is:", options: ["\\(2\\pi i\\)", "\\(\\pi i\\)", "\\(0\\)", "\\(1\\)"], correct: 0 },
+        { text: "The order of pole of \\(f(z)=\\frac{e^z}{z\\sin z}\\) at z=0 is:", options: ["1", "2", "3", "0"], correct: 1 },
+        { text: "The Legendre polynomial \\(P_2(x)\\) is:", options: ["\\((3x^2-1)/2\\)", "\\((3x^2+1)/2\\)", "\\((x^2-1)/2\\)", "\\((x^2+1)/2\\)"], correct: 0 },
+        { text: "The value of \\(P_n(1)\\) is:", options: ["1", "0", "\\((-1)^n\\)", "\\(n\\)"], correct: 0 },
+        { text: "The Bessel function \\(J_0(0)\\) equals:", options: ["1", "0", "\\(\\infty\\)", "\\(-1\\)"], correct: 0 },
+        { text: "The Hermite polynomial \\(H_2(x)\\) is:", options: ["\\(4x^2-2\\)", "\\(4x^2+2\\)", "\\(2x^2-1\\)", "\\(2x^2+1\\)"], correct: 0 },
+        // 31-40
+        { text: "The value of \\(\\Gamma(1/2)\\) is:", options: ["\\(\\sqrt{\\pi}\\)", "\\(\\pi\\)", "\\(\\sqrt{2\\pi}\\)", "\\(1\\)"], correct: 0 },
+        { text: "The solution of \\(dy/dx = y/x\\) is:", options: ["\\(y=cx\\)", "\\(y=c/x\\)", "\\(y=cx^2\\)", "\\(y=c\\sqrt{x}\\)"], correct: 0 },
+        { text: "The integrating factor of \\(dy/dx + y = e^x\\) is:", options: ["\\(e^x\\)", "\\(e^{-x}\\)", "\\(x\\)", "\\(1/x\\)"], correct: 0 },
+        { text: "The general solution of \\(y'' - 4y = 0\\) is:", options: ["\\(c_1 e^{2x} + c_2 e^{-2x}\\)", "\\(c_1 e^{x} + c_2 e^{-x}\\)", "\\(c_1 \\cos 2x + c_2 \\sin 2x\\)", "\\(c_1 + c_2 x\\)"], correct: 0 },
+        { text: "The Wronskian of \\(e^x\\) and \\(e^{-x}\\) is:", options: ["\\(-2\\)", "\\(2\\)", "\\(0\\)", "\\(1\\)"], correct: 0 },
+        { text: "The partial differential equation \\(p+q=1\\) has solution:", options: ["\\(z = x + y + c\\)", "\\(z = x - y + c\\)", "\\(z = xy + c\\)", "\\(z = x/y + c\\)"], correct: 0 },
+        { text: "The order of the differential equation \\(y''' + y'' + y = 0\\) is:", options: ["3", "2", "1", "0"], correct: 0 },
+        { text: "The Laplace transform of \\(\\sin at\\) is:", options: ["\\(a/(s^2+a^2)\\)", "\\(s/(s^2+a^2)\\)", "\\(a/(s^2-a^2)\\)", "\\(s/(s^2-a^2)\\)"], correct: 0 },
+        { text: "The inverse Laplace transform of \\(1/(s(s+1))\\) is:", options: ["\\(1-e^{-t}\\)", "\\(e^{-t}\\)", "\\(1+e^{-t}\\)", "\\(e^{t}\\)"], correct: 0 },
+        { text: "The Fourier sine transform of \\(e^{-ax}\\) is:", options: ["\\(\\frac{\\omega}{a^2+\\omega^2}\\)", "\\(\\frac{a}{a^2+\\omega^2}\\)", "\\(\\frac{1}{a^2+\\omega^2}\\)", "\\(\\frac{\\omega^2}{a^2+\\omega^2}\\)"], correct: 0 },
+        // 41-50
+        { text: "The value of \\(\\int_0^1 x^2 dx\\) is:", options: ["\\(1/3\\)", "\\(1/2\\)", "\\(1/4\\)", "\\(1\\)"], correct: 0 },
+        { text: "The value of \\(\\int_0^{\\pi} \\sin x dx\\) is:", options: ["2", "0", "1", "\\(\\pi\\)"], correct: 0 },
+        { text: "The derivative of \\(\\tan^{-1} x\\) is:", options: ["\\(1/(1+x^2)\\)", "\\(1/(1-x^2)\\)", "\\(1/\\sqrt{1-x^2}\\)", "\\(-1/(1+x^2)\\)"], correct: 0 },
+        { text: "The value of \\(\\lim_{x\\to 0} \\frac{\\sin x}{x}\\) is:", options: ["1", "0", "\\(\\infty\\)", "\\(-1\\)"], correct: 0 },
+        { text: "The Maclaurin series of \\(e^x\\) is:", options: ["\\(\\sum x^n/n!\\)", "\\(\\sum (-1)^n x^n/n!\\)", "\\(\\sum x^n\\)", "\\(\\sum x^{2n}/(2n)!\\)"], correct: 0 },
+        { text: "The gradient of \\(f(x,y)=x^2+y^2\\) at (1,1) is:", options: ["\\((2,2)\\)", "\\((1,1)\\)", "\\((0,0)\\)", "\\((2,0)\\)"], correct: 0 },
+        { text: "The divergence of \\(\\vec{F} = (x,y,z)\\) is:", options: ["3", "1", "0", "\\(x+y+z\\)"], correct: 0 },
+        { text: "The curl of \\(\\vec{F} = (y,z,x)\\) is:", options: ["\\((-1,-1,-1)\\)", "\\((1,1,1)\\)", "\\((0,0,0)\\)", "\\((1,-1,1)\\)"], correct: 0 },
+        { text: "The value of \\(\\iint_S \\vec{F}\\cdot d\\vec{S}\\) for \\(\\vec{F}=(x,y,z)\\) over unit sphere is:", options: ["\\(4\\pi\\)", "\\(2\\pi\\)", "\\(\\pi\\)", "\\(0\\)"], correct: 0 },
+        { text: "The directional derivative of \\(f=x^2+y^2\\) at (1,1) in direction (1,1) is:", options: ["\\(2\\sqrt{2}\\)", "\\(\\sqrt{2}\\)", "\\(2\\)", "\\(4\\)"], correct: 0 },
+        // 51-60
+        { text: "The equation of tangent plane to \\(x^2+y^2+z^2=1\\) at (1,0,0) is:", options: ["\\(x=1\\)", "\\(x+y+z=1\\)", "\\(x=0\\)", "\\(y=0\\)"], correct: 0 },
+        { text: "The maximum value of \\(x+y\\) subject to \\(x^2+y^2=1\\) is:", options: ["\\(\\sqrt{2}\\)", "1", "2", "\\(1/\\sqrt{2}\\)"], correct: 0 },
+        { text: "The Lagrange multiplier for \\(f=x+y\\) and \\(g=x^2+y^2-1=0\\) is:", options: ["\\(1/\\sqrt{2}\\)", "\\(\\sqrt{2}\\)", "1", "0"], correct: 0 },
+        { text: "The Jacobian of \\(x=r\\cos\\theta, y=r\\sin\\theta\\) is:", options: ["\\(r\\)", "\\(1/r\\)", "\\(r^2\\)", "\\(1\\)"], correct: 0 },
+        { text: "The value of \\(\\int_0^1 \\int_0^1 (x+y) dx dy\\) is:", options: ["1", "1/2", "2", "0"], correct: 0 },
+        { text: "The area of circle \\(x^2+y^2=a^2\\) using double integral is:", options: ["\\(\\pi a^2\\)", "\\(2\\pi a^2\\)", "\\(\\pi a^2/2\\)", "\\(4\\pi a^2\\)"], correct: 0 },
+        { text: "The value of \\(\\int_0^1 x e^{-x} dx\\) is:", options: ["\\(1 - 2/e\\)", "\\(1/e\\)", "\\(1 - 1/e\\)", "\\(2/e\\)"], correct: 0 },
+        { text: "The Fourier coefficient \\(a_0\\) for \\(f(x)=x^2\\) in \\((-\\pi,\\pi)\\) is:", options: ["\\(\\pi^2/3\\)", "\\(\\pi^2/2\\)", "\\(2\\pi^2/3\\)", "\\(\\pi^2\\)"], correct: 0 },
+        { text: "The Laplace transform of \\(f(t)=t\\) is:", options: ["\\(1/s^2\\)", "\\(1/s\\)", "\\(2/s^2\\)", "\\(1/s^3\\)"], correct: 0 },
+        { text: "The inverse Laplace transform of \\(1/(s^2-1)\\) is:", options: ["\\(\\sinh t\\)", "\\(\\sin t\\)", "\\(\\cosh t\\)", "\\(\\cos t\\)"], correct: 0 },
+        // 61-70
+        { text: "The residue of \\(f(z)=\\frac{1}{z^2+4}\\) at \\(z=2i\\) is:", options: ["\\(1/(4i)\\)", "\\(1/(2i)\\)", "\\(1/4\\)", "\\(i/4\\)"], correct: 0 },
+        { text: "The value of \\(\\int_{-\\infty}^{\\infty} \\frac{dx}{1+x^2}\\) is:", options: ["\\(\\pi\\)", "\\(2\\pi\\)", "\\(\\pi/2\\)", "\\(1\\)"], correct: 0 },
+        { text: "The Legendre polynomial \\(P_3(x)\\) is:", options: ["\\((5x^3-3x)/2\\)", "\\((5x^3+3x)/2\\)", "\\((3x^3-5x)/2\\)", "\\((3x^3+5x)/2\\)"], correct: 0 },
+        { text: "The Bessel function \\(J_1(x)\\) satisfies:", options: ["\\(J_1(0)=0\\)", "\\(J_1(0)=1\\)", "\\(J_1(0)=\\infty\\)", "\\(J_1(0)=-1\\)"], correct: 0 },
+        { text: "The value of \\(\\Gamma(3)\\) is:", options: ["2", "1", "6", "24"], correct: 0 },
+        { text: "The solution of \\(dy/dx = e^{x+y}\\) is:", options: ["\\(e^{-y} = -e^x + c\\)", "\\(e^y = e^x + c\\)", "\\(e^{-y} = e^x + c\\)", "\\(e^y = -e^x + c\\)"], correct: 0 },
+        { text: "The integrating factor of \\(x dy/dx + y = x^2\\) is:", options: ["\\(x\\)", "\\(1/x\\)", "\\(x^2\\)", "\\(e^x\\)"], correct: 0 },
+        { text: "The general solution of \\(y'' + y = 0\\) is:", options: ["\\(c_1\\cos x + c_2\\sin x\\)", "\\(c_1 e^x + c_2 e^{-x}\\)", "\\(c_1 + c_2 x\\)", "\\(c_1\\cosh x + c_2\\sinh x\\)"], correct: 0 },
+        { text: "The partial differential equation \\(z = px + qy\\) is:", options: ["Clairaut's equation", "Lagrange's equation", "Homogeneous", "Linear"], correct: 0 },
+        { text: "The order of PDE \\(u_{xx} + u_{yy} = 0\\) is:", options: ["2", "1", "0", "3"], correct: 0 },
+        // 71-80
+        { text: "The Laplace transform of \\(\\cos at\\) is:", options: ["\\(s/(s^2+a^2)\\)", "\\(a/(s^2+a^2)\\)", "\\(s/(s^2-a^2)\\)", "\\(a/(s^2-a^2)\\)"], correct: 0 },
+        { text: "The inverse Laplace transform of \\(1/(s^2+2s+5)\\) involves:", options: ["\\(e^{-t}\\sin 2t\\)", "\\(e^{t}\\sin 2t\\)", "\\(e^{-t}\\cos 2t\\)", "\\(e^{t}\\cos 2t\\)"], correct: 0 },
+        { text: "The Fourier transform of \\(f(x)=1\\) for \\(|x|<a\\) and 0 otherwise is:", options: ["\\(2\\sin(a\\omega)/\\omega\\)", "\\(\\sin(a\\omega)/\\omega\\)", "\\(2\\cos(a\\omega)/\\omega\\)", "\\(\\cos(a\\omega)/\\omega\\)"], correct: 0 },
+        { text: "The value of \\(\\int_0^{\\infty} \\frac{\\sin x}{x} dx\\) is:", options: ["\\(\\pi/2\\)", "\\(\\pi\\)", "\\(\\pi/4\\)", "\\(1\\)"], correct: 0 },
+        { text: "The derivative of \\(\\sin^{-1} x\\) is:", options: ["\\(1/\\sqrt{1-x^2}\\)", "\\(1/(1+x^2)\\)", "\\(1/\\sqrt{1+x^2}\\)", "\\(-1/\\sqrt{1-x^2}\\)"], correct: 0 },
+        { text: "The value of \\(\\lim_{x\\to\\infty} (1+1/x)^x\\) is:", options: ["\\(e\\)", "1", "\\(\\infty\\)", "0"], correct: 0 },
+        { text: "The Taylor series of \\(\\ln(1+x)\\) is:", options: ["\\(\\sum (-1)^{n+1} x^n/n\\)", "\\(\\sum (-1)^n x^n/n\\)", "\\(\\sum x^n/n\\)", "\\(\\sum x^{2n}/(2n)\\)"], correct: 0 },
+        { text: "The divergence of \\(\\vec{F} = (x^2, y^2, z^2)\\) is:", options: ["\\(2(x+y+z)\\)", "\\(2x+2y+2z\\)", "\\(x+y+z\\)", "\\(2\\)"], correct: 0 },
+        { text: "The curl of \\(\\vec{F} = (z, x, y)\\) is:", options: ["\\((-1,-1,-1)\\)", "\\((1,1,1)\\)", "\\((0,0,0)\\)", "\\((1,-1,1)\\)"], correct: 0 },
+        { text: "The value of \\(\\iint_S \\vec{F}\\cdot d\\vec{S}\\) for \\(\\vec{F}=(x^2,y^2,z^2)\\) over unit cube is:", options: ["3", "1", "0", "6"], correct: 0 },
+        // 81-90
+        { text: "The equation of normal to \\(y=x^2\\) at (1,1) is:", options: ["\\(x+2y=3\\)", "\\(2x+y=3\\)", "\\(x-2y=-1\\)", "\\(2x-y=1\\)"], correct: 0 },
+        { text: "The maximum value of \\(f(x)=x^3-3x\\) is:", options: ["2", "-2", "0", "1"], correct: 0 },
+        { text: "The point of inflection of \\(y=x^3\\) is:", options: ["(0,0)", "(1,1)", "(-1,-1)", "(0,1)"], correct: 0 },
+        { text: "The value of \\(\\int_0^{\\pi/2} \\cos x dx\\) is:", options: ["1", "0", "2", "\\(\\pi/2\\)"], correct: 0 },
+        { text: "The Laplace transform of \\(f(t)=1\\) is:", options: ["\\(1/s\\)", "\\(1/s^2\\)", "\\(s\\)", "\\(1\\)"], correct: 0 },
+        { text: "The inverse Laplace transform of \\(1/(s+2)\\) is:", options: ["\\(e^{-2t}\\)", "\\(e^{2t}\\)", "\\(e^{-t}\\)", "\\(e^{t}\\)"], correct: 0 },
+        { text: "The residue of \\(f(z)=e^z/z^2\\) at z=0 is:", options: ["1", "0", "2", "\\(1/2\\)"], correct: 0 },
+        { text: "The value of \\(\\int_0^{\\infty} e^{-x} dx\\) is:", options: ["1", "0", "\\(\\infty\\)", "2"], correct: 0 },
+        { text: "The Legendre polynomial \\(P_1(x)\\) is:", options: ["\\(x\\)", "\\(1\\)", "\\((3x^2-1)/2\\)", "\\((5x^3-3x)/2\\)"], correct: 0 },
+        { text: "The Bessel function \\(J_0(x)\\) satisfies:", options: ["\\(J_0(0)=1\\)", "\\(J_0(0)=0\\)", "\\(J_0(0)=\\infty\\)", "\\(J_0(0)=-1\\)"], correct: 0 }
+    ];
+
+    // Fill 1-90 (Maths)
+    for (let i = 0; i < 90; i++) {
+        if (i < mathsData.length) {
+            questions.push(mathsData[i]);
+        } else {
+            // Fallback (should not happen)
+            questions.push({
+                text: `Maths Question ${i+1}: Solve \\(\\int_0^1 x^{${i}} dx\\)`,
+                options: ["\\(1/(i+1)\\)", "\\(1/i\\)", "\\(i\\)", "\\(1\\)"],
+                correct: 0
+            });
+        }
+    }
+
+    // ---- GK (91-120) ----
+    const gkData = [
+        { text: "The NISAR satellite is a joint mission between ISRO and which space agency?", options: ["ESA", "NASA", "Roscosmos", "JAXA"], correct: 1 },
+        { text: "The Secretariat of BIMSTEC is located in which city?", options: ["New Delhi", "Colombo", "Dhaka", "Kathmandu"], correct: 2 },
+        { text: "Which tennis Grand Slam is played on clay courts?", options: ["Australian Open", "Wimbledon", "US Open", "French Open"], correct: 3 },
+        { text: "The 'Kavach' system was developed for safety in which Indian sector?", options: ["Cybersecurity", "Border defense", "Railway networks", "Civil aviation"], correct: 2 },
+        { text: "The Fields Medal recognizes outstanding achievements in which discipline?", options: ["Physics", "Mathematics", "Architecture", "Computer Science"], correct: 1 },
+        { text: "The 'Zone of Proximal Development' was introduced by:", options: ["Jean Piaget", "B.F. Skinner", "Lev Vygotsky", "John Dewey"], correct: 2 },
+        { text: "Which research paradigm relies heavily on qualitative data?", options: ["Positivism", "Interpretivism", "Experimentalism", "Empiricism"], correct: 1 },
+        { text: "Which measure of central tendency is most appropriate with extreme outliers?", options: ["Mean", "Median", "Mode", "Standard Deviation"], correct: 1 },
+        { text: "A 'Criterion-referenced' evaluation measures performance against:", options: ["Peer average", "Fixed predetermined standards", "Previous scores", "National percentile"], correct: 1 },
+        { text: "IUCAA, established by UGC, is located in:", options: ["Bangalore", "Hyderabad", "Pune", "Ahmedabad"], correct: 2 },
+        { text: "What does DDoS stand for?", options: ["Direct Denial of Service", "Distributed Denial of Service", "Dynamic Data Operating System", "Digital Domain Overlay System"], correct: 1 },
+        { text: "What does OLED stand for?", options: ["Optical Light Emitting Diode", "Organic Light Emitting Diode", "Optimized Liquid Electronic Display", "Overlaid Light Emitting Device"], correct: 1 },
+        { text: "Which protocol is primarily used by local email clients to retrieve messages?", options: ["SMTP", "FTP", "IMAP", "VoIP"], correct: 2 },
+        { text: "What does VPN stand for?", options: ["Verified Public Node", "Virtual Private Network", "Visual Processing Network", "Variable Protocol Node"], correct: 1 },
+        { text: "Using remote servers on the internet to store and process data is termed:", options: ["Edge computing", "Cloud computing", "Grid computing", "Parallel processing"], correct: 1 },
+        { text: "The Convention on Biological Diversity was opened for signature at:", options: ["1972 Stockholm Conference", "1992 Earth Summit in Rio", "1997 Kyoto Conference", "2015 Paris Agreement"], correct: 1 },
+        { text: "BOD is used to evaluate:", options: ["Organic pollution in water", "Heavy metals in soil", "Ozone depletion", "Particulate matter in air"], correct: 0 },
+        { text: "PM2.5 refers to fine inhalable particles with diameter of 2.5:", options: ["Millimeters or less", "Centimeters or less", "Micrometers or less", "Nanometers or less"], correct: 2 },
+        { text: "A 'keystone species' is best defined as one that:", options: ["Has largest population", "Is most massive", "Has disproportionately large effect on environment", "Is invasive"], correct: 2 },
+        { text: "Ocean acidification is primarily caused by increased absorption of:", options: ["Methane", "Carbon dioxide", "Nitrous oxide", "Sulfur dioxide"], correct: 1 },
+        { text: "Who was the British Viceroy responsible for the partition of Bengal in 1905?", options: ["Lord Dalhousie", "Lord Mountbatten", "Lord Curzon", "Lord Irwin"], correct: 2 },
+        { text: "'Roaring Forties', 'Furious Fifties', 'Shrieking Sixties' refer to:", options: ["Ocean currents in Atlantic", "Cyclones in Bay of Bengal", "Powerful westerly winds in Southern Hemisphere", "Jet streams over Himalayas"], correct: 2 },
+        { text: "The ancient University of Nalanda was founded during which dynasty?", options: ["Maurya", "Gupta", "Chola", "Kushan"], correct: 1 },
+        { text: "The 'Poona Pact' of 1932 was signed between Mahatma Gandhi and:", options: ["Jawaharlal Nehru", "B.R. Ambedkar", "Sardar Patel", "Lord Irwin"], correct: 1 },
+        { text: "The 'Goldilocks Zone' refers to orbital region where:", options: ["Planetary mass equals Earth's", "Solar winds are deflected", "Temperatures allow liquid water", "Asteroid impacts are impossible"], correct: 2 },
+        { text: "Which writ commands a lower court or public authority to perform a mandatory public duty?", options: ["Habeas Corpus", "Certiorari", "Quo Warranto", "Mandamus"], correct: 3 },
+        { text: "What does CRR stand for in Indian banking?", options: ["Capital Return Ratio", "Cash Reserve Ratio", "Credit Risk Rate", "Currency Retention Ratio"], correct: 1 },
+        { text: "A 'Money Bill' can originate only in the:", options: ["Rajya Sabha", "Lok Sabha", "Public Accounts Committee", "Office of the President"], correct: 1 },
+        { text: "The 'Lorenz curve' illustrates:", options: ["Inflation-unemployment trade-off", "Tax rate vs revenue", "Income or wealth inequality", "Marginal utility"], correct: 2 },
+        { text: "The directive for a Uniform Civil Code is enshrined in which Article?", options: ["Article 40", "Article 44", "Article 48", "Article 51"], correct: 1 }
+    ];
+
+    for (let i = 0; i < 30; i++) {
+        if (i < gkData.length) {
+            questions.push(gkData[i]);
+        } else {
+            questions.push({
+                text: `GK Question ${i+91}`,
+                options: ["Option A", "Option B", "Option C", "Option D"],
+                correct: 0
+            });
+        }
+    }
+
+    // Ensure exactly 120 questions
+    while (questions.length < 120) {
+        questions.push({
+            text: `Question ${questions.length+1}: Placeholder`,
+            options: ["A", "B", "C", "D"],
+            correct: 0
+        });
+    }
+    if (questions.length > 120) questions.length = 120;
+
+    // ======================= STATE =======================
+    const TOTAL = 120;
+    const DURATION = 120 * 60; // seconds
+
+    let currentIndex = 0;
+    let userAnswers = new Array(TOTAL).fill(null); // null = not answered, else 0-3
+    let marked = new Array(TOTAL).fill(false);
+    let visited = new Array(TOTAL).fill(false);
+    let timeLeft = DURATION;
+    let timerInterval = null;
+    let testSubmitted = false;
+
+    // ======================= DOM REFS =======================
+    const timerDisplay = document.getElementById('timerDisplay');
+    const questionText = document.getElementById('questionText');
+    const optionsContainer = document.getElementById('optionsContainer');
+    const qCounter = document.getElementById('qCounter');
+    const qStatusBadge = document.getElementById('qStatusBadge');
+    const prevBtn = document.getElementById('prevBtn');
+    const nextBtn = document.getElementById('nextBtn');
+    const clearBtn = document.getElementById('clearBtn');
+    const markBtn = document.getElementById('markBtn');
+    const submitBtn = document.getElementById('submitBtn');
+    const paletteGrid = document.getElementById('paletteGrid');
+    const paletteProgress = document.getElementById('paletteProgress');
+    const resultOverlay = document.getElementById('resultOverlay');
+    const finalScore = document.getElementById('finalScore');
+    const statsContainer = document.getElementById('statsContainer');
+    const reviewList = document.getElementById('reviewList');
+    const downloadBtn = document.getElementById('downloadBtn');
+
+    // ======================= RENDER =======================
+    function renderQuestion(index) {
+        if (testSubmitted) return;
+        const q = questions[index];
+        if (!q) return;
+
+        // Mark visited
+        if (!visited[index]) {
+            visited[index] = true;
+        }
+
+        qCounter.textContent = `Question ${index+1} of ${TOTAL}`;
+        questionText.innerHTML = q.text;
+
+        // Status badge
+        if (marked[index]) {
+            qStatusBadge.textContent = '🔖 Marked for Review';
+            qStatusBadge.style.color = '#8b5cf6';
+        } else if (userAnswers[index] !== null) {
+            qStatusBadge.textContent = '✅ Answered';
+            qStatusBadge.style.color = '#10b981';
+        } else if (visited[index]) {
+            qStatusBadge.textContent = '⬜ Not Answered';
+            qStatusBadge.style.color = '#ef4444';
+        } else {
+            qStatusBadge.textContent = '● Not Visited';
+            qStatusBadge.style.color = '#94a3b8';
+        }
+
+        // Options
+        optionsContainer.innerHTML = '';
+        q.options.forEach((opt, optIdx) => {
+            const div = document.createElement('div');
+            div.className = 'option' + (userAnswers[index] === optIdx ? ' selected' : '');
+            div.innerHTML = `<span class="label">${String.fromCharCode(65+optIdx)}</span><span class="opt-text">${opt}</span>`;
+            div.addEventListener('click', () => {
+                if (testSubmitted) return;
+                // Toggle selection
+                if (userAnswers[index] === optIdx) {
+                    userAnswers[index] = null;
+                } else {
+                    userAnswers[index] = optIdx;
+                }
+                renderQuestion(index);
+                renderPalette();
+            });
+            optionsContainer.appendChild(div);
+        });
+
+        // Re-render MathJax
+        if (window.MathJax && MathJax.typesetPromise) {
+            MathJax.typesetPromise([questionText, optionsContainer]).catch(() => {});
+        }
+
+        // Update palette current highlight
+        renderPalette();
+    }
+
+    function renderPalette() {
+        paletteGrid.innerHTML = '';
+        let answeredCount = 0;
+        for (let i = 0; i < TOTAL; i++) {
+            const btn = document.createElement('div');
+            btn.className = 'palette-btn';
+            btn.textContent = i+1;
+
+            if (i === currentIndex) btn.classList.add('current');
+
+            if (marked[i]) {
+                btn.classList.add('marked');
+            } else if (userAnswers[i] !== null) {
+                btn.classList.add('answered');
+                answeredCount++;
+            } else if (visited[i]) {
+                btn.classList.add('notanswered');
+            } else {
+                btn.classList.add('notvisited');
+            }
+
+            btn.addEventListener('click', () => {
+                if (testSubmitted) return;
+                currentIndex = i;
+                renderQuestion(i);
+            });
+            paletteGrid.appendChild(btn);
+        }
+        paletteProgress.textContent = `${answeredCount} / ${TOTAL}`;
+
+        // Re-render MathJax for palette? No math there.
+    }
+
+    // ======================= TIMER =======================
+    function startTimer() {
+        if (timerInterval) clearInterval(timerInterval);
+        timerInterval = setInterval(() => {
+            if (testSubmitted) return;
+            timeLeft--;
+            updateTimerDisplay();
+            if (timeLeft <= 0) {
+                clearInterval(timerInterval);
+                submitTest(true);
+            }
+        }, 1000);
+    }
+
+    function updateTimerDisplay() {
+        const m = Math.floor(timeLeft / 60);
+        const s = timeLeft % 60;
+        timerDisplay.textContent = `${String(m).padStart(2,'0')}:${String(s).padStart(2,'0')}`;
+        if (timeLeft < 300) timerDisplay.style.color = '#ef4444';
+        else timerDisplay.style.color = '#facc15';
+    }
+
+    // ======================= SUBMIT =======================
+    function submitTest(auto = false) {
+        if (testSubmitted) return;
+        testSubmitted = true;
+        clearInterval(timerInterval);
+
+        // Calculate score
+        let correct = 0, wrong = 0, skipped = 0;
+        for (let i = 0; i < TOTAL; i++) {
+            const ans = userAnswers[i];
+            if (ans === null) skipped++;
+            else if (ans === questions[i].correct) correct++;
+            else wrong++;
+        }
+        const score = correct * 3 - wrong * 1;
+        const accuracy = (correct + wrong) > 0 ? (correct / (correct + wrong) * 100) : 0;
+
+        // Show overlay
+        resultOverlay.classList.add('active');
+        finalScore.textContent = `${score} pts`;
+
+        // Stats
+        statsContainer.innerHTML = `
+            <div class="stat-item"><span class="stat-label">Correct</span><span class="stat-value" style="color:#10b981;">${correct}</span></div>
+            <div class="stat-item"><span class="stat-label">Wrong</span><span class="stat-value" style="color:#ef4444;">${wrong}</span></div>
+            <div class="stat-item"><span class="stat-label">Skipped</span><span class="stat-value" style="color:#64748b;">${skipped}</span></div>
+            <div class="stat-item"><span class="stat-label">Accuracy</span><span class="stat-value">${accuracy.toFixed(1)}%</span></div>
+            <div class="stat-item"><span class="stat-label">Score</span><span class="stat-value" style="color:#3b82f6;">${score}</span></div>
+        `;
+
+        // Build review
+        renderReview('all');
+
+        // Filter buttons
+        document.querySelectorAll('.filter-btn').forEach(btn => {
+            btn.onclick = () => {
+                document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+                btn.classList.add('active');
+                renderReview(btn.dataset.filter);
+            };
+        });
+
+        // Download
+        downloadBtn.onclick = downloadReview;
+    }
+
+    function renderReview(filter) {
+        reviewList.innerHTML = '';
+        let items = [];
+        for (let i = 0; i < TOTAL; i++) {
+            const ans = userAnswers[i];
+            const q = questions[i];
+            let status;
+            if (ans === null) status = 'skipped';
+            else if (ans === q.correct) status = 'correct';
+            else status = 'incorrect';
+
+            if (filter === 'correct' && status !== 'correct') continue;
+            if (filter === 'incorrect' && status !== 'incorrect') continue;
+            if (filter === 'skipped' && status !== 'skipped') continue;
+
+            items.push({ i, q, ans, status });
+        }
+
+        if (items.length === 0) {
+            reviewList.innerHTML = '<p style="color:#64748b; padding:20px;">No questions match this filter.</p>';
+            return;
+        }
+
+        items.forEach(({ i, q, ans, status }) => {
+            const div = document.createElement('div');
+            div.className = `review-item ${status}`;
+
+            const userAnsText = ans !== null ? `${String.fromCharCode(65+ans)}. ${q.options[ans]}` : 'Not attempted';
+            const correctAnsText = `${String.fromCharCode(65+q.correct)}. ${q.options[q.correct]}`;
+
+            let badgeClass = '';
+            if (status === 'correct') badgeClass = 'correct-badge';
+            else if (status === 'incorrect') badgeClass = 'wrong-badge';
+            else badgeClass = 'skipped-badge';
+
+            div.innerHTML = `
+                <div class="review-q">Q${i+1}. ${q.text}</div>
+                <div class="review-ans">
+                    <span>Your answer: <strong>${userAnsText}</strong></span>
+                    <span class="${badgeClass}">Correct: ${correctAnsText}</span>
+                </div>
+            `;
+            reviewList.appendChild(div);
+        });
+
+        // Re-render MathJax
+        if (window.MathJax && MathJax.typesetPromise) {
+            MathJax.typesetPromise([reviewList]).catch(() => {});
+        }
+    }
+
+    // ======================= DOWNLOAD =======================
+    function downloadReview() {
+        let html = `<!DOCTYPE html><html><head><meta charset="UTF-8"><title>Performance & Solutions</title>
+        <script>window.MathJax={tex:{inlineMath:[['$','$'],['\\\\(','\\\\)']]}};<\/script>
+        <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-svg.js" async><\/script>
+        <style>body{font-family:sans-serif;padding:30px;max-width:900px;margin:auto;background:#f8fafc;}
+        .item{border-left:6px solid #cbd5e1;padding:12px 16px;margin:12px 0;background:white;border-radius:12px;}
+        .correct{border-left-color:#10b981;} .incorrect{border-left-color:#ef4444;} .skipped{border-left-color:#94a3b8;}
+        .badge{padding:2px 12px;border-radius:20px;font-weight:600;}
+        .correct-badge{background:#dcfce7;color:#166534;} .wrong-badge{background:#fee2e2;color:#991b1b;} .skipped-badge{background:#f1f5f9;color:#475569;}
+        </style></head><body>
+        <h1>📊 Performance & Solutions</h1>
+        <p><strong>Total Score:</strong> ${finalScore.textContent} | <strong>Accuracy:</strong> ${document.querySelector('.stat-value:nth-child(4)')?.textContent || ''}</p>
+        <hr>`;
+
+        for (let i = 0; i < TOTAL; i++) {
+            const ans = userAnswers[i];
+            const q = questions[i];
+            let status, statusText;
+            if (ans === null) { status = 'skipped'; statusText = 'Skipped'; }
+            else if (ans === q.correct) { status = 'correct'; statusText = 'Correct'; }
+            else { status = 'incorrect'; statusText = 'Incorrect'; }
+
+            const userAnsText = ans !== null ? `${String.fromCharCode(65+ans)}. ${q.options[ans]}` : 'Not attempted';
+            const correctAnsText = `${String.fromCharCode(65+q.correct)}. ${q.options[q.correct]}`;
+
+            html += `<div class="item ${status}">
+                <div><strong>Q${i+1}.</strong> ${q.text}</div>
+                <div style="margin-top:6px;">Your answer: ${userAnsText} &nbsp;|&nbsp; 
+                <span class="badge ${status==='correct'?'correct-badge':status==='incorrect'?'wrong-badge':'skipped-badge'}">
+                Correct: ${correctAnsText}</span></div>
+            </div>`;
+        }
+        html += `</body></html>`;
+
+        const blob = new Blob([html], { type: 'text/html' });
+        const a = document.createElement('a');
+        a.href = URL.createObjectURL(blob);
+        a.download = 'performance_solutions.html';
+        a.click();
+        URL.revokeObjectURL(a.href);
+    }
+
+    // ======================= NAVIGATION =======================
+    prevBtn.addEventListener('click', () => {
+        if (testSubmitted) return;
+        if (currentIndex > 0) {
+            currentIndex--;
+            renderQuestion(currentIndex);
+        }
+    });
+    nextBtn.addEventListener('click', () => {
+        if (testSubmitted) return;
+        if (currentIndex < TOTAL - 1) {
+            currentIndex++;
+            renderQuestion(currentIndex);
+        }
+    });
+    clearBtn.addEventListener('click', () => {
+        if (testSubmitted) return;
+        userAnswers[currentIndex] = null;
+        renderQuestion(currentIndex);
+        renderPalette();
+    });
+    markBtn.addEventListener('click', () => {
+        if (testSubmitted) return;
+        marked[currentIndex] = !marked[currentIndex];
+        renderQuestion(currentIndex);
+        renderPalette();
+    });
+    submitBtn.addEventListener('click', () => {
+        if (testSubmitted) return;
+        if (confirm('Are you sure you want to submit the test?')) {
+            submitTest(false);
+        }
+    });
+
+    // ======================= INIT =======================
+    function init() {
+        updateTimerDisplay();
+        startTimer();
+        renderQuestion(0);
+        renderPalette();
+    }
+
+    init();
+</script>
+</body>
+</html>
