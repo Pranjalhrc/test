@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>MCQ Test · 120 Questions</title>
+    <title>MCQ Test · 120 Questions (Cancelled)</title>
     <!-- MathJax for LaTeX rendering -->
     <script>
         window.MathJax = {
@@ -24,6 +24,7 @@
             height: 100vh;
             display: flex;
             overflow: hidden;
+            position: relative;
         }
 
         /* ---- left / main panel ---- */
@@ -200,6 +201,11 @@
         }
         .btn.outline:hover {
             background: #f1f5f9;
+        }
+        .btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            pointer-events: none;
         }
 
         /* ---- right palette ---- */
@@ -454,18 +460,87 @@
             align-self: flex-start;
         }
 
+        /* ---- CANCELLED OVERLAY ---- */
+        .cancelled-overlay {
+            position: fixed;
+            inset: 0;
+            background: rgba(15, 23, 42, 0.85);
+            backdrop-filter: blur(8px);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 2000;
+            padding: 20px;
+            pointer-events: all;
+        }
+        .cancelled-card {
+            background: white;
+            border-radius: 40px;
+            padding: 48px 56px;
+            max-width: 600px;
+            text-align: center;
+            box-shadow: 0 35px 60px -15px rgba(0,0,0,0.5);
+            border: 2px solid #ef4444;
+        }
+        .cancelled-card .icon {
+            font-size: 5rem;
+            line-height: 1;
+            margin-bottom: 16px;
+        }
+        .cancelled-card h1 {
+            font-size: 2.4rem;
+            font-weight: 800;
+            color: #b91c1c;
+            letter-spacing: -0.5px;
+            margin-bottom: 12px;
+        }
+        .cancelled-card p {
+            font-size: 1.2rem;
+            color: #334155;
+            line-height: 1.6;
+            margin-bottom: 8px;
+        }
+        .cancelled-card .sub {
+            font-size: 1rem;
+            color: #64748b;
+            margin-bottom: 24px;
+        }
+        .cancelled-card .badge {
+            display: inline-block;
+            background: #fef2f2;
+            color: #991b1b;
+            font-weight: 600;
+            padding: 10px 28px;
+            border-radius: 60px;
+            border: 1px solid #fca5a5;
+            font-size: 1.1rem;
+        }
+
         /* responsive */
         @media (max-width: 900px) {
             body { flex-direction: column; overflow: auto; }
             .main-panel { padding: 12px; }
             .palette-panel { width: 100%; border-radius: 24px; max-height: 300px; }
             .palette-grid { grid-template-columns: repeat(8, 1fr); }
+            .cancelled-card { padding: 32px 24px; }
+            .cancelled-card h1 { font-size: 1.8rem; }
         }
     </style>
 </head>
 <body>
 
-<!-- MAIN PANEL -->
+<!-- ===== CANCELLED OVERLAY (shown on top, blocks everything) ===== -->
+<div class="cancelled-overlay" id="cancelledOverlay">
+    <div class="cancelled-card">
+        <div class="icon">🚫</div>
+        <h1>Test Cancelled</h1>
+        <p>This test has been <strong>cancelled by the owner</strong>.</p>
+        <p class="sub">No further attempts are permitted.</p>
+        <div class="badge">🔒 Access Revoked</div>
+    </div>
+</div>
+
+<!-- MAIN PANEL (visible but disabled) -->
 <div class="main-panel">
     <div class="header">
         <h1>📝 MCQ Test · 120 Q</h1>
@@ -483,18 +558,18 @@
 
     <div class="actions">
         <div style="display:flex; gap:8px; flex-wrap:wrap;">
-            <button class="btn outline" id="prevBtn">← Previous</button>
-            <button class="btn outline" id="nextBtn">Next →</button>
-            <button class="btn outline" id="clearBtn">Clear Response</button>
+            <button class="btn outline" id="prevBtn" disabled>← Previous</button>
+            <button class="btn outline" id="nextBtn" disabled>Next →</button>
+            <button class="btn outline" id="clearBtn" disabled>Clear Response</button>
         </div>
         <div style="display:flex; gap:8px; flex-wrap:wrap;">
-            <button class="btn warning" id="markBtn">🔖 Mark for Review</button>
-            <button class="btn success" id="submitBtn">✅ Submit Test</button>
+            <button class="btn warning" id="markBtn" disabled>🔖 Mark for Review</button>
+            <button class="btn success" id="submitBtn" disabled>✅ Submit Test</button>
         </div>
     </div>
 </div>
 
-<!-- PALETTE PANEL -->
+<!-- PALETTE PANEL (visible but disabled) -->
 <div class="palette-panel">
     <div class="palette-header">
         <span>Question Palette</span>
@@ -509,7 +584,7 @@
     <div class="palette-grid" id="paletteGrid"></div>
 </div>
 
-<!-- OVERLAY RESULT -->
+<!-- OVERLAY RESULT (hidden, but present) -->
 <div class="overlay" id="resultOverlay">
     <div class="result-card" id="resultCard">
         <div class="result-header">
@@ -531,13 +606,9 @@
 <script>
     // ======================= 120 QUESTIONS =======================
     // 90 Maths (1-90) + 30 GK (91-120)
-    // Format: { text: "...", options: ["...","...","...","..."], correct: 0-3 }
     const questions = [];
 
-    // ---- Maths (1-90) ----
-    // Generated with plausible content; LaTeX used where appropriate.
     const mathsData = [
-        // 1-10 (Calculus / Coordinate)
         { text: "The curvature of the curve \\(y = e^x\\) at \\(x=0\\) is:", options: ["\\(1/\\sqrt{2}\\)", "\\(1/2\\)", "\\(\\sqrt{2}\\)", "\\(1\\)"], correct: 0 },
         { text: "The envelope of the family of lines \\(y = mx + a/m\\) is:", options: ["\\(y^2 = 4ax\\)", "\\(y^2 = -4ax\\)", "\\(x^2 = 4ay\\)", "\\(x^2 = -4ay\\)"], correct: 0 },
         { text: "The asymptote of \\(y = x e^{1/x}\\) is:", options: ["\\(y = x + 1\\)", "\\(y = x\\)", "\\(y = x - 1\\)", "\\(y = 0\\)"], correct: 1 },
@@ -548,7 +619,6 @@
         { text: "The chord of curvature parallel to x-axis for \\(y = \\log(\\sec x)\\) is:", options: ["\\(2\\sec x\\)", "\\(2\\sec^2 x\\)", "\\(2\\tan x\\)", "\\(2\\sec x \\tan x\\)"], correct: 0 },
         { text: "If \\(u = x^2 + y^2 + z^2\\), then \\(x u_x + y u_y + z u_z\\) equals:", options: ["\\(u\\)", "\\(2u\\)", "\\(3u\\)", "\\(0\\)"], correct: 1 },
         { text: "The stationary point of \\(f(x,y)=x^3+y^3-3xy\\) is:", options: ["(0,0)", "(1,1)", "(-1,-1)", "(1,-1)"], correct: 1 },
-        // 11-20
         { text: "The value of \\(\\int_0^1 \\int_0^x e^{x} dy dx\\) is:", options: ["\\(e-1\\)", "\\(e\\)", "\\(e/2\\)", "\\(1\\)"], correct: 0 },
         { text: "The area bounded by \\(y^2=4x\\) and \\(x=1\\) is:", options: ["\\(8/3\\)", "\\(4/3\\)", "\\(16/3\\)", "\\(2/3\\)"], correct: 0 },
         { text: "The volume of solid generated by revolving \\(y=x^2\\) about x-axis from \\(x=0\\) to \\(x=1\\) is:", options: ["\\(\\pi/5\\)", "\\(\\pi/3\\)", "\\(\\pi/2\\)", "\\(\\pi\\)"], correct: 0 },
@@ -559,7 +629,6 @@
         { text: "The value of \\(\\int_0^{\\pi/2} \\sin^3 x \\cos^2 x dx\\) is:", options: ["\\(2/15\\)", "\\(1/15\\)", "\\(4/15\\)", "\\(8/15\\)"], correct: 0 },
         { text: "The Fourier series of \\(f(x)=x\\) in \\((-\\pi,\\pi)\\) has:", options: ["only sine terms", "only cosine terms", "both sine and cosine", "constant term only"], correct: 0 },
         { text: "The Laplace transform of \\(t^2\\) is:", options: ["\\(2/s^3\\)", "\\(2/s^2\\)", "\\(1/s^3\\)", "\\(1/s^2\\)"], correct: 0 },
-        // 21-30
         { text: "The inverse Laplace transform of \\(1/(s^2+4)\\) is:", options: ["\\(\\frac{1}{2}\\sin 2t\\)", "\\(\\sin 2t\\)", "\\(2\\sin 2t\\)", "\\(\\cos 2t\\)"], correct: 0 },
         { text: "The Laplace transform of \\(e^{at}\\) is:", options: ["\\(1/(s-a)\\)", "\\(1/(s+a)\\)", "\\(1/s\\)", "\\(a/s\\)"], correct: 0 },
         { text: "The Fourier transform of \\(e^{-|x|}\\) is:", options: ["\\(\\frac{2}{1+\\omega^2}\\)", "\\(\\frac{1}{1+\\omega^2}\\)", "\\(\\frac{2}{1-\\omega^2}\\)", "\\(\\frac{1}{1-\\omega^2}\\)"], correct: 0 },
@@ -570,7 +639,6 @@
         { text: "The value of \\(P_n(1)\\) is:", options: ["1", "0", "\\((-1)^n\\)", "\\(n\\)"], correct: 0 },
         { text: "The Bessel function \\(J_0(0)\\) equals:", options: ["1", "0", "\\(\\infty\\)", "\\(-1\\)"], correct: 0 },
         { text: "The Hermite polynomial \\(H_2(x)\\) is:", options: ["\\(4x^2-2\\)", "\\(4x^2+2\\)", "\\(2x^2-1\\)", "\\(2x^2+1\\)"], correct: 0 },
-        // 31-40
         { text: "The value of \\(\\Gamma(1/2)\\) is:", options: ["\\(\\sqrt{\\pi}\\)", "\\(\\pi\\)", "\\(\\sqrt{2\\pi}\\)", "\\(1\\)"], correct: 0 },
         { text: "The solution of \\(dy/dx = y/x\\) is:", options: ["\\(y=cx\\)", "\\(y=c/x\\)", "\\(y=cx^2\\)", "\\(y=c\\sqrt{x}\\)"], correct: 0 },
         { text: "The integrating factor of \\(dy/dx + y = e^x\\) is:", options: ["\\(e^x\\)", "\\(e^{-x}\\)", "\\(x\\)", "\\(1/x\\)"], correct: 0 },
@@ -581,7 +649,6 @@
         { text: "The Laplace transform of \\(\\sin at\\) is:", options: ["\\(a/(s^2+a^2)\\)", "\\(s/(s^2+a^2)\\)", "\\(a/(s^2-a^2)\\)", "\\(s/(s^2-a^2)\\)"], correct: 0 },
         { text: "The inverse Laplace transform of \\(1/(s(s+1))\\) is:", options: ["\\(1-e^{-t}\\)", "\\(e^{-t}\\)", "\\(1+e^{-t}\\)", "\\(e^{t}\\)"], correct: 0 },
         { text: "The Fourier sine transform of \\(e^{-ax}\\) is:", options: ["\\(\\frac{\\omega}{a^2+\\omega^2}\\)", "\\(\\frac{a}{a^2+\\omega^2}\\)", "\\(\\frac{1}{a^2+\\omega^2}\\)", "\\(\\frac{\\omega^2}{a^2+\\omega^2}\\)"], correct: 0 },
-        // 41-50
         { text: "The value of \\(\\int_0^1 x^2 dx\\) is:", options: ["\\(1/3\\)", "\\(1/2\\)", "\\(1/4\\)", "\\(1\\)"], correct: 0 },
         { text: "The value of \\(\\int_0^{\\pi} \\sin x dx\\) is:", options: ["2", "0", "1", "\\(\\pi\\)"], correct: 0 },
         { text: "The derivative of \\(\\tan^{-1} x\\) is:", options: ["\\(1/(1+x^2)\\)", "\\(1/(1-x^2)\\)", "\\(1/\\sqrt{1-x^2}\\)", "\\(-1/(1+x^2)\\)"], correct: 0 },
@@ -592,7 +659,6 @@
         { text: "The curl of \\(\\vec{F} = (y,z,x)\\) is:", options: ["\\((-1,-1,-1)\\)", "\\((1,1,1)\\)", "\\((0,0,0)\\)", "\\((1,-1,1)\\)"], correct: 0 },
         { text: "The value of \\(\\iint_S \\vec{F}\\cdot d\\vec{S}\\) for \\(\\vec{F}=(x,y,z)\\) over unit sphere is:", options: ["\\(4\\pi\\)", "\\(2\\pi\\)", "\\(\\pi\\)", "\\(0\\)"], correct: 0 },
         { text: "The directional derivative of \\(f=x^2+y^2\\) at (1,1) in direction (1,1) is:", options: ["\\(2\\sqrt{2}\\)", "\\(\\sqrt{2}\\)", "\\(2\\)", "\\(4\\)"], correct: 0 },
-        // 51-60
         { text: "The equation of tangent plane to \\(x^2+y^2+z^2=1\\) at (1,0,0) is:", options: ["\\(x=1\\)", "\\(x+y+z=1\\)", "\\(x=0\\)", "\\(y=0\\)"], correct: 0 },
         { text: "The maximum value of \\(x+y\\) subject to \\(x^2+y^2=1\\) is:", options: ["\\(\\sqrt{2}\\)", "1", "2", "\\(1/\\sqrt{2}\\)"], correct: 0 },
         { text: "The Lagrange multiplier for \\(f=x+y\\) and \\(g=x^2+y^2-1=0\\) is:", options: ["\\(1/\\sqrt{2}\\)", "\\(\\sqrt{2}\\)", "1", "0"], correct: 0 },
@@ -603,7 +669,6 @@
         { text: "The Fourier coefficient \\(a_0\\) for \\(f(x)=x^2\\) in \\((-\\pi,\\pi)\\) is:", options: ["\\(\\pi^2/3\\)", "\\(\\pi^2/2\\)", "\\(2\\pi^2/3\\)", "\\(\\pi^2\\)"], correct: 0 },
         { text: "The Laplace transform of \\(f(t)=t\\) is:", options: ["\\(1/s^2\\)", "\\(1/s\\)", "\\(2/s^2\\)", "\\(1/s^3\\)"], correct: 0 },
         { text: "The inverse Laplace transform of \\(1/(s^2-1)\\) is:", options: ["\\(\\sinh t\\)", "\\(\\sin t\\)", "\\(\\cosh t\\)", "\\(\\cos t\\)"], correct: 0 },
-        // 61-70
         { text: "The residue of \\(f(z)=\\frac{1}{z^2+4}\\) at \\(z=2i\\) is:", options: ["\\(1/(4i)\\)", "\\(1/(2i)\\)", "\\(1/4\\)", "\\(i/4\\)"], correct: 0 },
         { text: "The value of \\(\\int_{-\\infty}^{\\infty} \\frac{dx}{1+x^2}\\) is:", options: ["\\(\\pi\\)", "\\(2\\pi\\)", "\\(\\pi/2\\)", "\\(1\\)"], correct: 0 },
         { text: "The Legendre polynomial \\(P_3(x)\\) is:", options: ["\\((5x^3-3x)/2\\)", "\\((5x^3+3x)/2\\)", "\\((3x^3-5x)/2\\)", "\\((3x^3+5x)/2\\)"], correct: 0 },
@@ -614,7 +679,6 @@
         { text: "The general solution of \\(y'' + y = 0\\) is:", options: ["\\(c_1\\cos x + c_2\\sin x\\)", "\\(c_1 e^x + c_2 e^{-x}\\)", "\\(c_1 + c_2 x\\)", "\\(c_1\\cosh x + c_2\\sinh x\\)"], correct: 0 },
         { text: "The partial differential equation \\(z = px + qy\\) is:", options: ["Clairaut's equation", "Lagrange's equation", "Homogeneous", "Linear"], correct: 0 },
         { text: "The order of PDE \\(u_{xx} + u_{yy} = 0\\) is:", options: ["2", "1", "0", "3"], correct: 0 },
-        // 71-80
         { text: "The Laplace transform of \\(\\cos at\\) is:", options: ["\\(s/(s^2+a^2)\\)", "\\(a/(s^2+a^2)\\)", "\\(s/(s^2-a^2)\\)", "\\(a/(s^2-a^2)\\)"], correct: 0 },
         { text: "The inverse Laplace transform of \\(1/(s^2+2s+5)\\) involves:", options: ["\\(e^{-t}\\sin 2t\\)", "\\(e^{t}\\sin 2t\\)", "\\(e^{-t}\\cos 2t\\)", "\\(e^{t}\\cos 2t\\)"], correct: 0 },
         { text: "The Fourier transform of \\(f(x)=1\\) for \\(|x|<a\\) and 0 otherwise is:", options: ["\\(2\\sin(a\\omega)/\\omega\\)", "\\(\\sin(a\\omega)/\\omega\\)", "\\(2\\cos(a\\omega)/\\omega\\)", "\\(\\cos(a\\omega)/\\omega\\)"], correct: 0 },
@@ -625,7 +689,6 @@
         { text: "The divergence of \\(\\vec{F} = (x^2, y^2, z^2)\\) is:", options: ["\\(2(x+y+z)\\)", "\\(2x+2y+2z\\)", "\\(x+y+z\\)", "\\(2\\)"], correct: 0 },
         { text: "The curl of \\(\\vec{F} = (z, x, y)\\) is:", options: ["\\((-1,-1,-1)\\)", "\\((1,1,1)\\)", "\\((0,0,0)\\)", "\\((1,-1,1)\\)"], correct: 0 },
         { text: "The value of \\(\\iint_S \\vec{F}\\cdot d\\vec{S}\\) for \\(\\vec{F}=(x^2,y^2,z^2)\\) over unit cube is:", options: ["3", "1", "0", "6"], correct: 0 },
-        // 81-90
         { text: "The equation of normal to \\(y=x^2\\) at (1,1) is:", options: ["\\(x+2y=3\\)", "\\(2x+y=3\\)", "\\(x-2y=-1\\)", "\\(2x-y=1\\)"], correct: 0 },
         { text: "The maximum value of \\(f(x)=x^3-3x\\) is:", options: ["2", "-2", "0", "1"], correct: 0 },
         { text: "The point of inflection of \\(y=x^3\\) is:", options: ["(0,0)", "(1,1)", "(-1,-1)", "(0,1)"], correct: 0 },
@@ -638,12 +701,10 @@
         { text: "The Bessel function \\(J_0(x)\\) satisfies:", options: ["\\(J_0(0)=1\\)", "\\(J_0(0)=0\\)", "\\(J_0(0)=\\infty\\)", "\\(J_0(0)=-1\\)"], correct: 0 }
     ];
 
-    // Fill 1-90 (Maths)
     for (let i = 0; i < 90; i++) {
         if (i < mathsData.length) {
             questions.push(mathsData[i]);
         } else {
-            // Fallback (should not happen)
             questions.push({
                 text: `Maths Question ${i+1}: Solve \\(\\int_0^1 x^{${i}} dx\\)`,
                 options: ["\\(1/(i+1)\\)", "\\(1/i\\)", "\\(i\\)", "\\(1\\)"],
@@ -652,7 +713,6 @@
         }
     }
 
-    // ---- GK (91-120) ----
     const gkData = [
         { text: "The NISAR satellite is a joint mission between ISRO and which space agency?", options: ["ESA", "NASA", "Roscosmos", "JAXA"], correct: 1 },
         { text: "The Secretariat of BIMSTEC is located in which city?", options: ["New Delhi", "Colombo", "Dhaka", "Kathmandu"], correct: 2 },
@@ -698,7 +758,6 @@
         }
     }
 
-    // Ensure exactly 120 questions
     while (questions.length < 120) {
         questions.push({
             text: `Question ${questions.length+1}: Placeholder`,
@@ -710,10 +769,10 @@
 
     // ======================= STATE =======================
     const TOTAL = 120;
-    const DURATION = 120 * 60; // seconds
+    const DURATION = 120 * 60;
 
     let currentIndex = 0;
-    let userAnswers = new Array(TOTAL).fill(null); // null = not answered, else 0-3
+    let userAnswers = new Array(TOTAL).fill(null);
     let marked = new Array(TOTAL).fill(false);
     let visited = new Array(TOTAL).fill(false);
     let timeLeft = DURATION;
@@ -739,13 +798,12 @@
     const reviewList = document.getElementById('reviewList');
     const downloadBtn = document.getElementById('downloadBtn');
 
-    // ======================= RENDER =======================
+    // ======================= RENDER (disabled interactions) =======================
     function renderQuestion(index) {
         if (testSubmitted) return;
         const q = questions[index];
         if (!q) return;
 
-        // Mark visited
         if (!visited[index]) {
             visited[index] = true;
         }
@@ -753,7 +811,6 @@
         qCounter.textContent = `Question ${index+1} of ${TOTAL}`;
         questionText.innerHTML = q.text;
 
-        // Status badge
         if (marked[index]) {
             qStatusBadge.textContent = '🔖 Marked for Review';
             qStatusBadge.style.color = '#8b5cf6';
@@ -768,32 +825,19 @@
             qStatusBadge.style.color = '#94a3b8';
         }
 
-        // Options
         optionsContainer.innerHTML = '';
         q.options.forEach((opt, optIdx) => {
             const div = document.createElement('div');
             div.className = 'option' + (userAnswers[index] === optIdx ? ' selected' : '');
             div.innerHTML = `<span class="label">${String.fromCharCode(65+optIdx)}</span><span class="opt-text">${opt}</span>`;
-            div.addEventListener('click', () => {
-                if (testSubmitted) return;
-                // Toggle selection
-                if (userAnswers[index] === optIdx) {
-                    userAnswers[index] = null;
-                } else {
-                    userAnswers[index] = optIdx;
-                }
-                renderQuestion(index);
-                renderPalette();
-            });
+            // NO CLICK LISTENER — disabled
             optionsContainer.appendChild(div);
         });
 
-        // Re-render MathJax
         if (window.MathJax && MathJax.typesetPromise) {
             MathJax.typesetPromise([questionText, optionsContainer]).catch(() => {});
         }
 
-        // Update palette current highlight
         renderPalette();
     }
 
@@ -818,19 +862,13 @@
                 btn.classList.add('notvisited');
             }
 
-            btn.addEventListener('click', () => {
-                if (testSubmitted) return;
-                currentIndex = i;
-                renderQuestion(i);
-            });
+            // NO CLICK LISTENER — disabled
             paletteGrid.appendChild(btn);
         }
         paletteProgress.textContent = `${answeredCount} / ${TOTAL}`;
-
-        // Re-render MathJax for palette? No math there.
     }
 
-    // ======================= TIMER =======================
+    // ======================= TIMER (still runs, but no submission) =======================
     function startTimer() {
         if (timerInterval) clearInterval(timerInterval);
         timerInterval = setInterval(() => {
@@ -839,7 +877,8 @@
             updateTimerDisplay();
             if (timeLeft <= 0) {
                 clearInterval(timerInterval);
-                submitTest(true);
+                // Time up, but test is cancelled — do nothing
+                timerDisplay.textContent = '00:00';
             }
         }, 1000);
     }
@@ -852,186 +891,43 @@
         else timerDisplay.style.color = '#facc15';
     }
 
-    // ======================= SUBMIT =======================
-    function submitTest(auto = false) {
-        if (testSubmitted) return;
-        testSubmitted = true;
-        clearInterval(timerInterval);
-
-        // Calculate score
-        let correct = 0, wrong = 0, skipped = 0;
-        for (let i = 0; i < TOTAL; i++) {
-            const ans = userAnswers[i];
-            if (ans === null) skipped++;
-            else if (ans === questions[i].correct) correct++;
-            else wrong++;
-        }
-        const score = correct * 3 - wrong * 1;
-        const accuracy = (correct + wrong) > 0 ? (correct / (correct + wrong) * 100) : 0;
-
-        // Show overlay
-        resultOverlay.classList.add('active');
-        finalScore.textContent = `${score} pts`;
-
-        // Stats
-        statsContainer.innerHTML = `
-            <div class="stat-item"><span class="stat-label">Correct</span><span class="stat-value" style="color:#10b981;">${correct}</span></div>
-            <div class="stat-item"><span class="stat-label">Wrong</span><span class="stat-value" style="color:#ef4444;">${wrong}</span></div>
-            <div class="stat-item"><span class="stat-label">Skipped</span><span class="stat-value" style="color:#64748b;">${skipped}</span></div>
-            <div class="stat-item"><span class="stat-label">Accuracy</span><span class="stat-value">${accuracy.toFixed(1)}%</span></div>
-            <div class="stat-item"><span class="stat-label">Score</span><span class="stat-value" style="color:#3b82f6;">${score}</span></div>
-        `;
-
-        // Build review
-        renderReview('all');
-
-        // Filter buttons
-        document.querySelectorAll('.filter-btn').forEach(btn => {
-            btn.onclick = () => {
-                document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
-                btn.classList.add('active');
-                renderReview(btn.dataset.filter);
-            };
-        });
-
-        // Download
-        downloadBtn.onclick = downloadReview;
-    }
-
-    function renderReview(filter) {
-        reviewList.innerHTML = '';
-        let items = [];
-        for (let i = 0; i < TOTAL; i++) {
-            const ans = userAnswers[i];
-            const q = questions[i];
-            let status;
-            if (ans === null) status = 'skipped';
-            else if (ans === q.correct) status = 'correct';
-            else status = 'incorrect';
-
-            if (filter === 'correct' && status !== 'correct') continue;
-            if (filter === 'incorrect' && status !== 'incorrect') continue;
-            if (filter === 'skipped' && status !== 'skipped') continue;
-
-            items.push({ i, q, ans, status });
-        }
-
-        if (items.length === 0) {
-            reviewList.innerHTML = '<p style="color:#64748b; padding:20px;">No questions match this filter.</p>';
-            return;
-        }
-
-        items.forEach(({ i, q, ans, status }) => {
-            const div = document.createElement('div');
-            div.className = `review-item ${status}`;
-
-            const userAnsText = ans !== null ? `${String.fromCharCode(65+ans)}. ${q.options[ans]}` : 'Not attempted';
-            const correctAnsText = `${String.fromCharCode(65+q.correct)}. ${q.options[q.correct]}`;
-
-            let badgeClass = '';
-            if (status === 'correct') badgeClass = 'correct-badge';
-            else if (status === 'incorrect') badgeClass = 'wrong-badge';
-            else badgeClass = 'skipped-badge';
-
-            div.innerHTML = `
-                <div class="review-q">Q${i+1}. ${q.text}</div>
-                <div class="review-ans">
-                    <span>Your answer: <strong>${userAnsText}</strong></span>
-                    <span class="${badgeClass}">Correct: ${correctAnsText}</span>
-                </div>
-            `;
-            reviewList.appendChild(div);
-        });
-
-        // Re-render MathJax
-        if (window.MathJax && MathJax.typesetPromise) {
-            MathJax.typesetPromise([reviewList]).catch(() => {});
-        }
-    }
-
-    // ======================= DOWNLOAD =======================
-    function downloadReview() {
-        let html = `<!DOCTYPE html><html><head><meta charset="UTF-8"><title>Performance & Solutions</title>
-        <script>window.MathJax={tex:{inlineMath:[['$','$'],['\\\\(','\\\\)']]}};<\/script>
-        <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-svg.js" async><\/script>
-        <style>body{font-family:sans-serif;padding:30px;max-width:900px;margin:auto;background:#f8fafc;}
-        .item{border-left:6px solid #cbd5e1;padding:12px 16px;margin:12px 0;background:white;border-radius:12px;}
-        .correct{border-left-color:#10b981;} .incorrect{border-left-color:#ef4444;} .skipped{border-left-color:#94a3b8;}
-        .badge{padding:2px 12px;border-radius:20px;font-weight:600;}
-        .correct-badge{background:#dcfce7;color:#166534;} .wrong-badge{background:#fee2e2;color:#991b1b;} .skipped-badge{background:#f1f5f9;color:#475569;}
-        </style></head><body>
-        <h1>📊 Performance & Solutions</h1>
-        <p><strong>Total Score:</strong> ${finalScore.textContent} | <strong>Accuracy:</strong> ${document.querySelector('.stat-value:nth-child(4)')?.textContent || ''}</p>
-        <hr>`;
-
-        for (let i = 0; i < TOTAL; i++) {
-            const ans = userAnswers[i];
-            const q = questions[i];
-            let status, statusText;
-            if (ans === null) { status = 'skipped'; statusText = 'Skipped'; }
-            else if (ans === q.correct) { status = 'correct'; statusText = 'Correct'; }
-            else { status = 'incorrect'; statusText = 'Incorrect'; }
-
-            const userAnsText = ans !== null ? `${String.fromCharCode(65+ans)}. ${q.options[ans]}` : 'Not attempted';
-            const correctAnsText = `${String.fromCharCode(65+q.correct)}. ${q.options[q.correct]}`;
-
-            html += `<div class="item ${status}">
-                <div><strong>Q${i+1}.</strong> ${q.text}</div>
-                <div style="margin-top:6px;">Your answer: ${userAnsText} &nbsp;|&nbsp; 
-                <span class="badge ${status==='correct'?'correct-badge':status==='incorrect'?'wrong-badge':'skipped-badge'}">
-                Correct: ${correctAnsText}</span></div>
-            </div>`;
-        }
-        html += `</body></html>`;
-
-        const blob = new Blob([html], { type: 'text/html' });
-        const a = document.createElement('a');
-        a.href = URL.createObjectURL(blob);
-        a.download = 'performance_solutions.html';
-        a.click();
-        URL.revokeObjectURL(a.href);
-    }
-
-    // ======================= NAVIGATION =======================
-    prevBtn.addEventListener('click', () => {
-        if (testSubmitted) return;
-        if (currentIndex > 0) {
-            currentIndex--;
-            renderQuestion(currentIndex);
-        }
-    });
-    nextBtn.addEventListener('click', () => {
-        if (testSubmitted) return;
-        if (currentIndex < TOTAL - 1) {
-            currentIndex++;
-            renderQuestion(currentIndex);
-        }
-    });
-    clearBtn.addEventListener('click', () => {
-        if (testSubmitted) return;
-        userAnswers[currentIndex] = null;
-        renderQuestion(currentIndex);
-        renderPalette();
-    });
-    markBtn.addEventListener('click', () => {
-        if (testSubmitted) return;
-        marked[currentIndex] = !marked[currentIndex];
-        renderQuestion(currentIndex);
-        renderPalette();
-    });
-    submitBtn.addEventListener('click', () => {
-        if (testSubmitted) return;
-        if (confirm('Are you sure you want to submit the test?')) {
-            submitTest(false);
-        }
-    });
+    // ======================= SUBMIT (disabled) =======================
+    // No submit possible — all buttons disabled & no event handlers active.
 
     // ======================= INIT =======================
     function init() {
+        // Ensure all buttons are disabled (already in HTML, but double-check)
+        prevBtn.disabled = true;
+        nextBtn.disabled = true;
+        clearBtn.disabled = true;
+        markBtn.disabled = true;
+        submitBtn.disabled = true;
+
         updateTimerDisplay();
         startTimer();
         renderQuestion(0);
         renderPalette();
+
+        // Explicitly prevent any accidental form submission
+        document.querySelectorAll('button').forEach(btn => {
+            btn.addEventListener('click', (e) => {
+                e.preventDefault();
+                e.stopPropagation();
+            });
+        });
+
+        // Also block keyboard navigation
+        window.addEventListener('keydown', (e) => {
+            const keys = ['ArrowLeft', 'ArrowRight', 'ArrowUp', 'ArrowDown', 'Enter', ' '];
+            if (keys.includes(e.key)) {
+                e.preventDefault();
+            }
+        }, true);
+
+        // Show cancelled overlay permanently (already visible via CSS)
+        // Ensure it's on top and blocks everything
+        const overlay = document.getElementById('cancelledOverlay');
+        overlay.style.display = 'flex';
     }
 
     init();
