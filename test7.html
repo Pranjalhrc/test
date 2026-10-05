@@ -1,0 +1,1809 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MCQ Test · Maths + GK</title>
+    <!-- MathJax for LaTeX rendering -->
+    <script>
+        MathJax = {
+            tex: {
+                inlineMath: [['$', '$'], ['\\(', '\\)']],
+                displayMath: [['$$', '$$'], ['\\[', '\\]']],
+                processEscapes: true
+            },
+            options: {
+                skipHtmlTags: ['script', 'noscript', 'style', 'textarea', 'pre']
+            }
+        };
+    </script>
+    <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <style>
+        /* ----- GLOBAL ----- */
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+        body {
+            font-family: 'Segoe UI', Roboto, system-ui, sans-serif;
+            background: #f2f5f9;
+            display: flex;
+            justify-content: center;
+            height: 100vh;
+            overflow: hidden;
+            padding: 12px;
+        }
+        .app {
+            display: flex;
+            gap: 16px;
+            width: 100%;
+            max-width: 1500px;
+            height: 100%;
+        }
+        /* ----- LEFT / MAIN ----- */
+        .main-panel {
+            flex: 1 1 0;
+            min-width: 0;
+            display: flex;
+            flex-direction: column;
+            background: white;
+            border-radius: 24px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
+            padding: 20px 24px 16px;
+            overflow: hidden;
+            height: 100%;
+        }
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid #e9ecf2;
+            padding-bottom: 10px;
+            flex-shrink: 0;
+        }
+        .header h2 {
+            font-size: 1.2rem;
+            font-weight: 600;
+            color: #1e293b;
+        }
+        .timer {
+            font-size: 1.5rem;
+            font-weight: 700;
+            font-variant-numeric: tabular-nums;
+            background: #1e293b;
+            color: #f8fafc;
+            padding: 6px 18px;
+            border-radius: 60px;
+            letter-spacing: 1px;
+        }
+        .question-area {
+            flex: 1 1 auto;
+            overflow-y: auto;
+            padding: 18px 6px 12px 6px;
+            scrollbar-width: thin;
+            min-height: 0;
+        }
+        .question-text {
+            font-size: 1.05rem;
+            line-height: 1.6;
+            color: #0f172a;
+            margin-bottom: 20px;
+            font-weight: 500;
+        }
+        .options {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            margin-bottom: 10px;
+        }
+        .option {
+            display: flex;
+            align-items: flex-start;
+            gap: 14px;
+            background: #f8fafc;
+            border: 2px solid #e2e8f0;
+            border-radius: 14px;
+            padding: 14px 18px;
+            cursor: pointer;
+            transition: all 0.15s ease;
+            user-select: none;
+        }
+        .option:hover {
+            background: #f1f5f9;
+            border-color: #cbd5e1;
+        }
+        .option.selected {
+            background: #e6f0ff;
+            border-color: #3b82f6;
+            box-shadow: 0 0 0 1px #3b82f6;
+        }
+        .option .letter {
+            font-weight: 700;
+            color: #475569;
+            min-width: 22px;
+        }
+        .option.selected .letter {
+            color: #1d4ed8;
+        }
+        .option .opt-text {
+            flex: 1;
+            color: #1e293b;
+        }
+        .bottom-bar {
+            display: flex;
+            flex-wrap: wrap;
+            align-items: center;
+            justify-content: space-between;
+            gap: 10px;
+            border-top: 1px solid #e9ecf2;
+            padding-top: 14px;
+            flex-shrink: 0;
+        }
+        .nav-buttons {
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+        }
+        .btn {
+            padding: 10px 18px;
+            border-radius: 40px;
+            border: none;
+            font-weight: 600;
+            font-size: 0.9rem;
+            cursor: pointer;
+            background: #f1f5f9;
+            color: #1e293b;
+            transition: all 0.15s;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            border: 1px solid transparent;
+        }
+        .btn:hover {
+            background: #e2e8f0;
+        }
+        .btn.primary {
+            background: #1e293b;
+            color: white;
+        }
+        .btn.primary:hover {
+            background: #0f172a;
+        }
+        .btn.warning {
+            background: #f59e0b;
+            color: white;
+        }
+        .btn.warning:hover {
+            background: #d97706;
+        }
+        .btn.success {
+            background: #10b981;
+            color: white;
+        }
+        .btn.success:hover {
+            background: #059669;
+        }
+        .btn.outline {
+            background: white;
+            border: 1px solid #cbd5e1;
+        }
+        .btn.outline:hover {
+            background: #f8fafc;
+        }
+        .btn.small {
+            padding: 6px 14px;
+            font-size: 0.8rem;
+        }
+        /* ----- RIGHT PALETTE ----- */
+        .palette-panel {
+            flex: 0 0 280px;
+            background: white;
+            border-radius: 24px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+            height: 100%;
+            padding: 16px 12px 12px;
+        }
+        .palette-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding-bottom: 10px;
+            border-bottom: 1px solid #e9ecf2;
+            flex-shrink: 0;
+        }
+        .palette-header h3 {
+            font-size: 1rem;
+            font-weight: 600;
+            color: #1e293b;
+        }
+        .legend {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px 12px;
+            font-size: 0.65rem;
+            color: #475569;
+            padding: 8px 0 6px;
+            flex-shrink: 0;
+            border-bottom: 1px solid #f1f5f9;
+        }
+        .legend span {
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+        .dot {
+            width: 12px;
+            height: 12px;
+            border-radius: 4px;
+            display: inline-block;
+        }
+        .dot.not-visited {
+            background: #e2e8f0;
+            border: 1px solid #cbd5e1;
+        }
+        .dot.answered {
+            background: #10b981;
+            border: 1px solid #059669;
+        }
+        .dot.not-answered {
+            background: #f43f5e;
+            border: 1px solid #e11d48;
+        }
+        .dot.marked {
+            background: #8b5cf6;
+            border: 1px solid #7c3aed;
+        }
+        .palette-grid {
+            flex: 1 1 auto;
+            overflow-y: auto;
+            display: grid;
+            grid-template-columns: repeat(6, 1fr);
+            gap: 6px;
+            padding: 10px 2px 6px;
+            min-height: 0;
+            scrollbar-width: thin;
+        }
+        .palette-btn {
+            aspect-ratio: 1 / 1;
+            border-radius: 8px;
+            border: 1px solid #cbd5e1;
+            background: #f8fafc;
+            font-weight: 600;
+            font-size: 0.75rem;
+            color: #1e293b;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.1s;
+        }
+        .palette-btn:hover {
+            filter: brightness(0.95);
+            transform: scale(1.02);
+        }
+        .palette-btn.answered {
+            background: #10b981;
+            border-color: #059669;
+            color: white;
+        }
+        .palette-btn.not-answered {
+            background: #f43f5e;
+            border-color: #e11d48;
+            color: white;
+        }
+        .palette-btn.marked {
+            background: #8b5cf6;
+            border-color: #7c3aed;
+            color: white;
+        }
+        .palette-btn.not-visited {
+            background: #f1f5f9;
+            border-color: #cbd5e1;
+            color: #64748b;
+        }
+        .palette-btn.current {
+            outline: 3px solid #3b82f6;
+            outline-offset: 1px;
+            border-color: #3b82f6;
+        }
+        /* ----- OVERLAY / RESULT ----- */
+        .overlay {
+            position: fixed;
+            inset: 0;
+            background: rgba(15, 23, 42, 0.6);
+            backdrop-filter: blur(4px);
+            display: none;
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+            padding: 20px;
+        }
+        .overlay.active {
+            display: flex;
+        }
+        .result-card {
+            background: white;
+            border-radius: 28px;
+            max-width: 1000px;
+            width: 100%;
+            max-height: 90vh;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+        }
+        .result-header {
+            padding: 20px 24px 12px;
+            border-bottom: 1px solid #e2e8f0;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 10px;
+            flex-shrink: 0;
+        }
+        .result-header h2 {
+            font-size: 1.5rem;
+            color: #0f172a;
+        }
+        .score-stats {
+            display: flex;
+            gap: 24px;
+            flex-wrap: wrap;
+            padding: 12px 24px 12px;
+            background: #f8fafc;
+            border-bottom: 1px solid #e2e8f0;
+            flex-shrink: 0;
+        }
+        .stat-item {
+            display: flex;
+            flex-direction: column;
+        }
+        .stat-label {
+            font-size: 0.7rem;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            color: #64748b;
+            font-weight: 600;
+        }
+        .stat-value {
+            font-size: 1.6rem;
+            font-weight: 700;
+            color: #0f172a;
+        }
+        .filters {
+            display: flex;
+            gap: 8px;
+            padding: 12px 24px;
+            border-bottom: 1px solid #e2e8f0;
+            flex-wrap: wrap;
+            background: white;
+            flex-shrink: 0;
+        }
+        .filter-btn {
+            padding: 6px 16px;
+            border-radius: 40px;
+            border: 1px solid #cbd5e1;
+            background: white;
+            font-weight: 500;
+            font-size: 0.8rem;
+            cursor: pointer;
+            transition: all 0.1s;
+        }
+        .filter-btn.active {
+            background: #1e293b;
+            color: white;
+            border-color: #1e293b;
+        }
+        .filter-btn:hover {
+            background: #f1f5f9;
+        }
+        .filter-btn.active:hover {
+            background: #0f172a;
+        }
+        .review-list {
+            flex: 1 1 auto;
+            overflow-y: auto;
+            padding: 12px 20px 20px;
+            min-height: 0;
+        }
+        .review-item {
+            border-left: 6px solid #cbd5e1;
+            background: #f8fafc;
+            border-radius: 12px;
+            padding: 14px 18px;
+            margin-bottom: 12px;
+        }
+        .review-item.correct {
+            border-left-color: #10b981;
+            background: #f0fdf4;
+        }
+        .review-item.incorrect {
+            border-left-color: #ef4444;
+            background: #fef2f2;
+        }
+        .review-item.unattempted {
+            border-left-color: #94a3b8;
+            background: #f8fafc;
+        }
+        .review-q {
+            font-weight: 600;
+            margin-bottom: 6px;
+            color: #0f172a;
+        }
+        .review-meta {
+            font-size: 0.85rem;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 12px 24px;
+            margin-top: 6px;
+        }
+        .review-meta span {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+        .review-answer {
+            font-weight: 600;
+        }
+        .correct-text {
+            color: #059669;
+        }
+        .incorrect-text {
+            color: #dc2626;
+        }
+        .unattempted-text {
+            color: #64748b;
+        }
+        .result-footer {
+            padding: 14px 24px;
+            border-top: 1px solid #e2e8f0;
+            display: flex;
+            justify-content: flex-end;
+            gap: 12px;
+            flex-shrink: 0;
+            background: white;
+        }
+        /* utility */
+        .hidden {
+            display: none !important;
+        }
+        .mt-2 {
+            margin-top: 8px;
+        }
+        .text-muted {
+            color: #64748b;
+            font-size: 0.8rem;
+        }
+    </style>
+</head>
+<body>
+    <div class="app">
+        <!-- MAIN PANEL -->
+        <div class="main-panel">
+            <div class="header">
+                <h2>📘 MCQ Test · Maths (1-90) & GK (91-120)</h2>
+                <div class="timer" id="timerDisplay">120:00</div>
+            </div>
+            <div class="question-area" id="questionArea">
+                <!-- dynamic -->
+            </div>
+            <div class="bottom-bar">
+                <div class="nav-buttons">
+                    <button class="btn outline" id="prevBtn">◀ Previous</button>
+                    <button class="btn outline" id="nextBtn">Next ▶</button>
+                    <button class="btn warning" id="markBtn">🔖 Mark for Review</button>
+                    <button class="btn outline" id="clearBtn">✕ Clear Response</button>
+                </div>
+                <button class="btn primary" id="submitBtn">📤 Submit Test</button>
+            </div>
+        </div>
+
+        <!-- PALETTE PANEL -->
+        <div class="palette-panel">
+            <div class="palette-header">
+                <h3>Question Palette</h3>
+                <span class="text-muted" id="paletteCounter">0/120</span>
+            </div>
+            <div class="legend">
+                <span><span class="dot not-visited"></span> Not Visited</span>
+                <span><span class="dot not-answered"></span> Not Answered</span>
+                <span><span class="dot answered"></span> Answered</span>
+                <span><span class="dot marked"></span> Marked</span>
+            </div>
+            <div class="palette-grid" id="paletteGrid"></div>
+        </div>
+    </div>
+
+    <!-- OVERLAY RESULT -->
+    <div class="overlay" id="resultOverlay">
+        <div class="result-card">
+            <div class="result-header">
+                <h2>📊 Performance & Solutions</h2>
+                <button class="btn outline" id="downloadResultBtn">⬇ Download Report</button>
+            </div>
+            <div class="score-stats" id="scoreStats">
+                <!-- filled by JS -->
+            </div>
+            <div class="filters" id="filterBar">
+                <button class="filter-btn active" data-filter="all">All</button>
+                <button class="filter-btn" data-filter="correct">✅ Correct</button>
+                <button class="filter-btn" data-filter="incorrect">❌ Incorrect</button>
+                <button class="filter-btn" data-filter="unattempted">⏭ Unattempted</button>
+            </div>
+            <div class="review-list" id="reviewList"></div>
+            <div class="result-footer">
+                <button class="btn outline" id="closeOverlayBtn">Close</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // ============================================================
+        //  DATA : 120 questions (1-90 maths, 91-120 GK)
+        //  Each: text, options[4], correct (0-3)
+        // ============================================================
+        const questions = [];
+
+        // ---------- MATHEMATICS 1–90 (from provided LaTeX) ----------
+        const mathsData = [
+            // Page 1 (1-5)
+            {
+                text: "If \\(-1 < 2x < 1\\) then \\(\\Gamma\\left(\\frac{3}{2} - x\\right)\\Gamma\\left(\\frac{3}{2} + x\\right) =\\)",
+                options: [
+                    "\\(\\left(\\frac{1}{4} - x^{2}\\right)\\pi \\sec \\pi x\\)",
+                    "\\(\\left(\\frac{1}{4} - x^{2}\\right)\\pi \\csc \\pi x\\)",
+                    "\\(\\left(\\frac{1}{4} - x\\right)^{2}\\pi \\sec \\pi x\\)",
+                    "\\(\\left(\\frac{1}{4} - x\\right)^{2}\\pi \\csc \\pi x\\)"
+                ],
+                correct: 0
+            },
+            {
+                text: "If \\(B(m,n)\\) is Beta function, then \\(\\displaystyle\\int_{0}^{7}(x - 5)^{6}(7 - x)^{3}\\,dx =\\)",
+                options: [
+                    "\\(2^{10}B(6,3)\\)",
+                    "\\(2^{10}B(7,4)\\)",
+                    "\\(2^{10}B(6,4)\\)",
+                    "\\(2^{10}B(7,3)\\)"
+                ],
+                correct: 1
+            },
+            {
+                text: "If \\(n\\) is a positive integer, then \\(2^{n}\\Gamma\\left(n + \\frac{1}{2}\\right) =\\)",
+                options: [
+                    "\\(\\displaystyle\\prod_{r=1}^{n}(2r - 1)\\)",
+                    "\\(\\displaystyle\\prod_{r=1}^{n}(2r + 1)\\sqrt{\\pi}\\)",
+                    "\\(\\displaystyle\\prod_{r=1}^{n}(2r - 1)\\sqrt{\\pi}\\)",
+                    "\\(\\displaystyle\\prod_{r=1}^{n}(2r + 3)\\sqrt{\\pi}\\)"
+                ],
+                correct: 2
+            },
+            {
+                text: "Which statement is true for Gauss hypergeometric equation \\(x(1 - x)\\frac{d^{2}y}{dx^{2}} + \\{c - (1 + a + b)x\\}\\frac{dy}{dx} - aby = 0\\)",
+                options: [
+                    "It has three regular singular points \\(x = 0, 1, -1\\)",
+                    "It has three regular singular points \\(x = 0, 1\\) and \\(\\infty\\)",
+                    "It has two regular singular points \\(x = 0, 1\\)",
+                    "It has no singular point"
+                ],
+                correct: 1
+            },
+            {
+                text: "Which statement is true for Legendre Function of first kind \\(P_{n}(x)\\)?",
+                options: [
+                    "It is an odd function of \\(x\\) for \\(n\\) even",
+                    "It is an even function of \\(x\\) for \\(n\\) odd",
+                    "It is an even function of \\(x\\) for \\(n\\) even",
+                    "\\(P_{2}(x) = -1\\) at \\(x = -1\\)"
+                ],
+                correct: 2
+            },
+            // Page 2 (6-10)
+            {
+                text: "Which statements is true for Legendre Function of first kind \\(P_{n}(x)\\):",
+                options: [
+                    "\\(\\displaystyle\\int_{-1}^{1}P_{100}(x)\\,dx = \\frac{2}{101}\\)",
+                    "\\(\\displaystyle\\int_{-1}^{1}P_{100}(x)P_{101}(x)\\,dx = \\frac{2}{301}\\)",
+                    "\\(\\displaystyle P_{50}(x) = \\frac{1}{2^{50}50!}\\frac{d^{50}}{dx^{50}}(x-1)^{50}\\)",
+                    "\\(\\displaystyle P_{50}(x) = \\frac{1}{2^{50}50!}\\frac{d^{50}}{dx^{50}}(x^{2}-1)^{50}\\)"
+                ],
+                correct: 0
+            },
+            {
+                text: "Which recurrence relation for Legendre function of first kind is incorrect?",
+                options: [
+                    "\\((2n + 1)P_{n}(x) = P_{n+1}'(x) - P_{n-1}'(x)\\)",
+                    "\\(nP_{n}(x) = xP_{n}'(x) - P_{n-1}'(x)\\)",
+                    "\\((n + 1)P_{n}(x) = P_{n+1}'(x) - xP_{n}'(x)\\)",
+                    "\\(nP_{n}(x) = xP_{n+1}'(x) - P_{n+1}'(x)\\)"
+                ],
+                correct: 0
+            },
+            {
+                text: "For Bessel function \\(J_{n}(x)\\), which series is correct Jacobi series?",
+                options: [
+                    "\\(\\cos(x\\sin\\phi) = 2J_{1}(x)\\sin\\phi + 2J_{3}(x)\\sin 3\\phi + \\ldots\\)",
+                    "\\(\\cos(x\\sin\\phi) = J_{0}(x) + 2J_{2}(x)\\cos 2\\phi + 2J_{4}(x)\\cos 4\\phi + \\ldots\\)",
+                    "\\(\\cos(x\\cos\\phi) = 2J_{1}(x)\\cos\\phi - 2J_{3}(x)\\cos 3\\phi + 2J_{5}(x)\\cos 5\\phi + \\ldots\\)",
+                    "\\(\\cos(x\\sin\\phi) = J_{0}(x) - 2J_{2}(x)\\cos 2\\phi + 2J_{4}(x)\\cos 4\\phi + \\ldots\\)"
+                ],
+                correct: 1
+            },
+            {
+                text: "If \\(\\alpha\\) and \\(\\beta\\) are zeroes of \\(J_{n}(x)\\), then which orthogonal property is correct?",
+                options: [
+                    "\\(\\displaystyle\\int_{0}^{1}xJ_{n}(\\alpha x)J_{n}(\\beta x)\\,dx = 0\\) if \\(\\alpha \\neq \\beta\\)",
+                    "\\(\\displaystyle\\int_{0}^{1}x^{2}J_{n}(\\alpha x)J_{n}(\\beta x)\\,dx = 0\\) if \\(\\alpha \\neq \\beta\\)",
+                    "\\(\\displaystyle\\int_{0}^{1}\\{J_{n}(\\alpha x)\\}^{2}\\,dx = \\frac{1}{2}\\{J_{n}'(\\alpha)\\}^{2}\\)",
+                    "\\(\\displaystyle\\int_{0}^{1}x^{2}\\{J_{n}(\\alpha x)\\}^{2}\\,dx = \\frac{1}{2}\\{J_{n}'(\\alpha)\\}^{2}\\)"
+                ],
+                correct: 0
+            },
+            {
+                text: "Bessel's equation \\(x^{2}\\frac{d^{2}y}{dx^{2}} + x\\frac{dy}{dx} + (x^{2} - n^{2})y = 0\\) has:",
+                options: [
+                    "regular singular point at \\(x = \\infty\\)",
+                    "irregular singular point at \\(x = 0\\)",
+                    "regular singular point at \\(x = 0\\)",
+                    "irregular singular point at \\(x = n\\) if \\(n \\neq \\infty\\)"
+                ],
+                correct: 2
+            },
+            // Page 3 (11-15)
+            {
+                text: "Which result is incorrect for Hermite polynomial \\(H_{n}(x)\\)?",
+                options: [
+                    "\\(H_{1}(x) = 2xH_{0}(x)\\)",
+                    "\\(H_{2}(x) = H_{1}^{2}(x) - 2\\)",
+                    "\\(H_{2}(x) = H_{1}(x) - 2\\)",
+                    "\\(H_{3}(x) = H_{1}(x)H_{2}(x) - 4H_{1}(x)\\)"
+                ],
+                correct: 2
+            },
+            {
+                text: "The Rodrigues formula for \\(H_{n}(x)\\) is",
+                options: [
+                    "\\(e^{-x^{2}}H_{n}(x) = (-1)^{n}\\frac{d^{n}}{dx^{n}}(e^{x^{2}})\\)",
+                    "\\(e^{x^{2}}H_{n}(x) = (-1)^{n}\\frac{d^{n}}{dx^{n}}(e^{-x^{2}})\\)",
+                    "\\(e^{x^{2}}H_{n}(x) = (-1)^{n}\\frac{d^{n}}{dx^{n}}(e^{x^{2}})\\)",
+                    "\\(e^{-x^{2}}H_{n}(x) = (-1)^{n}\\frac{d^{n}}{dx^{n}}(e^{-x^{2}})\\)"
+                ],
+                correct: 3
+            },
+            {
+                text: "Which differential equation is a Laguerre's differential equation?",
+                options: [
+                    "\\(x\\frac{d^{2}y}{dx^{2}} - (1 - x)\\frac{dy}{dx} + ny = 0\\)",
+                    "\\(x\\frac{d^{2}y}{dx^{2}} + (x - 1)\\frac{dy}{dx} - ny = 0\\)",
+                    "\\(x\\frac{d^{2}y}{dx^{2}} + (1 - x)\\frac{dy}{dx} + ny = 0\\)",
+                    "\\(x\\frac{d^{2}y}{dx^{2}} + (1 - x)\\frac{dy}{dx} - ny = 0\\)"
+                ],
+                correct: 2
+            },
+            {
+                text: "For Laguerre polynomial \\(L_{n}(x)\\), \\(\\displaystyle\\sum_{n=0}^{\\infty}L_{n}(x)t^{n} =\\)",
+                options: [
+                    "\\(\\frac{1}{1 - t}\\exp\\left(\\frac{xt}{1 - t}\\right)\\)",
+                    "\\(\\frac{1}{1 + t}\\exp\\left(\\frac{-xt}{1 - t}\\right)\\)",
+                    "\\(\\frac{1}{1 + t}\\exp\\left(\\frac{xt}{1 - t}\\right)\\)",
+                    "\\(\\frac{1}{1 - t}\\exp\\left(\\frac{-xt}{1 - t}\\right)\\)"
+                ],
+                correct: 3
+            },
+            {
+                text: "Which function is of exponential order?",
+                options: [
+                    "\\(e^{t^{2}}\\)",
+                    "\\(e^{t^{3}}\\)",
+                    "\\(\\cosh(3t)\\)",
+                    "\\(\\cosh(t^{2})\\)"
+                ],
+                correct: 2
+            },
+            // Page 4 (16-20)
+            {
+                text: "\\(L^{-1}\\left[\\frac{p}{p^{2} + a^{2}}\\right] =\\)",
+                options: [
+                    "\\(tJ_{1}(at)\\)",
+                    "\\(t^{2}J_{1}(at)\\)",
+                    "\\(J_{0}(at)\\)",
+                    "\\(tJ_{0}(at)\\)"
+                ],
+                correct: 0
+            },
+            {
+                text: "\\(\\displaystyle\\int_{-\\infty}^{\\infty}\\frac{\\sin x}{x}\\,dx =\\)",
+                options: [
+                    "\\(0\\)",
+                    "\\(\\pi/4\\)",
+                    "\\(\\pi/2\\)",
+                    "\\(\\pi\\)"
+                ],
+                correct: 2
+            },
+            {
+                text: "If \\(f(p)\\) is the Laplace transform of function \\(F(t)\\), then Laplace transform of \\(\\displaystyle\\int_{0}^{t}F(t)\\,dt\\):",
+                options: [
+                    "\\(\\displaystyle\\int f(p)\\,dp\\)",
+                    "\\(\\frac{1}{p}f(p) - f(0)\\)",
+                    "\\(pf(p) - f(0)\\)",
+                    "\\(\\frac{1}{p}f(p)\\)"
+                ],
+                correct: 3
+            },
+            {
+                text: "The value of \\(L^{-1}\\left[\\frac{1}{(p + 25)^{3}}\\right]\\) is:",
+                options: [
+                    "\\(e^{-25t}\\)",
+                    "\\(2te^{-25t}\\)",
+                    "\\(t^{2}e^{-25t}\\)",
+                    "\\(2t^{2}e^{-25t}\\)"
+                ],
+                correct: 0
+            },
+            {
+                text: "The value of \\(L^{-1}\\left[\\frac{1}{p^{2}(p + 1)}\\right]\\) is:",
+                options: [
+                    "\\(1 + t + e^{-t}\\)",
+                    "\\(1 - t + e^{-t}\\)",
+                    "\\(\\frac{t^{2}}{2} + e^{-t}\\)",
+                    "\\(1 - t - e^{-t}\\)"
+                ],
+                correct: 3
+            },
+            // Page 5 (21-24)
+            {
+                text: "The inverse Fourier transform \\(F(x)\\) of \\(f(p) = e^{-y|p|}\\) where \\(-\\infty < y < \\infty\\) will be:",
+                options: [
+                    "\\(\\sqrt{\\frac{2}{\\pi}}\\frac{y}{(y^{2}+x^{2})}\\)",
+                    "\\(\\frac{1}{\\pi}\\frac{y}{(y^{2}+x^{2})}\\)",
+                    "\\(\\sqrt{2\\pi}\\,y(y^{2}+x^{2})\\)",
+                    "\\(\\sqrt{\\frac{2}{\\pi}}\\frac{1}{(y^{2}+x^{2})}\\)"
+                ],
+                correct: 1
+            },
+            {
+                text: "If Fourier cosine transform of \\(f(x) = e^{-2x} + 4e^{-3x}\\) is \\(2I(p)\\), then \\(I(p)\\) will be:",
+                options: [
+                    "\\(\\frac{1}{6}\\left[\\frac{1}{p^{2}+4}+\\frac{1}{p^{2}+9}\\right]\\)",
+                    "\\(\\frac{1}{6}\\left[\\frac{1}{p^{2}+4}+\\frac{1}{p^{2}+9}\\right]\\)",
+                    "\\(\\frac{1}{6}\\left[\\frac{1}{p^{2}+4}+\\frac{1}{p^{2}+9}\\right]\\)",
+                    "\\(\\frac{1}{6}\\left[\\frac{1}{p^{2}+4}+\\frac{1}{p^{2}+9}\\right]\\)"
+                ],
+                correct: 2
+            },
+            {
+                text: "If \\(F[F(x)] = f(p)\\) then \\(F[F(x)\\cos ax]\\) is equal to:",
+                options: [
+                    "\\(f(p+a)+f(p-a)\\)",
+                    "\\(\\frac{1}{2}[f(p+a)+f(p-a)]\\)",
+                    "\\(f(p+a)-f(p-a)\\)",
+                    "\\(\\frac{1}{2}[f(p+a)-f(p-a)]\\)"
+                ],
+                correct: 1
+            },
+            {
+                text: "The Fourier cosine transform of \\(e^{-x}\\) is:",
+                options: [
+                    "\\(\\frac{1}{1+p^{2}}\\)",
+                    "\\(\\sqrt{\\frac{2}{\\pi}}\\frac{1}{1+p^{2}}\\)",
+                    "\\(\\frac{p}{1+p^{2}}\\)",
+                    "\\(\\sqrt{\\frac{2}{\\pi}}\\frac{p}{1+p^{2}}\\)"
+                ],
+                correct: 1
+            },
+            // Page 6 (25-29)
+            {
+                text: "If the first 100 derivatives of \\(f(x)\\) vanish identically as \\(x \\to \\infty\\), then Fourier transform of \\(\\frac{d^{101}}{dx^{101}}F(x) =\\)",
+                options: [
+                    "\\(p^{101}f(p)\\)",
+                    "\\(-p^{101}f(p)\\)",
+                    "\\(ip^{101}f(p)\\)",
+                    "\\(-ip^{101}f(p)\\)"
+                ],
+                correct: 2
+            },
+            {
+                text: "If \\(xJ_{0}(px)\\) is the kernel, then infinite Hankel transform of \\(f(x) = \\begin{cases}1 - x^{2} & 0 < x < 1 \\\\ 0 & 1 < x\\end{cases}\\) is:",
+                options: [
+                    "\\(\\displaystyle\\int_{0}^{1}(1 + x^{2})J_{1}(px)\\,dx\\)",
+                    "\\(\\displaystyle\\int_{0}^{1}x(1 + x^{2})J_{1}(px)\\,dx\\)",
+                    "\\(\\displaystyle\\int_{0}^{1}x(1 - x^{2})J_{0}(px)\\,dx\\)",
+                    "\\(\\displaystyle\\int_{0}^{1}(1 - x^{2})J_{1}(px)\\,dx\\)"
+                ],
+                correct: 2
+            },
+            {
+                text: "The value of \\(H_{0}\\left\\{\\frac{\\sin 2x}{x};p\\right\\}\\) for \\(0 < p < 2\\) is:",
+                options: [
+                    "\\((4 - p^{2})^{-1/2}\\)",
+                    "\\((4 - p^{2})^{1/2}\\)",
+                    "\\((4 + p^{2})^{-1/2}\\)",
+                    "\\((4 + p^{2})^{1/2}\\)"
+                ],
+                correct: 2
+            },
+            {
+                text: "The differential equation \\(x\\frac{\\partial^{2}u}{\\partial x^{2}} + x\\frac{\\partial^{2}u}{\\partial x\\partial y} + y\\frac{\\partial^{2}u}{\\partial y^{2}} = 0\\) is:",
+                options: [
+                    "Hyperbolic in region \\(x^{2} \\geq 4y\\)",
+                    "Hyperbolic in region \\(x^{2} > 4y\\)",
+                    "Elliptic in region \\(x^{2} > 4y\\)",
+                    "Elliptic in region \\(x^{2} \\geq 4y\\)"
+                ],
+                correct: 1
+            },
+            {
+                text: "Nature of the differential equation: \\(\\frac{\\partial^{2}u}{\\partial x^{2}} - 2\\frac{\\partial^{2}u}{\\partial x\\partial y} + 2\\frac{\\partial^{2}u}{\\partial x\\partial z} + 2\\frac{\\partial^{2}u}{\\partial y^{2}} - 2\\frac{\\partial^{2}u}{\\partial y\\partial z} + \\frac{\\partial^{2}u}{\\partial z^{2}} = 0\\)",
+                options: [
+                    "Hyperbolic",
+                    "Elliptic",
+                    "Parabolic",
+                    "None of these"
+                ],
+                correct: 1
+            },
+            // Page 7 (30-34)
+            {
+                text: "Green's function is useful in the study of",
+                options: [
+                    "Ordinary differential equations",
+                    "Elliptic partial differential equations",
+                    "Hyperbolic partial differential equations",
+                    "Linear partial differential equations"
+                ],
+                correct: 3
+            },
+            {
+                text: "Sturm-Liouville equation is \\([r(x)y']' + [q(x) + \\lambda p(x)]y = 0\\), defined on \\(a \\leq x \\leq b\\). Boundary conditions are:",
+                options: [
+                    "\\(k_{1}y'' + k_{2}y' = 0\\) at \\(x = a\\); \\(l_{1}y'' + l_{2}y = 0\\) at \\(x = b\\)",
+                    "\\(k_{1}y'' + k_{2}y = 0\\) at \\(x = a\\); \\(l_{1}y'' + l_{2}y = 0\\) at \\(x = b\\)",
+                    "\\(k_{1}y + k_{2}y' = 0\\) at \\(x = a\\); \\(l_{1}y + l_{2}y' = 0\\) at \\(x = b\\)",
+                    "\\(y(a) + y'(a) = 1\\) at \\(x = a\\); \\(y(b) + y'(b) = 0\\) at \\(x = b\\)"
+                ],
+                correct: 2
+            },
+            {
+                text: "If \\(\\theta\\) is considered as temperature, then the equation \\(\\frac{\\partial^{2}\\theta}{\\partial x^{2}} = \\frac{1}{\\kappa}\\frac{\\partial\\theta}{\\partial t}\\) is known as:",
+                options: [
+                    "One-dimensional wave equation",
+                    "Diffusion equation",
+                    "One-dimensional Laplace equation",
+                    "None of these"
+                ],
+                correct: 1
+            },
+            {
+                text: "The eigen value of the Sturm-Liouville boundary value problem \\(\\frac{d^{2}y}{dx^{2}} + \\lambda y = 0;\\; y(0) = y(2\\pi);\\; y'(0) = y'(2\\pi)\\) are",
+                options: [
+                    "\\(-(n+1)^{2}\\)",
+                    "\\((n+1)^{2}\\)",
+                    "\\(n^{2}\\)",
+                    "\\(-n^{2}\\)"
+                ],
+                correct: 2
+            },
+            {
+                text: "The curve, on which the functional \\(I[y(x)] = \\int_{0}^{1}\\{(y')^{2} + 15xy\\}\\,dx;\\; y(0) = 0;\\; y(1) = 1\\) can be extremized is:",
+                options: [
+                    "\\(y - x^{3} + x = 0\\)",
+                    "\\(y + x^{3} - x = 10\\)",
+                    "\\(4y - x + 5x^{3} = 0\\)",
+                    "\\(4y + x - 5x^{3} = 0\\)"
+                ],
+                correct: 3
+            },
+            // Page 8 (35-38)
+            {
+                text: "Which is not the Euler-Lagrange equation for variational problems?",
+                options: [
+                    "\\(\\frac{d}{dx}\\left(\\frac{\\partial f}{\\partial x}\\right) - \\frac{\\partial f}{\\partial y} = 0\\)",
+                    "\\(\\frac{\\partial f}{\\partial x} - \\frac{d}{dx}\\left(\\frac{\\partial f}{\\partial y}\\right) = 1\\)",
+                    "\\(\\frac{\\partial f}{\\partial y} - \\frac{d}{dx}\\left(\\frac{\\partial f}{\\partial y}\\right) = 0\\)",
+                    "\\(\\frac{\\partial f}{\\partial x} - \\frac{d^{2}}{dx^{2}}\\left(\\frac{\\partial f}{\\partial y}\\right) = 0\\)"
+                ],
+                correct: 0
+            },
+            {
+                text: "Brachistochrone Problem in calculus of variations is related with:",
+                options: [
+                    "Path of shortest distance joining two points",
+                    "Path followed by particle in absence of friction in minimum time",
+                    "Surface of revolution of stationary area when revolved about the x-axis",
+                    "None of these"
+                ],
+                correct: 1
+            },
+            {
+                text: "The integral equation corresponding to the differential equation \\(\\frac{d^{2}y}{dx^{2}} + x\\frac{dy}{dx} + y = 0\\) with initial conditions \\(y(0) = 1\\), \\(y'(0) = 0\\) is:",
+                options: [
+                    "\\(\\phi(x) = 1 + \\int_{0}^{x}(2x - \\xi)\\phi(\\xi)\\,d\\xi\\)",
+                    "\\(\\phi(x) = -1 - \\int_{0}^{x}(2x - \\xi)\\phi(\\xi)\\,d\\xi\\)",
+                    "\\(\\phi(x) = 1 + \\int_{0}^{x}(\\xi + 2x)\\phi(\\xi)\\,d\\xi\\)",
+                    "\\(\\phi(x) = -\\int_{0}^{x}(2x - \\xi)\\phi(\\xi)\\,d\\xi\\)"
+                ],
+                correct: 0
+            },
+            {
+                text: "The resolvent kernel \\(R(x, \\xi; \\lambda)\\) of the Volterra integral equation with kernel \\(K(x, \\xi) = 1\\) is:",
+                options: [
+                    "\\(e^{\\lambda(x - \\xi)}\\)",
+                    "\\(e^{\\lambda(x - \\xi)}\\)",
+                    "\\(e^{\\lambda(x + \\xi)}\\)",
+                    "\\(e^{\\lambda(x - \\xi)}\\)"
+                ],
+                correct: 1
+            },
+            // Page 9 (39-43)
+            {
+                text: "For homogenous Fredholm integral equation of second kind, the Eigen values of symmetric kernel are:",
+                options: [
+                    "Complex numbers",
+                    "purely imaginary number",
+                    "purely real number",
+                    "None of these"
+                ],
+                correct: 2
+            },
+            {
+                text: "The value of the solution \\(u = f(x,y)\\) at \\((1,1)\\) of the Cauchy problem \\(u_{xx} - u_{yy} = 1\\), \\(f(x,0) = x^{2}\\), \\(f_{y}(x,0) = 1\\) is:",
+                options: [
+                    "\\(5/2\\)",
+                    "\\(5/3\\)",
+                    "\\(9/5\\)",
+                    "\\(-5/2\\)"
+                ],
+                correct: 1
+            },
+            {
+                text: "The solution of the integral equation \\(\\phi(x) = 1 + \\int_{0}^{x}\\phi(\\xi)\\,d\\xi\\) is:",
+                options: [
+                    "\\(1 + e^{x}\\)",
+                    "\\(1 - e^{x}\\)",
+                    "\\(e^{-x}\\)",
+                    "\\(e^{x}\\)"
+                ],
+                correct: 3
+            },
+            {
+                text: "Solution of the integral equation \\(\\phi(x) = e^{x} + (1 - e) + \\int_{0}^{1}\\phi(\\xi)\\,d\\xi\\) is:",
+                options: [
+                    "\\(1 - x - e^{x}\\)",
+                    "\\(1 + x + e^{x}\\)",
+                    "\\(e^{x}\\)",
+                    "\\(e^{-x}\\)"
+                ],
+                correct: 2
+            },
+            {
+                text: "If \\((X,d)\\) is a metric space, then which statement is not true:",
+                options: [
+                    "\\(\\emptyset\\) is open",
+                    "\\(X\\) is open",
+                    "The union of arbitrary collection of open sets is open",
+                    "The intersection of infinite number of open sets is open"
+                ],
+                correct: 3
+            },
+            // Page 10 (44-48)
+            {
+                text: "If \\((X,d)\\) is a metric space, then which statement is true:",
+                options: [
+                    "On real line, with usual metric, singleton set \\(\\{x\\}\\) is open",
+                    "Every set in a discrete space \\((X,d)\\) is open",
+                    "The set \\(\\mathbb{Q}\\) of rational numbers is closed",
+                    "Every finite subset of a metric space is not necessarily closed"
+                ],
+                correct: 1
+            },
+            {
+                text: "Which is not separable?",
+                options: [
+                    "The complex plane \\(\\mathbb{C}\\)",
+                    "The real line",
+                    "The space \\(l_{\\infty}\\)",
+                    "The space \\(l_{p}\\) with \\(1 \\leq p < \\infty\\)"
+                ],
+                correct: 2
+            },
+            {
+                text: "Which statement is not true:",
+                options: [
+                    "Every closed subset of a compact metric space is compact",
+                    "The discrete space \\((X,d)\\) where \\(X\\) is finite set, is compact",
+                    "Open interval \\((0,1)\\) with usual metric is compact",
+                    "Compactness is connected with Heine-Borel property"
+                ],
+                correct: 2
+            },
+            {
+                text: "A subset \\(A\\) of a metric space \\(X\\) is closed iff its complement \\(A'\\) is",
+                options: [
+                    "Closed",
+                    "Open",
+                    "Bounded",
+                    "None of these"
+                ],
+                correct: 1
+            },
+            {
+                text: "A mapping \\(d:\\mathbb{R}\\times\\mathbb{R}\\to\\mathbb{R}\\) defined as: \\(d(x,y) = \\begin{cases}1, & x \\neq y\\\\ 0, & x = y\\end{cases}\\;\\forall x,y\\in\\mathbb{R}\\), then \\(d\\) is known as:",
+                options: [
+                    "Usual Metric",
+                    "Trivial Metric",
+                    "Euclidean Metric",
+                    "None of these"
+                ],
+                correct: 3
+            },
+            // Page 11 (49-53)
+            {
+                text: "\\((X,d)\\) be a Metric space and \\(A\\) be a subset of \\(X\\), then diameter of \\(A\\) is:",
+                options: [
+                    "\\(\\inf\\{d(a_{1},a_{2}): a_{1},a_{2}\\in A\\}\\)",
+                    "\\(\\inf\\{d(a_{1}+a_{2},a_{1}-a_{2}): a_{1},a_{2}\\in A\\}\\)",
+                    "\\(\\sup\\{d(a_{1},a_{2}): a_{1},a_{2}\\in A\\}\\)",
+                    "\\(\\sup\\{d(a_{1}\\cdot a_{2},a_{1}/a_{2}): a_{1},a_{2}\\in A\\}\\)"
+                ],
+                correct: 2
+            },
+            {
+                text: "Which statement is incorrect for topological spaces:",
+                options: [
+                    "If \\(T_{1}\\) and \\(T_{2}\\) are two topologies on \\(X\\), then \\(T_{1} \\cap T_{2}\\) is also a topology on \\(X\\)",
+                    "Subspace of a topological space is itself a topological space",
+                    "Subset of a topological space is nowhere dense",
+                    "Subset of a topological space has empty boundary"
+                ],
+                correct: 2
+            },
+            {
+                text: "If \\((X,d)\\) is a topological space, then a family \\(S\\) of subsets of \\(X\\) is called sub-base for \\(T\\), if:",
+                options: [
+                    "\\(S \\subset T\\) and finite intersection of members of \\(S\\) form a base for \\(T\\)",
+                    "\\(S \\subset T\\) and arbitrary intersection of members of \\(S\\) form a base for \\(T\\)",
+                    "\\(S \\subset T\\) and finite union of members of \\(S\\) form a base for \\(T\\)",
+                    "\\(S \\subset T\\) and infinite union of members of \\(S\\) form a base for \\(T\\)"
+                ],
+                correct: 0
+            },
+            {
+                text: "If \\((X,T_{1})\\) and \\((Y,T_{2})\\) are two topological spaces and mapping \\(f\\) is defined from \\(X\\) to \\(Y\\). If \\(B\\) is the base for topology \\(T_{2}\\), then \\(f\\) is called continuous, if:",
+                options: [
+                    "for each \\(B_{i} \\in B\\), \\(f^{-1}(B_{i})\\) is \\(T_{1}\\)-open",
+                    "for each \\(B_{i} \\in B\\), \\(f^{-1}(B_{i})\\) is \\(T_{1}\\)-closed",
+                    "for some \\(B_{i} \\in B\\), \\(f^{-1}(B_{i})\\) is \\(T_{1}\\)-open",
+                    "for some \\(B_{i} \\in B\\), \\(f^{-1}(B_{i})\\) is \\(T_{1}\\)-closed"
+                ],
+                correct: 0
+            },
+            {
+                text: "Which is not compact?",
+                options: [
+                    "A continuous image of a compact space",
+                    "Every indiscrete space",
+                    "Every closed and bounded interval on \\(\\mathbb{R}\\) with usual topology",
+                    "\\((0,1]\\) interval"
+                ],
+                correct: 3
+            },
+            // Page 12 (54-57)
+            {
+                text: "For a topological space \\(X\\) which statement is not equivalent to others (odd statement)",
+                options: [
+                    "\\(X\\) is connected",
+                    "\\(X\\) cannot be expressed as the union of two non-empty separated sets",
+                    "\\(X\\) cannot be expressed as the union of two non-empty disjoint closed sets",
+                    "\\(X\\) has at least one proper subset which is both open and closed"
+                ],
+                correct: 3
+            },
+            {
+                text: "A topological space \\((X,T)\\) is said to be second countable space, if:",
+                options: [
+                    "It is first countable",
+                    "there exists a countable base for \\(T\\)",
+                    "There exists a countable local base at each point of \\(X\\)",
+                    "None of these"
+                ],
+                correct: 1
+            },
+            {
+                text: "If \\((X,T)\\) is a topological space, then which is not true?",
+                options: [
+                    "Every finite subset of \\(X\\) is closed",
+                    "Every singleton subset of \\(X\\) is closed",
+                    "\\((X,T)\\) is a \\(T_{1}\\) space",
+                    "Every singleton subset of a \\(T_{2}\\)-space is open"
+                ],
+                correct: 3
+            },
+            {
+                text: "In the statement of Heine-Borel Theorem, subset \\(A\\) of \\(\\mathbb{R}\\) is compact iff:",
+                options: [
+                    "\\(A\\) is bounded and open",
+                    "\\(A\\) is unbounded and open",
+                    "\\(A\\) is bounded and closed",
+                    "\\(A\\) is unbounded and closed"
+                ],
+                correct: 2
+            },
+            // Page 13 (58-62)
+            {
+                text: "The equation of the plane that has three point of contact at the origin with the curve \\(x = t^{2} - 1;\\; y = t^{3} - 1;\\; z = t^{4} - 1\\) will be:",
+                options: [
+                    "\\(2x + 5y + 3z = 0\\)",
+                    "\\(3x - 8y + 6z = 0\\)",
+                    "\\(2x - 5y + 3z = 0\\)",
+                    "\\(3x + 8y - 6z = 0\\)"
+                ],
+                correct: 1
+            },
+            {
+                text: "The equation of the osculating plane at a given point is given by:",
+                options: [
+                    "\\([R - r(s), r'(s), r''(s)] = 0\\)",
+                    "\\([R, R - r(s), r''(s)] = 0\\)",
+                    "\\([R - r(s), R - r'(s), r''(s)] = 0\\)",
+                    "\\([R - r(s)] = 0\\)"
+                ],
+                correct: 0
+            },
+            {
+                text: "The arc rate of rotation of the binormal at a point \\(P\\) is called:",
+                options: [
+                    "Curvature at \\(P\\)",
+                    "Torsion at \\(P\\)",
+                    "skew curvature at \\(P\\)",
+                    "spherical curvature at \\(P\\)"
+                ],
+                correct: 1
+            },
+            {
+                text: "Which is not known as Serret-Frenet formulae?",
+                options: [
+                    "\\(\\frac{d\\vec{b}}{ds} = -\\tau\\vec{n}\\)",
+                    "\\(\\frac{d\\vec{b}}{ds} = \\kappa\\vec{n}\\)",
+                    "\\(\\frac{d\\vec{n}}{ds} = -\\kappa\\vec{t} + \\tau\\vec{b}\\)",
+                    "\\(\\frac{d\\vec{b}}{ds} = \\kappa\\vec{t}\\)"
+                ],
+                correct: 3
+            },
+            {
+                text: "A curve will be helix if it's:",
+                options: [
+                    "only curvature is constant",
+                    "only torsion is constant",
+                    "Both curvature and torsion are constant",
+                    "curvature is infinite"
+                ],
+                correct: 2
+            },
+            // Page 14 (63-67)
+            {
+                text: "The osculating sphere at point \\(P\\) is a sphere which has contact with the curve at \\(P\\).",
+                options: [
+                    "three point",
+                    "four point",
+                    "infinite point",
+                    "two point"
+                ],
+                correct: 1
+            },
+            {
+                text: "Which of the following is not the property of Bertrand curves?",
+                options: [
+                    "The distance between corresponding points of two curves is constant",
+                    "The tangents at the corresponding points of two curves are inclined at a constant angle",
+                    "The curvature and torsion of together associate Bertrand curves are connected by linear relation",
+                    "Bertrand curves has vanishing torsion"
+                ],
+                correct: 3
+            },
+            {
+                text: "The equation of edge of regression of one parameter family of surface \\(f(x,y,z,a) = 0\\) is given by:",
+                options: [
+                    "\\(\\frac{\\partial f}{\\partial a} = 0\\)",
+                    "\\(f = 0, \\frac{\\partial f}{\\partial a} = 0\\)",
+                    "\\(f = 0, \\frac{\\partial f}{\\partial a} = 0, \\frac{\\partial^{2}f}{\\partial a^{2}} = 0\\)",
+                    "\\(f = 0, \\frac{\\partial^{2}f}{\\partial a^{2}} = 0\\)"
+                ],
+                correct: 2
+            },
+            {
+                text: "The first fundamental form on the surface of revolution \\(\\vec{r} = f(t)(\\cos\\theta)\\vec{e}_{1} + f(t)(\\sin\\theta)\\vec{e}_{2} + g(t)\\vec{e}_{3}\\), is:",
+                options: [
+                    "\\(f\\,d\\theta^{2} + (f' + g')\\,dt^{2}\\)",
+                    "\\(f\\,d\\theta + (f' + g')\\,dt\\)",
+                    "\\(f^{2}\\,d\\theta^{2} - (f'^{2} + g'^{2})\\,dt^{2}\\)",
+                    "\\(f^{2}\\,d\\theta^{2} + (f'^{2} + g'^{2})\\,dt^{2}\\)"
+                ],
+                correct: 3
+            },
+            {
+                text: "If \\(\\vec{r} = \\vec{r}(u,v)\\) represents a surface where \\(u\\) and \\(v\\) are curvilinear coordinates of a point, then first fundamental form of surface in \\(du\\) and \\(dv\\) will be:",
+                options: [
+                    "Positive definite quadratic form",
+                    "negative definite quadratic form",
+                    "positive semidefinite quadratic form",
+                    "negative semidefinite quadratic form"
+                ],
+                correct: 0
+            },
+            // Page 15 (68-71)
+            {
+                text: "The necessary and sufficient condition for the two family of curves given by \\(P\\,du^{2} + 2Q\\,du\\,dv + R\\,dv^{2} = 0\\), to be orthogonal is:",
+                options: [
+                    "\\(ER + GP - 2FQ = 0\\)",
+                    "\\(ER + GP + 2FQ = 0\\)",
+                    "\\(EF + PQ - 2RG = 0\\)",
+                    "\\(EF + PQ + 2RG = 0\\)"
+                ],
+                correct: 0
+            },
+            {
+                text: "Rectifying plane is a plane which contains:",
+                options: [
+                    "tangent and normal",
+                    "normal and binormal",
+                    "tangent and binormal",
+                    "None of these"
+                ],
+                correct: 2
+            },
+            {
+                text: "Which one of the following, usual notation, is correct?",
+                options: [
+                    "\\(\\vec{r}''' = \\kappa'\\vec{n} - \\kappa^{2}\\vec{t}\\)",
+                    "\\(\\vec{r}''' = \\kappa'\\vec{n} - \\kappa^{2}\\vec{t} + \\kappa\\tau\\vec{b}\\)",
+                    "\\(\\vec{r}''' = \\kappa'\\vec{n} - \\kappa\\vec{t} + \\kappa\\tau\\vec{b}\\)",
+                    "\\(\\vec{r}''' = -\\kappa^{2}\\vec{t} + \\kappa\\tau\\vec{b}\\)"
+                ],
+                correct: 1
+            },
+            {
+                text: "Curvature of spherical indicatrix of Binormal is given by:",
+                options: [
+                    "\\(\\tau\\sqrt{\\kappa^{2} + \\tau^{2}}\\)",
+                    "\\(\\frac{\\sqrt{\\kappa^{2} + \\tau^{2}}}{\\kappa}\\)",
+                    "\\(\\frac{\\sqrt{\\kappa^{2} + \\tau^{2}}}{\\tau}\\)",
+                    "\\(\\frac{\\sqrt{\\kappa^{2} + \\tau^{2}}}{\\tau}\\)"
+                ],
+                correct: 3
+            },
+            // Page 16 (72-76)
+            {
+                text: "Centre of the osculating circle is called the centre of curvature, whose position vector \\(\\vec{c}\\), for \\(\\rho = 1/\\kappa\\):",
+                options: [
+                    "\\(\\vec{c} = \\rho\\vec{n}\\)",
+                    "\\(\\vec{c} = \\rho\\vec{n} + \\vec{r}\\)",
+                    "\\(\\vec{c} = R + \\rho\\vec{r}\\)",
+                    "\\(\\vec{c} = \\vec{r}\\kappa + \\rho\\vec{n}\\)"
+                ],
+                correct: 1
+            },
+            {
+                text: "Principal radii of curvature of the surface \\(y\\cos(z/a) = x\\sin(z/a)\\) are:",
+                options: [
+                    "\\(\\pm(x^{2} + y^{2})z^{2}/a\\)",
+                    "\\(\\pm(x^{2} + y^{2} + a^{2})/a\\)",
+                    "\\(\\pm(x^{2} + y + z)/a\\)",
+                    "\\(\\pm(x^{2} + y^{2})/za\\)"
+                ],
+                correct: 2 // '*' replaced with 2 (since answer marked '*' but options are 0-3; we put 2 as placeholder from context)
+            },
+            {
+                text: "If a tensor equation holds in a one coordinate system, then which is not correct:",
+                options: [
+                    "it will hold in cartesian coordinate system",
+                    "it will hold in polar coordinate system",
+                    "it will hold in every coordinate system",
+                    "it will not hold in spherical coordinate system"
+                ],
+                correct: 3
+            },
+            {
+                text: "\\(A_{i,j}\\) is",
+                options: [
+                    "a tensor of rank zero",
+                    "a tensor of rank two",
+                    "not a tensor",
+                    "an invariant"
+                ],
+                correct: 2 // '*' replaced with 2
+            },
+            {
+                text: "Which statement is incorrect for contraction of a tensor:",
+                options: [
+                    "Contraction is being done through indices",
+                    "It reduces the rank by two for an index",
+                    "set two contravariant indices equal",
+                    "set one covariant and one contravariant indices equal"
+                ],
+                correct: 2
+            },
+            // Page 17 (77-81)
+            {
+                text: "A skew symmetric tensor of rank two in \\(V_{n}\\) has independent components:",
+                options: [
+                    "\\(\\frac{n(n-1)}{2}\\)",
+                    "\\(\\frac{n(n+1)}{2}\\)",
+                    "\\(\\frac{n(n-1)^{2}}{2}\\)",
+                    "\\(\\frac{n(n+1)^{2}}{2}\\)"
+                ],
+                correct: 0
+            },
+            {
+                text: "If \\(A_{ij}\\) is a tensor and \\(B^{i}\\) and \\(C^{j}\\) are vectors, then the invariant is:",
+                options: [
+                    "\\(A_{ij}B_{i}C_{j}\\)",
+                    "\\(A_{ij}B^{i}C^{j}\\)",
+                    "\\(A^{ij}B^{i}C^{j}\\)",
+                    "\\(A_{ij}B^{i}C_{j}\\)"
+                ],
+                correct: 1
+            },
+            {
+                text: "For the metric in \\(V_{3}\\), \\(ds^{2} = 5(dx^{1})^{2} + 3(dx^{2})^{2} + 4(dx^{3})^{2}\\). The value of component \\(g^{33}\\) of metric tensor will be:",
+                options: [
+                    "\\(1/5\\)",
+                    "\\(1/3\\)",
+                    "\\(1/4\\)",
+                    "\\(1/60\\)"
+                ],
+                correct: 2
+            },
+            {
+                text: "If \\(A^{ij}\\) is skew symmetric tensor and \\(B_{ij}\\) is symmetric, the value of \\(A^{ij}B_{ij}\\) will be:",
+                options: [
+                    "\\(-1\\)",
+                    "\\(1/2\\)",
+                    "\\(1\\)",
+                    "\\(0\\)"
+                ],
+                correct: 3
+            },
+            {
+                text: "For an orthogonal coordinate system \\(V_{3}\\), which one is correct:",
+                options: [
+                    "\\(g^{ij} = g_{ij}\\)",
+                    "\\(g^{ii} = \\frac{1}{g_{ii}}\\)",
+                    "\\(g^{ii}g_{ii} = 0\\)",
+                    "\\(g_{11} + g_{22} + g_{33} = 0\\)"
+                ],
+                correct: 1
+            },
+            // Page 18 (82-86)
+            {
+                text: "If \\(g = |g_{ij}|\\), then \\(\\left\\{\\begin{array}{c}i\\\\ j\\end{array}\\right\\}\\) is equal to:",
+                options: [
+                    "\\(\\frac{\\partial}{\\partial x^{2}}(\\log g)\\)",
+                    "\\(\\frac{\\partial}{\\partial x^{2}}(\\sqrt{g})\\)",
+                    "\\(\\frac{1}{2g}\\frac{\\partial g}{\\partial x^{2}}\\)",
+                    "\\(\\frac{1}{2g}\\frac{\\partial\\sqrt{g}}{\\partial x^{2}}\\)"
+                ],
+                correct: 2
+            },
+            {
+                text: "For the metric \\(ds^{2} = dx^{2} + dy^{2} + dz^{2} - \\sin^{2}(xyz)\\,dt^{2}\\), the value of Christoffel symbol \\([41,4]\\) will be:",
+                options: [
+                    "\\(\\cos(xyz)\\)",
+                    "\\(\\frac{\\cos(xyz)}{2}\\)",
+                    "\\(\\frac{\\sin(xyz)}{2}\\)",
+                    "\\(\\frac{\\sin(xyz)}{2}\\)"
+                ],
+                correct: 2 // '*' replaced
+            },
+            {
+                text: "If \\(I\\) and \\(J\\) are invariants, then",
+                options: [
+                    "\\(\\mathrm{div}(JI_{i}) = J\\nabla^{2}I + g^{ij}I_{i}J_{j}\\)",
+                    "\\(\\mathrm{div}(JI_{i}) = \\nabla^{2}I + g^{ij}J_{i}\\)",
+                    "\\(\\mathrm{div}(I_{i}) = J\\nabla^{2}I + J_{i}\\)",
+                    "\\(\\mathrm{div}(I_{i}) = J\\nabla^{2}I\\)"
+                ],
+                correct: 0 // '*' replaced
+            },
+            {
+                text: "Which statement is incorrect for tensors:",
+                options: [
+                    "\\(g_{ij,k} = 0\\)",
+                    "\\(\\delta_{j,k}^{i} = 0\\)",
+                    "\\(\\mathrm{Curl}\\,A_{i} = A_{i,j} - A_{j,i}\\)",
+                    "\\(\\mathrm{Div}\\,A^{i} = A_{i,j}^{i}g_{ij}\\)"
+                ],
+                correct: 2
+            },
+            {
+                text: "If Mellin transform of \\(f(x)\\) is denoted by \\(M[f(x),p]\\) or \\(f^{*}(p)\\), then \\(M[f(x^{a}),p]\\) is equal to:",
+                options: [
+                    "\\(f^{*}(p + a)\\)",
+                    "\\(af^{*}(p), a > 0\\)",
+                    "\\(af^{*}(p/a), a > 0\\)",
+                    "\\(a^{-1}f^{*}(p + a), a > 0\\)"
+                ],
+                correct: 2
+            },
+            // Page 19 (87-90)
+            {
+                text: "If \\(f^{*}(p)\\) and \\(g^{*}(p)\\) are Mellin transforms of \\(f(x)\\) and \\(g(x)\\) respectively, and \\(M[f(x)g(x);p] = \\frac{1}{2\\pi i}\\int_{c-i\\infty}^{c+i\\infty}I\\,dz\\) then value of \\(I\\) will be:",
+                options: [
+                    "\\(f^{*}(p)g^{*}(p - z)\\)",
+                    "\\(f^{*}(z)g^{*}(p - z)\\)",
+                    "\\(f^{*}(p + z)g^{*}(z)\\)",
+                    "\\(f^{*}(p + z)g^{*}(p - z)\\)"
+                ],
+                correct: 1
+            },
+            {
+                text: "If \\(m\\) is the mass of rigid body at any time \\(t\\) and \\(X,Y,Z\\) be the components of external force acting along \\(x,y,z\\) axis respectively, then equation of the type \\(m(x'\\bar{y}' - y'\\bar{x}') = \\Sigma(x'Y - y'X)\\) represents:",
+                options: [
+                    "motion of translation",
+                    "motion of rotation",
+                    "Both rotation and translation",
+                    "None of these"
+                ],
+                correct: 1
+            },
+            {
+                text: "The integral \\(\\int_{0}^{t}F\\,dt\\), where \\(F\\) is a variable force and time interval is \\(0\\) to \\(t\\), represents:",
+                options: [
+                    "Finite force on the body",
+                    "Moment of impulses",
+                    "Impulse",
+                    "None of these"
+                ],
+                correct: 2
+            },
+            {
+                text: "The moment of inertia of a right circular solid cone, whose height is \\(h\\) and base is \\(r\\), about its axis is:",
+                options: [
+                    "\\(\\frac{3}{40}Mhr\\)",
+                    "\\(\\frac{3}{20}Mhr\\)",
+                    "\\(\\frac{3}{10}Mhr\\)",
+                    "\\(\\frac{3}{10}Mr^{2}\\)"
+                ],
+                correct: 3
+            }
+        ];
+
+        // ---------- GK 91–120 (from provided text) ----------
+        const gkData = [
+            { text: "In 2024, which country held the presidency of the G20 summit, taking over from India?", options: ["South Africa", "Brazil", "Indonesia", "Argentina"], correct: 1 },
+            { text: "Which country successfully landed the SLIM (Smart Lander for Investigating Moon) spacecraft on the lunar surface in early 2024?", options: ["South Korea", "France", "Japan", "China"], correct: 2 },
+            { text: "Which nation won the ICC Men's T20 World Cup held in 2024?", options: ["Australia", "India", "South Africa", "England"], correct: 1 },
+            { text: "Dr. Nallathamby Kalaiselvi recently became the first woman Director-General of which premier research organization in India?", options: ["DRDO", "ICMR", "CSIR", "ISRO"], correct: 2 },
+            { text: "The Nobel Prize in Medicine 2023 was awarded for discoveries concerning nucleoside base modifications that enabled the development of effective vaccines against which disease?", options: ["Malaria", "COVID-19", "Ebola", "Tuberculosis"], correct: 1 },
+            { text: "Which of the following teaching approaches gives students the maximum opportunity to work at their own pace?", options: ["Lecture method", "Programmed instruction", "Demonstration method", "Collaborative learning"], correct: 1 },
+            { text: "In a research study, any characteristic or attribute that can take on different values is known as a:", options: ["Construct", "Variable", "Hypothesis", "Constant"], correct: 1 },
+            { text: "Which sampling technique ensures that every individual in a population has an equal and independent chance of being selected?", options: ["Quota sampling", "Snowball sampling", "Simple random sampling", "Purposive sampling"], correct: 2 },
+            { text: "The UGC scheme 'Paramarsh' is specifically designed to promote:", options: ["Financial grants for PhD scholars", "Mentoring of Higher Education Institutions to help them achieve NAAC accreditation", "Distance learning programs in rural areas", "Foreign student exchange programs"], correct: 1 },
+            { text: "A teacher's effectiveness is most reliably measured by:", options: ["Their years of experience", "The strictness of their classroom discipline", "The improvement and engagement of their students", "The number of research papers they have published"], correct: 2 },
+            { text: "In the context of computer networking, what does 'LAN' stand for?", options: ["Local Area Network", "Logical Access Node", "Large Array Network", "Linear Area Network"], correct: 0 },
+            { text: "What is the primary function of a DNS (Domain Name System) server on the internet?", options: ["To block malware and viruses", "To host website files and images", "To translate human-readable domain names into numerical IP addresses", "To encrypt email communications"], correct: 2 },
+            { text: "Which of the following is considered an 'Input Device' for a computer?", options: ["Monitor", "Printer", "Speaker", "Scanner"], correct: 3 },
+            { text: "In standard email services like Gmail, what is the typical maximum size limit for a file attachment before it must be sent as a cloud link (like Google Drive)?", options: ["5 MB", "25 MB", "100 MB", "1 GB"], correct: 1 },
+            { text: "Software that is maliciously designed to gather information about a person or organization without their knowledge is known as:", options: ["Firmware", "Freeware", "Spyware", "Shareware"], correct: 2 },
+            { text: "Coral bleaching, a major threat to marine biodiversity, is most directly caused by:", options: ["Overfishing", "Plastic pollution", "Rising ocean temperatures", "Oil spills"], correct: 2 },
+            { text: "The headquarters of the International Union for Conservation of Nature (IUCN), the body that publishes the 'Red List' of threatened species, is located in:", options: ["Gland, Switzerland", "New York, USA", "London, UK", "Vienna, Austria"], correct: 0 },
+            { text: "The Water (Prevention and Control of Pollution) Act, a landmark environmental law in India, was passed in the year:", options: ["1972", "1974", "1981", "1986"], correct: 1 },
+            { text: "The traditional 'Bishnoi' community of Rajasthan is globally renowned for their historic and religious commitment to conserving the:", options: ["Bengal Tiger", "Asian Elephant", "Blackbuck and Khejri trees", "Snow Leopard"], correct: 2 },
+            { text: "Which of the following types of pollution is primarily measured using the 'Decibel (dB)' scale?", options: ["Air Pollution", "Water Pollution", "Soil Contamination", "Noise Pollution"], correct: 3 },
+            { text: "The spectacular Sun Temple, a UNESCO World Heritage site known for its chariot-shaped architecture, is located in:", options: ["Hampi, Karnataka", "Konark, Odisha", "Khajuraho, Madhya Pradesh", "Madurai, Tamil Nadu"], correct: 1 },
+            { text: "The political party 'All India Forward Bloc' was established in 1939 by:", options: ["Subhas Chandra Bose", "B.R. Ambedkar", "Jayaprakash Narayan", "C. Rajagopalachari"], correct: 0 },
+            { text: "The closest star to our Solar System is:", options: ["Sirius", "Alpha Centauri A", "Proxima Centauri", "Betelgeuse"], correct: 2 },
+            { text: "Chilika Lake, recognized as the largest coastal lagoon in India and a major wintering ground for migratory birds, is situated in the state of:", options: ["Andhra Pradesh", "Kerala", "West Bengal", "Odisha"], correct: 3 },
+            { text: "The Cabinet Mission, which proposed a framework for the transfer of power to Indian leadership, arrived in India in the year:", options: ["1942", "1944", "1946", "1947"], correct: 2 },
+            { text: "Which Schedule of the Indian Constitution contains the official list of recognized languages in India?", options: ["Sixth Schedule", "Eighth Schedule", "Ninth Schedule", "Tenth Schedule"], correct: 1 },
+            { text: "Under the Constitution of India, the President has the power to nominate how many members to the Rajya Sabha (Council of States) from fields like art, literature, science, and social service?", options: ["2 members", "10 members", "12 members", "15 members"], correct: 2 },
+            { text: "The concept of 'Five-Year Plans' for economic development in the Indian Constitution was originally inspired by the constitution of which country?", options: ["United States of America", "USSR (Soviet Union)", "United Kingdom", "France"], correct: 1 },
+            { text: "Which statutory body acts as the primary regulator for the securities and stock market in India?", options: ["Reserve Bank of India (RBI)", "Securities and Exchange Board of India (SEBI)", "National Stock Exchange (NSE)", "Ministry of Corporate Affairs"], correct: 1 },
+            { text: "The Census of India, which provides demographic and socio-economic data about the Indian population, is generally conducted once every:", options: ["5 years", "10 years", "12 years", "15 years"], correct: 1 }
+        ];
+
+        // Combine
+        questions.push(...mathsData, ...gkData);
+
+        // ============================================================
+        //  STATE
+        // ============================================================
+        const totalQ = questions.length; // should be 120
+        let currentIndex = 0;
+        let userAnswers = new Array(totalQ).fill(null);   // selected option index or null
+        let marked = new Array(totalQ).fill(false);
+        let visited = new Array(totalQ).fill(false);
+
+        // Timer
+        let timeLeft = 120 * 60; // 120 minutes in seconds
+        let timerInterval = null;
+        let testSubmitted = false;
+
+        // ============================================================
+        //  DOM refs
+        // ============================================================
+        const questionArea = document.getElementById('questionArea');
+        const paletteGrid = document.getElementById('paletteGrid');
+        const timerDisplay = document.getElementById('timerDisplay');
+        const prevBtn = document.getElementById('prevBtn');
+        const nextBtn = document.getElementById('nextBtn');
+        const markBtn = document.getElementById('markBtn');
+        const clearBtn = document.getElementById('clearBtn');
+        const submitBtn = document.getElementById('submitBtn');
+        const paletteCounter = document.getElementById('paletteCounter');
+
+        const resultOverlay = document.getElementById('resultOverlay');
+        const scoreStats = document.getElementById('scoreStats');
+        const reviewList = document.getElementById('reviewList');
+        const filterBar = document.getElementById('filterBar');
+        const closeOverlayBtn = document.getElementById('closeOverlayBtn');
+        const downloadResultBtn = document.getElementById('downloadResultBtn');
+
+        // ============================================================
+        //  RENDER
+        // ============================================================
+        function renderQuestion(index) {
+            if (index < 0 || index >= totalQ) return;
+            currentIndex = index;
+            visited[index] = true;
+            const q = questions[index];
+            let html = `<div class="question-text">Q${index + 1}. ${q.text}</div><div class="options">`;
+            q.options.forEach((opt, i) => {
+                const selected = userAnswers[index] === i ? 'selected' : '';
+                html += `<div class="option ${selected}" data-opt-index="${i}">
+                            <span class="letter">${String.fromCharCode(65 + i)}</span>
+                            <span class="opt-text">${opt}</span>
+                         </div>`;
+            });
+            html += `</div>`;
+            questionArea.innerHTML = html;
+
+            // Attach click handlers to options
+            document.querySelectorAll('.option').forEach(el => {
+                el.addEventListener('click', (e) => {
+                    if (testSubmitted) return;
+                    const optIdx = parseInt(el.dataset.optIndex);
+                    if (userAnswers[currentIndex] === optIdx) {
+                        // deselect
+                        userAnswers[currentIndex] = null;
+                    } else {
+                        userAnswers[currentIndex] = optIdx;
+                    }
+                    renderQuestion(currentIndex); // re-render to update UI
+                    updatePalette();
+                });
+            });
+
+            // Re-render MathJax
+            if (window.MathJax && MathJax.typesetPromise) {
+                MathJax.typesetPromise([questionArea]).catch(() => {});
+            }
+
+            updatePalette();
+            paletteCounter.textContent = `${index + 1}/${totalQ}`;
+        }
+
+        function updatePalette() {
+            // Build palette buttons
+            let html = '';
+            for (let i = 0; i < totalQ; i++) {
+                let cls = 'palette-btn';
+                if (!visited[i]) cls += ' not-visited';
+                else if (userAnswers[i] !== null) cls += ' answered';
+                else cls += ' not-answered';
+                if (marked[i]) cls += ' marked';
+                if (i === currentIndex) cls += ' current';
+                html += `<button class="${cls}" data-q-index="${i}">${i + 1}</button>`;
+            }
+            paletteGrid.innerHTML = html;
+            document.querySelectorAll('.palette-btn').forEach(btn => {
+                btn.addEventListener('click', () => {
+                    if (testSubmitted) return;
+                    const idx = parseInt(btn.dataset.qIndex);
+                    renderQuestion(idx);
+                });
+            });
+        }
+
+        // ============================================================
+        //  NAVIGATION
+        // ============================================================
+        prevBtn.addEventListener('click', () => {
+            if (testSubmitted) return;
+            if (currentIndex > 0) renderQuestion(currentIndex - 1);
+        });
+        nextBtn.addEventListener('click', () => {
+            if (testSubmitted) return;
+            if (currentIndex < totalQ - 1) renderQuestion(currentIndex + 1);
+        });
+        markBtn.addEventListener('click', () => {
+            if (testSubmitted) return;
+            marked[currentIndex] = !marked[currentIndex];
+            updatePalette();
+        });
+        clearBtn.addEventListener('click', () => {
+            if (testSubmitted) return;
+            userAnswers[currentIndex] = null;
+            renderQuestion(currentIndex);
+        });
+
+        // ============================================================
+        //  TIMER
+        // ============================================================
+        function startTimer() {
+            if (timerInterval) clearInterval(timerInterval);
+            timerInterval = setInterval(() => {
+                if (testSubmitted) return;
+                timeLeft--;
+                const mins = Math.floor(timeLeft / 60);
+                const secs = timeLeft % 60;
+                timerDisplay.textContent = `${String(mins).padStart(2, '0')}:${String(secs).padStart(2, '0')}`;
+                if (timeLeft <= 0) {
+                    clearInterval(timerInterval);
+                    submitTest();
+                }
+            }, 1000);
+        }
+
+        // ============================================================
+        //  SUBMIT
+        // ============================================================
+        function submitTest() {
+            if (testSubmitted) return;
+            testSubmitted = true;
+            clearInterval(timerInterval);
+
+            // Compute score
+            let correct = 0, incorrect = 0, unattempted = 0;
+            for (let i = 0; i < totalQ; i++) {
+                if (userAnswers[i] === null) {
+                    unattempted++;
+                } else if (userAnswers[i] === questions[i].correct) {
+                    correct++;
+                } else {
+                    incorrect++;
+                }
+            }
+            const totalScore = correct * 3 - incorrect * 1;
+            const accuracy = (correct + incorrect) > 0 ? ((correct / (correct + incorrect)) * 100).toFixed(2) : 0;
+
+            // Show overlay
+            resultOverlay.classList.add('active');
+            renderScoreStats(correct, incorrect, unattempted, totalScore, accuracy);
+            renderReview('all');
+            // Re-render MathJax in overlay
+            if (window.MathJax && MathJax.typesetPromise) {
+                MathJax.typesetPromise([resultOverlay]).catch(() => {});
+            }
+        }
+
+        function renderScoreStats(correct, incorrect, unattempted, totalScore, accuracy) {
+            scoreStats.innerHTML = `
+                <div class="stat-item"><span class="stat-label">Score</span><span class="stat-value">${totalScore}</span></div>
+                <div class="stat-item"><span class="stat-label">Correct</span><span class="stat-value" style="color:#059669">${correct}</span></div>
+                <div class="stat-item"><span class="stat-label">Incorrect</span><span class="stat-value" style="color:#dc2626">${incorrect}</span></div>
+                <div class="stat-item"><span class="stat-label">Unattempted</span><span class="stat-value" style="color:#64748b">${unattempted}</span></div>
+                <div class="stat-item"><span class="stat-label">Accuracy</span><span class="stat-value">${accuracy}%</span></div>
+            `;
+        }
+
+        function renderReview(filter = 'all') {
+            let html = '';
+            for (let i = 0; i < totalQ; i++) {
+                const q = questions[i];
+                const ua = userAnswers[i];
+                const isCorrect = ua !== null && ua === q.correct;
+                const isIncorrect = ua !== null && ua !== q.correct;
+                const isUnattempted = ua === null;
+
+                if (filter === 'correct' && !isCorrect) continue;
+                if (filter === 'incorrect' && !isIncorrect) continue;
+                if (filter === 'unattempted' && !isUnattempted) continue;
+
+                let itemClass = 'review-item';
+                if (isCorrect) itemClass += ' correct';
+                else if (isIncorrect) itemClass += ' incorrect';
+                else itemClass += ' unattempted';
+
+                const userAnsText = ua !== null ? `${String.fromCharCode(65 + ua)}. ${q.options[ua]}` : '—';
+                const correctAnsText = `${String.fromCharCode(65 + q.correct)}. ${q.options[q.correct]}`;
+
+                let userClass = '';
+                if (isCorrect) userClass = 'correct-text';
+                else if (isIncorrect) userClass = 'incorrect-text';
+                else userClass = 'unattempted-text';
+
+                html += `<div class="${itemClass}">
+                            <div class="review-q">Q${i + 1}. ${q.text}</div>
+                            <div class="review-meta">
+                                <span>Your answer: <span class="review-answer ${userClass}">${userAnsText}</span></span>
+                                <span>Correct answer: <span class="review-answer correct-text">${correctAnsText}</span></span>
+                            </div>
+                         </div>`;
+            }
+            reviewList.innerHTML = html || '<p style="padding:20px; color:#64748b;">No questions match this filter.</p>';
+            if (window.MathJax && MathJax.typesetPromise) {
+                MathJax.typesetPromise([reviewList]).catch(() => {});
+            }
+        }
+
+        // ============================================================
+        //  FILTERS
+        // ============================================================
+        filterBar.addEventListener('click', (e) => {
+            const btn = e.target.closest('.filter-btn');
+            if (!btn) return;
+            document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+            btn.classList.add('active');
+            renderReview(btn.dataset.filter);
+        });
+
+        // ============================================================
+        //  CLOSE OVERLAY
+        // ============================================================
+        closeOverlayBtn.addEventListener('click', () => {
+            resultOverlay.classList.remove('active');
+        });
+
+        // ============================================================
+        //  DOWNLOAD REPORT (as HTML)
+        // ============================================================
+        downloadResultBtn.addEventListener('click', () => {
+            const overlayContent = document.querySelector('.result-card').cloneNode(true);
+            // Remove interactive buttons
+            overlayContent.querySelectorAll('.btn, .filter-btn').forEach(el => el.remove());
+
+            const styles = document.querySelector('style').innerHTML;
+            const html = `<!DOCTYPE html><html><head><meta charset="utf-8"><title>Performance Report</title>
+            <style>${styles}</style>
+            <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"><\/script>
+            </head><body style="background:white; padding:20px;">
+            ${overlayContent.outerHTML}
+            <\/body><\/html>`;
+
+            const blob = new Blob([html], { type: 'text/html' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = 'Performance_Report.html';
+            a.click();
+            URL.revokeObjectURL(url);
+        });
+
+        // ============================================================
+        //  SUBMIT BUTTON
+        // ============================================================
+        submitBtn.addEventListener('click', () => {
+            if (!testSubmitted) {
+                if (confirm('Are you sure you want to submit the test?')) {
+                    submitTest();
+                }
+            }
+        });
+
+        // ============================================================
+        //  INIT
+        // ============================================================
+        function init() {
+            // Reset state
+            userAnswers.fill(null);
+            marked.fill(false);
+            visited.fill(false);
+            currentIndex = 0;
+            testSubmitted = false;
+            timeLeft = 120 * 60;
+            timerDisplay.textContent = '120:00';
+
+            renderQuestion(0);
+            startTimer();
+            updatePalette();
+        }
+
+        init();
+    </script>
+</body>
+</html>

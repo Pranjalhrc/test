@@ -1,0 +1,555 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MCQ Test App: 120 Questions (Maths + GK)</title>
+    <script>
+        window.MathJax = {
+            tex: { inlineMath: [['\\(', '\\)']], displayMath: [['\\[', '\\]']] },
+            svg: { fontCache: 'global' }
+        };
+    </script>
+    <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-svg.js" async></script>
+    <style>
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body {
+            font-family: 'Segoe UI', Roboto, system-ui, sans-serif;
+            background: #f2f5f9;
+            display: flex; justify-content: center; align-items: center;
+            min-height: 100vh; padding: 16px;
+        }
+        .app-container {
+            width: 1300px; max-width: 100%; height: 90vh;
+            background: white; border-radius: 24px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.12);
+            display: flex; flex-direction: column; overflow: hidden;
+        }
+        .header {
+            display: flex; justify-content: space-between; align-items: center;
+            padding: 12px 24px; background: #1e293b; color: white; flex-shrink: 0;
+        }
+        .header h1 { font-size: 1.25rem; font-weight: 500; }
+        .timer {
+            font-size: 1.5rem; font-weight: 600; background: #0f172a;
+            padding: 6px 18px; border-radius: 40px; color: #facc15;
+            letter-spacing: 1px; font-variant-numeric: tabular-nums;
+        }
+        .main-panel { display: flex; flex: 1; overflow: hidden; background: #ffffff; }
+        .question-area {
+            flex: 1; display: flex; flex-direction: column;
+            padding: 18px 24px 12px 24px; overflow-y: auto;
+            border-right: 1px solid #e2e8f0;
+        }
+        .question-text {
+            font-size: 1.1rem; line-height: 1.6;
+            margin-bottom: 16px; font-weight: 500; color: #0f172a;
+        }
+        .options { display: flex; flex-direction: column; gap: 10px; margin-bottom: 18px; }
+        .option-item {
+            display: flex; align-items: flex-start; padding: 12px 16px;
+            background: #f8fafc; border: 1.5px solid #e2e8f0;
+            border-radius: 14px; cursor: pointer; transition: all 0.1s ease;
+            user-select: none;
+        }
+        .option-item:hover { background: #eef2f6; border-color: #94a3b8; }
+        .option-item.selected {
+            background: #dbeafe; border-color: #2563eb;
+            box-shadow: 0 0 0 2px rgba(37, 99, 235, 0.15);
+        }
+        .option-prefix { font-weight: 700; margin-right: 14px; color: #1e293b; min-width: 24px; }
+        .option-text { flex: 1; font-size: 1rem; color: #1e293b; }
+        .nav-buttons {
+            display: flex; flex-wrap: wrap; gap: 10px; margin-top: 10px;
+            padding-top: 6px; border-top: 1px solid #e2e8f0; align-items: center;
+        }
+        .btn {
+            padding: 8px 18px; border-radius: 40px; border: none;
+            font-weight: 600; font-size: 0.85rem; cursor: pointer;
+            transition: all 0.15s; background: white;
+            border: 1.5px solid #cbd5e1; color: #1e293b;
+        }
+        .btn:hover { background: #f1f5f9; border-color: #94a3b8; }
+        .btn-primary { background: #2563eb; border-color: #2563eb; color: white; }
+        .btn-primary:hover { background: #1d4ed8; border-color: #1d4ed8; }
+        .btn-warning { background: #f59e0b; border-color: #f59e0b; color: white; }
+        .btn-warning:hover { background: #d97706; border-color: #d97706; }
+        .btn-danger { background: #dc2626; border-color: #dc2626; color: white; }
+        .btn-danger:hover { background: #b91c1c; border-color: #b91c1c; }
+        .btn-outline { background: white; border: 1.5px solid #cbd5e1; }
+        .palette-container {
+            width: 280px; background: #f8fafc; display: flex;
+            flex-direction: column; flex-shrink: 0;
+            border-left: 1px solid #e2e8f0; height: 100%;
+        }
+        .palette-header {
+            padding: 16px 16px 8px 16px; font-weight: 600;
+            color: #0f172a; font-size: 0.95rem;
+            display: flex; justify-content: space-between;
+            border-bottom: 1px solid #e2e8f0;
+        }
+        .legend {
+            display: flex; flex-wrap: wrap; gap: 12px;
+            padding: 8px 16px; font-size: 0.7rem; color: #475569;
+            border-bottom: 1px solid #e2e8f0;
+        }
+        .legend-item { display: flex; align-items: center; gap: 5px; }
+        .legend-swatch { width: 14px; height: 14px; border-radius: 6px; }
+        .palette-grid {
+            flex: 1; overflow-y: auto; padding: 12px 12px 20px 12px;
+            display: grid; grid-template-columns: repeat(5, 1fr);
+            gap: 8px; align-content: start;
+        }
+        .palette-btn {
+            aspect-ratio: 1/1; width: 100%; border-radius: 10px;
+            border: 1.5px solid transparent; font-weight: 600;
+            font-size: 0.8rem; display: flex; align-items: center;
+            justify-content: center; cursor: pointer; background: white;
+            color: #1e293b; transition: 0.1s; border: 1.5px solid #e2e8f0;
+        }
+        .palette-btn.not-visited { background: #ffffff; border-color: #e2e8f0; color: #64748b; }
+        .palette-btn.answered { background: #22c55e; border-color: #16a34a; color: white; }
+        .palette-btn.marked { background: #a855f7; border-color: #9333ea; color: white; }
+        .palette-btn.not-answered { background: #f97316; border-color: #ea580c; color: white; }
+        .palette-btn.current { box-shadow: 0 0 0 3px #2563eb, 0 0 0 5px white; border-color: #2563eb; }
+        .overlay {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.5); backdrop-filter: blur(3px);
+            display: none; justify-content: center; align-items: center;
+            z-index: 999; padding: 20px;
+        }
+        .overlay.active { display: flex; }
+        .result-card {
+            background: white; width: 900px; max-width: 100%;
+            max-height: 90vh; border-radius: 28px;
+            display: flex; flex-direction: column; overflow: hidden;
+            box-shadow: 0 30px 60px rgba(0,0,0,0.3);
+        }
+        .result-header {
+            padding: 20px 28px; background: #1e293b; color: white;
+            display: flex; justify-content: space-between; align-items: center;
+            flex-shrink: 0;
+        }
+        .result-header h2 { font-size: 1.5rem; font-weight: 500; }
+        .result-body { padding: 20px 28px; overflow-y: auto; flex: 1; }
+        .score-summary {
+            display: flex; flex-wrap: wrap; gap: 30px;
+            margin-bottom: 20px; background: #f1f5f9;
+            padding: 16px 24px; border-radius: 20px; align-items: center;
+        }
+        .score-item { display: flex; flex-direction: column; }
+        .score-label { font-size: 0.8rem; color: #64748b; text-transform: uppercase; }
+        .score-value { font-size: 1.8rem; font-weight: 700; color: #0f172a; }
+        .filter-bar { display: flex; gap: 12px; margin-bottom: 18px; flex-wrap: wrap; }
+        .filter-btn {
+            padding: 6px 18px; border-radius: 30px;
+            border: 1.5px solid #cbd5e1; background: white;
+            font-weight: 500; font-size: 0.85rem; cursor: pointer;
+        }
+        .filter-btn.active { background: #2563eb; color: white; border-color: #2563eb; }
+        .review-list { display: flex; flex-direction: column; gap: 14px; }
+        .review-item {
+            border-left: 6px solid #cbd5e1; background: #f8fafc;
+            padding: 12px 16px; border-radius: 12px;
+        }
+        .review-item.correct { border-left-color: #22c55e; background: #f0fdf4; }
+        .review-item.incorrect { border-left-color: #dc2626; background: #fef2f2; }
+        .review-item.unattempted { border-left-color: #94a3b8; background: #f8fafc; }
+        .review-question { font-weight: 600; margin-bottom: 6px; color: #0f172a; }
+        .review-option { font-size: 0.9rem; margin-left: 16px; color: #334155; }
+        .review-correct-ans { font-weight: 600; color: #15803d; }
+        .download-btn {
+            background: #0f172a; color: white; border: none;
+            padding: 8px 20px; border-radius: 40px;
+            font-weight: 500; cursor: pointer; margin-left: 12px;
+        }
+        .download-btn:hover { background: #1e293b; }
+        .footer-actions {
+            display: flex; justify-content: flex-end;
+            padding: 12px 28px 20px; border-top: 1px solid #e2e8f0;
+            flex-shrink: 0; background: white;
+        }
+        .btn-close {
+            background: #e2e8f0; border: none; padding: 8px 24px;
+            border-radius: 30px; font-weight: 600; cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+<div class="app-container">
+    <div class="header">
+        <h1>📘 Mathematics & General Knowledge — 120 Questions</h1>
+        <div class="timer" id="timerDisplay">120:00</div>
+    </div>
+    <div class="main-panel">
+        <div class="question-area" id="questionArea"></div>
+        <div class="palette-container">
+            <div class="palette-header">
+                <span>Question Palette</span>
+                <span id="paletteStats">0/120</span>
+            </div>
+            <div class="legend">
+                <div class="legend-item"><span class="legend-swatch" style="background:#22c55e;"></span> Answered</div>
+                <div class="legend-item"><span class="legend-swatch" style="background:#f97316;"></span> Not Answered</div>
+                <div class="legend-item"><span class="legend-swatch" style="background:#a855f7;"></span> Marked</div>
+                <div class="legend-item"><span class="legend-swatch" style="background:#ffffff;border:1px solid #cbd5e1;"></span> Not Visited</div>
+            </div>
+            <div class="palette-grid" id="paletteGrid"></div>
+        </div>
+    </div>
+</div>
+
+<div class="overlay" id="resultOverlay">
+    <div class="result-card">
+        <div class="result-header">
+            <h2>📊 Performance & Solutions</h2>
+            <div><button class="download-btn" id="downloadReportBtn">⬇ Download Report</button></div>
+        </div>
+        <div class="result-body" id="resultBody"></div>
+        <div class="footer-actions">
+            <button class="btn-close" id="closeOverlayBtn">Close</button>
+        </div>
+    </div>
+</div>
+
+<script>
+    // ==================== 120 QUESTIONS ====================
+    // 1-90 Mathematics, 91-120 GK
+    const questions = [
+        // ---------- MATHEMATICS 1-90 ----------
+        { text: "A particle moves towards the centre of Earth (of radius `R') from rest at infinity. Its velocity at centre of Earth will be:-", options: ["Infinity", "Zero", "\\(\\sqrt{2gR}\\)", "\\(\\sqrt{3gR}\\)"], correct: 2 },
+        { text: "If \\(H_{1}\\) and \\(H_{2}\\) be the greatest heights in two paths of a projectile of given horizontal range R, then:-", options: ["\\(R = H_{1}H_{2}\\)", "\\(R = 2\\sqrt{H_{1}H_{2}}\\)", "\\(R = 4\\sqrt{H_{1}H_{2}}\\)", "\\(R = H_{1} / H_{2}\\)"], correct: 2 },
+        { text: "Least velocity required to project a particle from a height `a' to fall at a horizontal distance `2a' is:-", options: ["\\(\\sqrt{ag}\\)", "\\(\\sqrt{3ag}\\)", "\\(2\\sqrt{ag}\\)", "\\(2\\sqrt{2} /\\sqrt{ag}\\)"], correct: 2 },
+        { text: "If \\(R_{1}\\) and \\(R_{2}\\) be the maximum ranges up and down an inclined plane respectively and R be the maximum range on the horizontal plane, then \\(R_{1}, R\\) and \\(R_{2}\\) are in :-", options: ["AP", "GP", "HP", "None of these"], correct: 2 },
+        { text: "A gun can fire with a velocity u in all directions from a given position on a horizontal plane. The shot will fall on the plane within a circle of radius:-", options: ["\\(u / g\\)", "\\(u / 2g\\)", "\\(u^{2} / 2g\\)", "\\(u^{2} / g\\)"], correct: 3 },
+        { text: "The residue of \\(f(z) = (z - 1)^{-3}e^{-2z}\\) at \\(z = 1\\) is:-", options: ["\\(2e^{-2}\\)", "\\(-2e^{-2}\\)", "\\(2e^{2}\\)", "\\(-2e^{2}\\)"], correct: 0 },
+        { text: "If \\(f(z) = u + iv\\) is an analytic function, then \\(\\left(\\frac{\\partial^{2}}{\\partial x^{2}} + \\frac{\\partial^{2}}{\\partial y^{2}}\\right)|f(z)|^{2}\\) is equal to:", options: ["\\(|f'(z)|^{2}\\)", "\\(2|f'(z)|^{2}\\)", "\\(4|f'(z)|^{2}\\)", "0"], correct: 2 },
+        { text: "Let \\(f(z) = \\frac{e^{-z / 2}}{(z - 2)(z + 4)^{2}}\\) and \\(C\\) is a circle \\(|z| = 3\\) described in anticlockwise direction, then value of \\(\\int_{C}f(z)dz\\) is :", options: ["\\(\\frac{\\pi i}{36e}\\)", "\\(\\frac{\\pi i}{18e}\\)", "\\(\\frac{2\\pi i e}{9}\\)", "0"], correct: 1 },
+        { text: "The number of generators of a cyclic group of order eight is:", options: ["1", "2", "3", "4"], correct: 3 },
+        { text: "The product of disjoint cycles equivalent to the permutation \\(\\sigma = \\left( \\begin{array}{cccccccc}1 & 2 & 3 & 4 & 5 & 6 & 7 & 8\\\\ 4 & 6 & 2 & 5 & 1 & 3 & 8 & 7 \\end{array} \\right)\\) is:", options: ["(1 4 5)(2 6 3)(7 8)", "(1 4 5)(2 3 6)(7 8)", "(4 6 2)(5 1 3)(8 7)", "(4 1 5)(6 2 3)(7 8)"], correct: 0 },
+        { text: "If a transformation \\(w = \\frac{az + b}{cz + d}\\) transforms the unit circle with centre at origin in the \\(w\\) -plane into a straight line in the \\(z\\) -plane, then:", options: ["\\(ad - bc = 0\\)", "\\(ad + bc = 0\\)", "\\(|a| = |c|\\)", "\\(|b| = |d|\\)"], correct: 0 },
+        { text: "Radius of convergence of power series \\(\\sum_{n = 1}^{\\infty}\\frac{2^{-n}}{1 + in^2} z^n\\) is:", options: ["1", "2", "3", "1/2"], correct: 1 },
+        { text: "Let \\(f(z) = u(x,y) + iv(x,y)\\) be an analytic function such that \\(u(x,y) = e^x \\cos y\\) , then \\(v(x,y)\\) is equal to:", options: ["\\(e^x \\sin y\\)", "\\(-e^x \\sin y\\)", "\\(e^y \\sin y\\)", "\\(-e^y \\sin y\\)"], correct: 0 },
+        { text: "The value of \\(\\int_C \\bar{z} dz\\) where \\(C\\) is a semi- circular arc \\(|z| = 1\\) , above the real axis from \\(-1\\) to 1, is:", options: ["\\(\\pi\\)", "\\(\\frac{\\pi}{2}\\)", "\\(\\frac{\\pi i}{2}\\)", "0"], correct: 3 },
+        { text: "Value of \\(z\\) , where the function \\(f(z) = \\sinh u \\cos v + i \\cosh u \\sin v\\) ceases to be analytic, is:", options: ["\\(z = \\pm 1\\)", "\\(z = 0\\)", "\\(z = \\pm i\\)", "None of these"], correct: 2 },
+        { text: "If \\(f(z)\\) is analytic constant function in the domain \\(D\\) , then:", options: ["Only \\(R[f(z)]\\) is constant", "Only \\(I[f(z)]\\) is constant", "both \\(R[f(z)]\\) and \\(I[f(z)]\\) are constant", "None of these"], correct: 2 },
+        { text: "The coefficient of \\(z^{-3}\\) in the Laurent's expansion of the function \\(f(z) = \\frac{1}{(z + 1)(x + 3)}\\) in the domain \\(|z| > 3\\) is:", options: ["8", "- 8", "- 4", "4"], correct: 2 },
+        { text: "Value of \\(\\int_{C}(z)^{2}dz\\) around the circle \\(C:|z - 1| = 1\\) is:", options: ["\\(\\pi i\\)", "\\(2\\pi i\\)", "\\(4\\pi i\\)", "zero"], correct: 3 },
+        { text: "For the function \\(f(z) = \\frac{e^{z}}{z^{2}\\sin mz} (m \\in \\mathbb{N})\\) , which of the following statement is false?", options: ["\\(z = \\frac{n\\pi}{m} (n = \\pm 1, \\pm 2, \\ldots)\\) are simple poles", "\\(z = 0\\) is a double pole", "\\(z = \\infty\\) is a non-isolated essential singularity", "\\(z = 0\\) is a removable singularity"], correct: 3 },
+        { text: "If statements (a) Bilinear transformation maps circle into circle, (b) Bilinear Transformation in normal form is \\(\\frac{w - \\alpha}{w - \\beta} = \\lambda \\frac{z - \\alpha}{z - \\beta}\\) is:", options: ["Only (a) is true", "Only (b) is true", "both (a) and (b) are true", "neither (a) nor (b) is true"], correct: 2 },
+        { text: "The function \\(w = u + iv = z^{2}\\) maps \\(y = a(a > 0)\\) onto:", options: ["\\(v^{2} = 4a^{2}(u + a^{2})\\)", "\\(v^{2} = -4a^{2}(u - a^{2})\\)", "\\(v^{2} = -4a^{2}(u + a^{2})\\)", "\\(u^{2} = -4a^{2}(v + a^{2})\\)"], correct: 0 },
+        { text: "For the power series \\(\\sum a_{n}z^{n}\\) , \\(R\\) is Radius of convergence, then:-", options: ["\\(|z| = R\\)", "\\(|z|\\leq R\\)", "\\(|z|< R\\)", "\\(|z| > R\\)"], correct: 3 },
+        { text: "If \\(0< \\theta < \\frac{\\pi}{2}\\) , then Jordan inequality gives:-", options: ["\\(\\frac{2}{\\pi} < \\frac{\\sin\\theta}{\\theta} < 1\\)", "\\(\\frac{\\pi}{2} < \\frac{\\cos\\theta}{\\sin\\theta} < 0\\)", "\\(\\frac{1}{\\pi} < \\frac{\\sin\\theta}{\\theta} < 1\\)", "\\(\\frac{1}{2\\pi} < \\frac{\\sin\\theta}{\\theta} < 0\\)"], correct: 0 },
+        { text: "If \\(p\\) is prime number and \\(O(G) = p^{2}\\) , then \\(G\\) is:-", options: ["Cyclic group", "Non cyclic and non abelian group", "abelian group", "None of these"], correct: 2 },
+        { text: "If radius of convergence of power series \\(\\sum a_{n}z^{n}\\) is \\(R\\) , then radius of convergence of the series \\(\\sum n a_{n}z^{n - 1}\\) is:-", options: ["\\(R^{2}\\)", "\\(1 / R\\)", "\\(R / 2\\)", "\\(R\\)"], correct: 3 },
+        { text: "If \\(C\\) is any closed contour around the origin, then the value of the integral \\(\\frac{1}{2\\pi i}\\int_{C}\\frac{e^{z}}{z^{n + 1}} dz\\) is:-", options: ["\\(\\left(\\frac{a}{n!}\\right)^{2}\\)", "\\(\\frac{a^{n}}{n!}\\)", "\\(\\frac{1}{n!}\\)", "\\(\\frac{1}{(n+1)!}\\)"], correct: 1 },
+        { text: "Three statements are: (a) Every field is an integral domain (b) A field has no zero divisor. (c) A skew field has no zero divisor. Then:", options: ["(a) and (b) are true but (c) is not", "(a) and (c) are true but (b) is not", "(b) and (c) are true but (a) is not", "(a) (b) and (c) are true"], correct: 3 },
+        { text: "Linear combination of matrix \\(\\alpha = \\left[ \\begin{array}{cc}3 & -1\\\\ 1 & -2 \\end{array} \\right]\\) in vector space of matrices \\(A = \\left[ \\begin{array}{cc}1 & 1\\\\ 0 & -1 \\end{array} \\right]\\) \\(B = \\left[ \\begin{array}{cc}1 & 1\\\\ -1 & 0 \\end{array} \\right]\\) and \\(C = \\left[ \\begin{array}{cc}1 & 1\\\\ 0 & 0 \\end{array} \\right]\\) is:", options: ["\\(\\alpha = A + B + C\\)", "\\(\\alpha = 2A + B + C\\)", "\\(\\alpha = 2A - B + 2C\\)", "\\(\\alpha = A - 2B + C\\)"], correct: 2 },
+        { text: "Which of the following is not a solvable group?", options: ["Symmetric group \\(S_{4}\\)", "Cyclic group", "Symmetric group \\(S_{3}\\)", "Symmetric group \\(S_{5}\\)"], correct: 3 },
+        { text: "Which of the following statement is false?", options: ["Every homomorphic image of a solvable group is solvable", "A group of prime order is nilpotent", "Every solvable group is not necessarily an abelian group", "Every subgroup of a solvable group is solvable"], correct: 2 },
+        { text: "Let \\(G\\) be a finite abelian group and \\(e\\) is the identity element in \\(G\\) . Then by Cauchy's theorem there exists an element \\(a \\in G\\) and \\(a \\neq e\\) such that \\(n = e\\) , where \\(n\\) is:", options: ["\\(n\\) is any number", "\\(n\\) is any prime number", "\\(n\\) is any number such that \\(n\\) is a divisor of the order of \\(G / n\\)", "\\(n\\) is a prime number such that \\(n\\) is a divisor of the order of \\(G / n\\)"], correct: 3 },
+        { text: "Vector \\(\\vec{a} = \\hat{i} - \\hat{j}\\) \\(\\vec{b} = \\hat{j} - \\hat{k}\\) and \\(\\vec{d} = \\hat{i} +\\hat{j} +\\hat{k}\\) , then", options: ["\\(\\vec{a}, \\vec{b}, \\vec{c}\\) are Linearly independent", "\\(\\vec{b}, \\vec{c}, \\vec{d}\\) are Linearly independent", "\\(\\vec{a},\\vec{c},\\vec{d}\\) are Linearly independent", "All of these are true"], correct: 3 },
+        { text: "Let \\(G\\) be a finite group. Consider the following two statements:- (i) \\(G\\) is nilpotent (ii) \\(G\\) is a direct product of its s", options: ["(i) \\(\\Rightarrow\\) (ii) only", "(ii) \\(\\Rightarrow\\) (i) only", "(i) \\(\\Leftrightarrow\\) (ii) only", "neither (i) nor (ii) is true"], correct: 0 },
+        { text: "The polynomial ring \\(\\mathbb{Z}[x]\\) over the ring of integers is a-", options: ["Prime ideal but not a maximum ideal", "Maximal ideal but not a prime ideal", "Both prime and maximal ideal", "Commutative ring with unity only"], correct: 3 },
+        { text: "If \\(\\lambda_{1},\\lambda_{2},\\lambda_{3}\\) are eigen values of a \\(3^{\\mathrm{rd}}\\) order square Matrix \\(A\\) , then (a) \\(\\lambda_{1}\\cdot \\lambda_{2}\\cdot \\lambda_{3} = |A|\\) and (b) \\(\\lambda_{1}\\cdot \\lambda_{2}\\cdot \\lambda_{3} = \\frac{1}{|A|}\\)", options: ["Only (a) is true", "Only (b) is true", "both (a) and (b) are true", "Neither (a) nor (b) is true"], correct: 0 },
+        { text: "Let \\(f(x) = 2 + x + 4x^{2} + 3x^{3}\\) and \\(g(x) = 4 + 3x + 5x^{2} + 3x^{3}\\) , over the ring of integers modulo 6, then degree of \\((f + g)(x)\\) is-", options: ["0", "1", "2", "3"], correct: 2 },
+        { text: "Let \\(f:(\\mathbb{Z}, + )\\to (\\mathbb{R}_{+},\\cdot)\\) where \\((\\mathbb{Z}, + )\\) is additive group of integers and \\((\\mathbb{R}_{*},\\cdot)\\) is multiplicative group of real numbers, is a homomorphism if \\(f(3) = \\frac{1}{8}\\) , then the value of \\(f(6)\\) is-", options: ["1/64", "1/4", "1", "1/8"], correct: 0 },
+        { text: "Let \\(G\\) be a group of permutations defined on a set \\(S = \\{1,2,3,4,5\\}\\) . Then order of proper normal subgroup of \\(G\\) is-", options: ["30", "60", "120", "240"], correct: 1 },
+        { text: "A homomorphism \\(f\\) of a group \\(G\\) into a group \\(G^{\\prime}\\) is a monomorphism iff \\(\\ker (f)\\) is: (where \\(e\\) and \\(e^{\\prime}\\) are identities of \\(G\\) and \\(G^{\\prime}\\) respectively):-", options: ["empty set \\(\\phi\\)", "\\(\\{e,e^{\\prime}\\}\\)", "\\(\\{e\\}\\)", "\\(\\{e^{\\prime}\\}\\)"], correct: 2 },
+        { text: "Union of two subspaces \\(W_{1}\\) and \\(W_{2}\\) of a vector space \\(V(F)\\) is a subspace, iff-", options: ["\\(W_{1}\\subset W_{2}\\) and \\(W_{2}\\subset W_{1}\\)", "\\(W_{1}\\subset W_{2}\\) or \\(W_{2}\\subset W_{1}\\)", "\\(W_{1}\\not\\subset W_{2}\\) and \\(W_{2}\\not\\subset W_{1}\\)", "None of these"], correct: 0 },
+        { text: "Which of the following ring is not of characteristic 0 or \\(\\infty\\)", options: ["\\((\\mathbb{Z}, + ,\\cdot)\\) ; \\(\\mathbb{Z}\\) is the set of integers", "\\((\\mathbb{Q}, + ,\\cdot)\\) ; \\(\\mathbb{Q}\\) is the set of rational numbers", "\\((\\mathbb{R}, + ,\\cdot)\\) ; \\(\\mathbb{R}\\) is the set of real number", "\\((\\mathbb{Z}_{6}, + ,\\cdot_{6})\\) ; \\(\\mathbb{Z}_{6}\\) is the set of integers modulo 6"], correct: 3 },
+        { text: "C (a set of pair of complex numbers) is not a vector space over \\(K\\) , when-", options: ["\\(K = \\mathbb{R}\\) (the set of real numbers)", "\\(K = \\mathbb{Q}\\) (the set of rational numbers)", "\\(K = \\mathbb{C}\\) (the set of complex numbers)", "\\(K = \\mathbb{Z}\\) (the set of integers)"], correct: 3 },
+        { text: "Let \\(f : (\\mathbb{Z}, +) \\to (\\mathbb{R}_{*}, \\cdot)\\) where \\((\\mathbb{Z}, +)\\) is additive group of integers and \\((\\mathbb{R}_{*}, \\cdot)\\) is multiplicative group of real numbers, is a homomorphism if \\(f(3) = \\frac{1}{8}\\), then the value of \\(f(6)\\) is:-", options: ["\\(1/64\\)", "\\(1/4\\)", "\\(1\\)", "\\(1/8\\)"], correct: 0 },
+        { text: "Which of following is a linear transformation?", options: ["\\(f:\\mathbb{R}^{2}\\to \\mathbb{R}^{2}\\) defined by \\(f(x,y) = (x + y,xy)\\)", "\\(g:\\mathbb{R}^{2}\\to \\mathbb{R}^{2}\\) defined by \\(g(x,y) = (x^{2},y^{2})\\)", "\\(h:\\mathbb{R}^{2}\\to \\mathbb{R}^{2}\\) defined by \\(g(x,y,z) = (x + 1,y + z)\\)", "\\(k:\\mathbb{R}^{2}\\to \\mathbb{R}\\) defined by \\(k(x,y) = xy\\)"], correct: 0 },
+        { text: "Let \\(F\\) denotes the reflection in \\(\\mathbb{R}^{2}\\) about the line \\(y = -x\\) . Then matrix \\(F\\) with respect to the usual basis of \\(\\mathbb{R}^{2}\\) is-:", options: ["\\(\\left(\\begin{array}{cc}{-1}&{0}\\\\{0}&{1}\\end{array}\\right)\\)", "\\(\\left(\\begin{array}{cc}{-1}&{0}\\\\{0}&{-1}\\end{array}\\right)\\)", "\\(\\left(\\begin{array}{cc}{0}&{1}\\\\{-1}&{0}\\end{array}\\right)\\)", "\\(\\left(\\begin{array}{cc}{0}&{-1}\\\\{-1}&{0}\\end{array}\\right)\\)"], correct: 3 },
+        { text: "Let \\(A = \\begin{pmatrix} 4 & 5\\\\ 2 & -1 \\end{pmatrix}\\) and \\(B\\) be matrix representation of the linear map \\(A:\\mathbb{R}^{2}\\to \\mathbb{R}^{2}\\) relative to the basis \\(\\{(1,4),(2,9)\\}\\) . Then \\(B\\) is-:", options: ["\\(\\left[\\begin{array}{cc}{220}&{487}\\\\{98}&{-217}\\end{array}\\right]\\)", "\\(\\left[\\begin{array}{cc}{220}&{487}\\\\{-98}&{-217}\\end{array}\\right]\\)", "\\(\\left[\\begin{array}{cc}{220}&{487}\\\\{-98}&{217}\\end{array}\\right]\\)", "\\(\\left[\\begin{array}{cc}{220}&{487}\\\\{98}&{217}\\end{array}\\right]\\)"], correct: 1 },
+        { text: "Let \\(\\mathbb{R}^{2}\\) is Vector space with inner product defined as \\(\\langle u,v\\rangle = x_{1}y_{1} - x_{2}y_{1} - x_{1}y_{2} + x_{2}y_{2}\\) Where \\(u = (x_{1},x_{2})\\in \\mathbb{R}^{2}\\) \\(v = (y_{1},y_{2})\\in \\mathbb{R}^{2}\\) . If \\(E = \\{(1,0),(0,1)\\}\\) , then \\(E\\) is-:", options: ["A basis of \\(\\mathbb{R}^{2}\\) Only", "An orthogonal basis of \\(\\mathbb{R}^{2}\\)", "An orthonormal basis of \\(\\mathbb{R}^{2}\\)", "Not a basis of \\(\\mathbb{R}^{2}\\)"], correct: 0 },
+        { text: "The characteristic equation of the matrix \\(A = \\begin{pmatrix} 2 & 2 \\\\ 1 & 3 \\end{pmatrix}\\) is-:", options: ["\\(A^{2} - 5A + 4 = 0\\)", "\\(A^{2} - 4A + 5I = 0\\)", "\\(A^{2} - 5A + 4I = 0\\)", "\\(A^{2} + 5A + 4I = 0\\)"], correct: 2 },
+        { text: "Let \\(A = \\left( \\begin{array}{cc}1 & 4\\\\ 2 & 3 \\end{array} \\right)\\) . Then eigenvector corresponding to eigenvalue 5 is-", options: ["\\((1,1)\\)", "\\((2, - 1)\\)", "\\((-1,2)\\)", "\\((-2, - 1)\\)"], correct: 0 },
+        { text: "The quadratic form of matrix \\(\\left( \\begin{array}{ccc}1 & 2 & 0\\\\ 2 & 1 & -3\\\\ 0 & -3 & -1 \\end{array} \\right)\\) is-", options: ["\\(x^{2} - 4xy + y^{2} + 6yz - 2z^{2}\\)", "\\(x^{2} + 4xy + y^{2} - 6yz - z^{2}\\)", "\\(x^{2} + 4xy + y^{2} + 6yz + z^{2}\\)", "None of these"], correct: 1 },
+        { text: "Let \\(AX = B\\) is the matrix form of a system of linear equations. If rank of \\(A = m\\) , rank of augmented matrix \\([A:B] = P\\) and number of unknowns \\(= n\\) , then the system has unique solution when-", options: ["\\(m = P\\) only", "\\(m = n = P\\)", "\\(n > m\\) or \\(n > P\\)", "\\(n > m\\) or \\(n > P\\)"], correct: 1 },
+        { text: "Set of vectors \\(S\\) in a product space \\(V\\) is orthonormal set, if \\(\\forall u_{i},u_{j}\\in S\\)", options: ["\\(\\langle u_{i},u_{j}\\rangle = 0\\)", "\\(\\langle u_{i},u_{j}\\rangle = 0\\)", "\\(\\langle u_{i},u_{j}\\rangle = -1\\)", "\\(\\langle u_{i},u_{j}\\rangle = 1\\)"], correct: 0 },
+        { text: "Which is not required for equimoment of two systems:", options: ["The same impulse", "The same principal axes", "The same centre of gravity", "The same mass"], correct: 0 },
+        { text: "Moment of inertia of spherical shell of mass \\(M\\) about diameter, when \\(a\\) and \\(b\\) are the external and internal radii, is given by:", options: ["\\(\\left(\\frac{2M}{5}\\right)\\left(\\frac{a^{2} + b^{2}}{a^{2} - b^{2}}\\right)\\)", "\\(\\left(\\frac{2M}{5}\\right)\\left(\\frac{a^{3} - b^{3}}{a + b}\\right)\\)", "\\(\\left(\\frac{2M}{5}\\right)\\left(\\frac{a^{5} - b^{5}}{a^{3} - b^{3}}\\right)\\)", "\\(\\left(\\frac{2M}{5}\\right)\\left(\\frac{a^{3} + b^{3}}{a - b}\\right)\\)"], correct: 1 },
+        { text: "For an imperfect rough sphere, moving from rest down a plane inclined at angle \\(\\alpha\\) to the horizon, with \\(\\mu\\) as coefficient of friction, the condition \\(\\mu < \\frac{2}{7}\\tan\\alpha\\) represents:", options: ["Rolling with limited friction", "Pure Rolling", "Sliding with Rolling", "None of these"], correct: 2 },
+        { text: "The equation of motion of moving solid cylinder of radius \\(b\\) inside a hollow cylinder of radius \\(a\\) fixed with its horizontal axis with completing other requirements are:", options: ["\\(M(a - b)\\dot{\\phi}^{2} = R - Mg\\cos\\phi\\)", "\\(M(a + b)\\dot{\\phi}^{2} = R - Mg\\cos\\phi\\)", "\\(M(a + b)\\dot{\\phi}^{2} = R - Mg\\cos\\phi\\)", "\\(M(a - b)\\dot{\\phi}^{2} = R - Mg\\cos\\phi\\)"], correct: 0 },
+        { text: "Two unequal smooth spheres are placed one on the top of the other in unstable equilibrium, then after disturbance, the equation, which governs the separation, is given by:", options: ["\\(\\left(\\frac{m}{m+M}\\right)\\cos^{3}\\theta - 3\\cos\\theta + 2 = 0\\)", "\\(\\left(\\frac{m}{m+M}\\right)\\cos^{2}\\theta - 3\\cos\\theta - 2 = 0\\)", "\\(\\left(\\frac{m}{m+M}\\right)\\cos^{3}\\theta + 2\\cos\\theta - 3 = 0\\)", "\\(\\left(\\frac{M}{m+M}\\right)\\cos^{2}\\theta - 2\\cos\\theta + 3 = 0\\)"], correct: 0 },
+        { text: "A cylinder rolling without slipping down a rough inclined plane is a dynamic system of type:", options: ["Holonomic", "Conservative", "Non Conservative", "Non Holonomic"], correct: 3 },
+        { text: "If \\(T\\) and \\(W\\) are kinetic energy and work function of the system and \\(\\theta\\) represents generalised coordinate, then Lagrange's equation for finite forces in holonomous system is:", options: ["\\(\\frac{d}{dt}\\left(\\frac{\\partial W}{\\partial\\theta}\\right) - \\frac{\\partial W}{\\partial\\theta} = 0\\)", "\\(\\frac{d}{dt}\\left(\\frac{\\partial V}{\\partial\\theta}\\right) + \\frac{\\partial V}{\\partial\\theta} = 0\\)", "\\(\\frac{d}{dt}\\left(\\frac{\\partial T}{\\partial\\theta}\\right) - \\frac{\\partial T}{\\partial\\theta} = \\frac{\\partial W}{\\partial\\theta}\\)", "\\(\\frac{d}{dt}\\left(\\frac{\\partial T}{\\partial\\theta}\\right) + \\frac{\\partial T}{\\partial\\theta} = \\frac{\\partial W}{\\partial\\theta}\\)"], correct: 2 },
+        { text: "If \\(\\theta, \\phi\\) and \\(\\psi\\) denote Eulerian angles and \\(w_{1}, w_{2}\\) and \\(w_{3}\\) denotes components of total angular velocity of rigid body about axes fixed in body, then which is not Euler's geometrical equation:", options: ["\\(w_{1} = \\dot{\\theta}\\sin\\phi - \\dot{\\psi}\\sin\\theta\\cos\\phi\\)", "\\(w_{2} = \\dot{\\theta}\\cos\\phi + \\dot{\\psi}\\sin\\theta\\sin\\phi\\)", "\\(w_{3} = \\dot{\\phi} + \\dot{\\psi}\\cos\\theta\\)", "\\(w_{1} + w_{2} + w_{3} = \\sin\\theta\\dot{\\psi}\\)"], correct: 3 },
+        { text: "Euler's theorem for motion in three dimensions for a body is related with:", options: ["Single Translation", "Single Transformation", "Single Rotation", "None of these"], correct: 2 },
+        { text: "In the motion of a Top which statement is correct about the centre of gravity:", options: ["one principal moment of inertia vanishes", "two principal moments of inertia are equal", "three principal moments of inertia are equal", "None of these"], correct: 1 },
+        { text: "In the motion of a Top, it's angular velocity about its axis will", options: ["vanish", "increase and then decrease from starting to the end", "remain constant throughout motion", "maximum at \\(t = 0\\)"], correct: 2 },
+        { text: "Angular momentum equation for the motion of a top is:", options: ["\\(A\\sin^{2}\\theta + Cn\\cos\\theta = \\) constant", "\\(A\\cos^{2}\\theta - Cn\\sin\\theta = \\) constant", "\\(A\\cos\\theta + Cn\\cos\\phi = \\) constant", "\\(A(\\dot{\\theta}^{2} + \\dot{\\phi}^{2}\\cos^{2}\\theta) + 2Mg\\cos\\theta = 0\\)"], correct: 0 },
+        { text: "If the table is: \\(\\begin{array}{c|cccccc} x & 0.01 & 0.02 & 0.03 & 0.04 & 0.05 & 0.06\\\\ \\hline f(x) & 0.1023 & 0.1047 & 0.1071 & 0.1096 & 0.1122 & 0.1148 \\end{array}\\) then \\(f'(0.04)\\) is", options: ["0.329", "0.254", "0.336", "0.268"], correct: 3 },
+        { text: "If \\(e^{0} = 1, e^{1} = 2.72, e^{2} = 7.39, e^{3} = 20.09, e^{4} = 54.60\\) then by Simpson's \\(1/3\\) rule, \\(\\int_{0}^{4}e^{x}\\,dx\\) is:", options: ["52.8733", "53.1650", "52.6612", "53.8733"], correct: 3 },
+        { text: "Using seven ordinates, by Weddle's rule solution of \\(\\int_{0}^{1}\\frac{dx}{1+x}\\), computed value of \\(\\log_{e}2\\) is:", options: ["0.49975", "2.69337", "0.69339", "0.93362"], correct: 2 },
+        { text: "Which one of the following is true:", options: ["\\(\\mu\\delta = \\Delta + \\nabla\\)", "\\(\\mu\\delta = \\frac{1}{2}(\\Delta)\\)", "\\(\\mu\\delta = \\Delta - \\nabla\\)", "\\(\\mu\\delta = \\frac{1}{2}(\\Delta - \\nabla)\\)"], correct: 3 },
+        { text: "By the method of false position, real root of equation \\(x^{3} - 2x - 5 = 0\\), upto three decimals, is (approx.)", options: ["2.089", "2.102", "1.278", "0.683"], correct: 0 },
+        { text: "In Simpson's 1/3 rule, the function \\(f(x)\\) is assumed to be a polynomial of degree:", options: ["Four", "Three", "Two", "One"], correct: 2 },
+        { text: "A point P is chosen at random on a straight line in a continuous interval \\((a,b)\\) where \\(a < b\\). The probability that it lies in interval \\((c,d)\\), \\(a \\leq c < d \\leq b\\) is:", options: ["\\(\\frac{d - c}{c - a}\\)", "\\(\\frac{d - c}{d - a}\\)", "\\(\\frac{d - c}{b - a}\\)", "\\(\\frac{d - c}{c - b}\\)"], correct: 2 },
+        { text: "A line is divided at random into three parts. The chance that they form the sides of a possible triangle, is:", options: ["\\(1/9\\)", "\\(3/11\\)", "\\(1/4\\)", "\\(1/5\\)"], correct: 2 },
+        { text: "If \\(A\\) and \\(B\\) are mutually exclusive events and \\(P(A \\cup B) \\neq 0\\), then \\(P\\left(\\frac{A}{A \\cup B}\\right) =\\)", options: ["\\(\\frac{P(A)}{P(B)}\\)", "\\(\\frac{P(\\bar{A})}{P(\\bar{A}) + P(\\bar{B})}\\)", "\\(P(A) + P(B) - 1\\)", "\\(\\frac{P(A) - P(B)}{P(A)}\\)"], correct: 0 },
+        { text: "If \\(P(A/B) = \\frac{1}{4}\\) and \\(P(B/A) = \\frac{1}{3}\\), then \\(\\frac{P(A)}{P(B)}\\) is equal to:", options: ["\\(7/12\\)", "\\(1/12\\)", "\\(4/3\\)", "\\(3/4\\)"], correct: 3 },
+        { text: "If \\(P(A) = \\frac{1}{3}\\), \\(P(B) = \\frac{3}{4}\\) and \\(P(A \\cup B) = \\frac{11}{12}\\) then probability \\(P\\left(\\frac{B}{A}\\right)\\) will be:", options: ["\\(1/6\\)", "\\(1/2\\)", "\\(4/9\\)", "\\(3/5\\)"], correct: 1 },
+        { text: "A coin is tossed six times, then probability of obtaining heads and tails alternatively is:", options: ["\\(1/2\\)", "\\(1/64\\)", "\\(1/32\\)", "\\(1/16\\)"], correct: 2 },
+        { text: "For Poisson distribution, recurrence relation will be: (where m is parameter)", options: ["\\(p(x+1) = \\frac{m}{x+1}p(x)\\)", "\\(p(x+1) = \\frac{m}{x}p(x)\\)", "\\(p(x-1) = \\frac{m}{x}p(x+1)\\)", "\\(p(x+1) = \\frac{m}{x-1}p(x)\\)"], correct: 0 },
+        { text: "If \\(X\\) is a random variable having it's p.d.f. as \\(f(x)\\), then \\(E(x)\\) is called:", options: ["Arithmetic Mean", "Geometric Mean", "Harmonic Mean", "First Quartile"], correct: 0 },
+        { text: "Which one of the following is true:", options: ["\\(\\mathrm{var}(x_{1} + x_{2}) = \\mathrm{var}(x_{1}) + \\mathrm{var}(x_{2})\\)", "\\(\\mathrm{var}(x_{1} + x_{2}) = \\mathrm{var}(x_{1}) + \\mathrm{var}(x_{2}) + 2\\mathrm{cov}(x_{1},x_{2})\\)", "\\(\\mathrm{var}(x_{1} + x_{2}) = \\mathrm{var}(x_{1}) - \\mathrm{var}(x_{2})\\)", "\\(\\mathrm{var}(x_{1} + x_{2}) = \\mathrm{var}(x_{1})\\cdot\\mathrm{var}(x_{2})\\)"], correct: 1 },
+        { text: "The moment generating function of a random variable \\(X\\), having probability function \\(f(x)\\) is given by (continuous distribution):", options: ["\\(\\sum e^{tx}f(x)\\)", "\\(\\sum e^{-tx}f(x)\\)", "\\(\\int e^{-tx}f(x)\\,dx\\)", "\\(\\int e^{tx}f(x)\\,dx\\)"], correct: 3 },
+        { text: "Moment of Inertia of the ellipsoid \\(\\frac{x^{2}}{4} + \\frac{y^{2}}{9} + \\frac{z^{2}}{16} = 1\\) about x-axis is:", options: ["\\(25M\\)", "\\(5M\\)", "\\(13M\\)", "\\(4M\\)"], correct: 1 },
+        { text: "Which statement is correct for Binomial distribution:", options: ["mean is \\(npq\\)", "variance is \\(np\\)", "moment generating function is \\((q + pe^{t})^{n}\\)", "characteristic function is \\((q - pe^{it})^{n}\\)"], correct: 2 },
+        { text: "If \\(X\\) and \\(Y\\) are independent, the value of regression coefficient \\(\\beta_{yx}\\) is equal to:", options: ["1", "0", "-1", "any negative value"], correct: 1 },
+        { text: "Which one of the following is true:", options: ["\\(0 < E(X) < 1\\)", "\\(-1 < E(X) < 1\\)", "\\(-1 \\leq E(X) \\leq 1\\)", "\\(0 \\leq E(X) < \\infty\\)"], correct: 3 },
+        { text: "What is range of correlation coefficient?", options: ["\\(0\\) to \\(\\infty\\)", "\\(0\\) to \\(1\\)", "\\(-1\\) to \\(1\\)", "\\(-1\\) to \\(0\\)"], correct: 2 },
+        { text: "First approximated value of \\(f(x) = 0\\) by Regula Falsi method is given by: [where \\(f(x_{1})f(x_{2}) < 0\\)]", options: ["\\(x_{3} + \\frac{(x_{2} - x_{1})f(x_{1})}{f(x_{1}) + f(x_{2})}\\)", "\\(x_{3} - \\frac{(x_{2} - x_{1})f(x_{2})}{f(x_{1}) - f(x_{2})}\\)", "\\(x_{1} + \\frac{(x_{2} - x_{1})f(x_{1})}{|f(x_{1})| + |f(x_{2})|}\\)", "\\(x_{1} - \\frac{(x_{2} - x_{1})f(x_{1})}{|f(x_{1})| + |f(x_{2})|}\\)"], correct: 2 },
+        { text: "The locus of \\(F(a) = 0\\), \\(\\frac{\\partial}{\\partial a}F(a) = 0\\) is called:", options: ["involute", "envelope", "evolute", "osculating plane"], correct: 1 },
+        { text: "In a metric space, every singleton set is:", options: ["closed", "open", "Neither closed nor open", "open as well as closed"], correct: 0 },
+        { text: "The curvature along the curve \\(\\vec{X} = (3t - t^{3})\\vec{e}_{1} + 3t^{2}\\vec{e}_{2} + (3t + t^{3})\\vec{e}_{3}\\) is given by:", options: ["\\(\\frac{|\\vec{X}' \\times \\vec{X}''|}{|\\vec{X}'|^{3}}\\)", "\\(\\frac{|\\vec{X}'|}{|\\vec{X}' \\times \\vec{X}''|}\\)", "\\(\\frac{|\\vec{X}' \\times \\vec{X}''|}{|\\vec{X}'|^{2}}\\)", "None of these"], correct: 3 },
+        { text: "Principal normals at consecutive points do not intersect unless:", options: ["\\(\\tau = 0\\)", "\\(\\kappa = 0\\)", "\\(\\vec{r}\\cdot\\vec{r} = 0\\)", "\\(f(\\vec{s}_{1}) = 0\\)"], correct: 0 },
+        { text: "The nth divided difference of a polynomial of degree n are", options: ["non-negative", "\\(0/0\\)", "constant", "None of these"], correct: 2 },
+        { text: "What is the value of \\(\\int_{0}^{\\infty}e^{-9x^{2}}\\,dx\\) using Gamma function:", options: ["\\(\\frac{1}{x}\\sqrt{\\frac{6}{\\log 2}}\\)", "\\(\\frac{1}{6}\\sqrt{\\frac{\\pi}{\\log 2}}\\)", "\\(\\frac{\\pi}{2}\\log 2\\)", "\\(\\frac{2}{\\sqrt{\\pi}}\\log 2\\)"], correct: 1 },
+        { text: "If \\(x_{n} = (-1)^{n}2^{n}n^{-1}\\), \\(n = 1,2,\\ldots\\) with probabilities \\(P_{n} = 2^{-n}\\), then \\(E(X)\\) is", options: ["\\(\\log\\left(\\frac{1}{2}\\right)\\)", "\\(\\log\\left(\\frac{1}{n}\\right)\\)", "\\(\\log(2)\\)", "\\(-\\log\\left(\\frac{1}{4}\\right)\\)"], correct: 0 },
+        { text: "An unbalanced transportation problem is the one in which:", options: ["the number of jobs are not equal to number of facilities", "the total supply is not equal to total requirement", "the total supply is same as total waste", "requirement is zero"], correct: 1 },
+        { text: "The assignment problem consists of:", options: ["a set of jobs", "set of n facilities", "a set of cost", "All of these"], correct: 3 },
+        { text: "The extreme points of feasible region, for \\(Z = 4x_{1} + 3x_{2}\\) subject to \\(3x_{1} + 4x_{2} \\leq 24\\), \\(8x_{1} + 6x_{2} \\leq 48\\), \\(x_{1}, x_{2} \\geq 0\\), are:", options: ["\\((0,0), (0,5), (\\frac{5}{3},\\frac{4}{3}), (\\frac{24}{7},\\frac{24}{7}), (0,6)\\)", "\\((0,0), (0,5), (\\frac{5}{3},\\frac{4}{3}), (\\frac{24}{7},\\frac{24}{7}), (6,0)\\)", "\\((0,0), (0,6), (\\frac{5}{3},\\frac{4}{3}), (\\frac{24}{7},\\frac{24}{7}), (8,0)\\)", "None of these"], correct: 0 },
+        { text: "If a transportation problem has 5 rows and 6 columns then degeneracy will exist, if:", options: ["Total allocated cells \\(= 12\\)", "Total allocated cells \\(= 11\\)", "Total allocated cells \\(= 10\\)", "Total allocated cells \\(= 9\\)"], correct: 2 },
+        { text: "Which is true for Two phase method to solve the LPP in phase I for artificial variable:", options: ["Assign cost \\(-1\\) to each artificial variable", "Assign cost 1 to all other variables", "Assign cost 0 to each artificial variable", "Assign cost \\(-1\\) to all other variables"], correct: 0 },
+        { text: "Which variable/variables are introduced to convert an LPP into standard form:", options: ["slack only", "surplus only", "slack and/or surplus", "artificial"], correct: 2 },
+        { text: "A basic feasible solution is said to be degenerate if:", options: ["Any basic variable is infinite", "Atleast one basic variable is zero", "Atleast one non-basic variable is zero", "No outgoing variable can be selected"], correct: 1 },
+        { text: "The number of dual variables is exactly equal to:", options: ["The number of primal variables", "The number of dual constraints", "The number of primal constraints", "None of these"], correct: 2 },
+        { text: "The technique for solving an integer programming problem is known as", options: ["Vogel's Technique", "Wolge Technique", "Lagrangian multiplier Technique", "Gomory's Technique"], correct: 3 },
+        { text: "Which scientist is not related with Transportation problems?", options: ["T.C. Koopmans", "F.L. Hitchcock", "Dantzig", "Euler"], correct: 3 },
+        { text: "The number of basic variables in a transportation problem is at the most: (If m denotes rows and n denotes columns)", options: ["\\(m + n - 1\\)", "\\(m + n - 2\\)", "\\(m + n\\)", "\\(m + n + 1\\)"], correct: 0 },
+        { text: "\\(\\frac{\\partial g_{ik}}{\\partial x^{k}} =\\)", options: ["\\(0\\)", "\\(1\\)", "\\(g_{ik}\\)", "None of these"], correct: 0 },
+        { text: "What is the saddle point of the problem in Game Theory for a company: \\(\\begin{array}{c|cccc} & I & II & III & IV\\\\ \\hline I & 20 & 15 & 12 & 35\\\\ II & 25 & 14 & 8 & 10\\\\ III & 40 & 2 & 10 & 5\\\\ IV & -5 & 4 & 11 & 0 \\end{array}\\)", options: ["15", "8", "12", "0"], correct: 2 },
+        { text: "The value of game \\(\\begin{array}{cccc}8 & 10 & 9 & 14\\\\ 10 & 11 & 8 & 12\\\\ 13 & 12 & 14 & 13\\end{array}\\) is:", options: ["12", "14", "13", "10"], correct: 0 },
+        { text: "Which does not have direct relevance with two person zero sum game.", options: ["Pure strategy game", "optimum strategy", "Mixed Strategy game", "Single strategy game"], correct: 3 },
+        { text: "In the case of prohibited assignments problems, the assignment cannot be made in a particular cell, then to resolve this we put one of them, in restricted cells and this is:", options: ["very large cost", "Average cost", "zero", "None of these"], correct: 0 },
+        // ---------- GK 91-120 ----------
+        { text: "Which city was selected to host the 2024 United Nations Climate Change Conference (COP29)?", options: ["Dubai, UAE", "Baku, Azerbaijan", "Glasgow, UK", "Sharm El-Sheikh, Egypt"], correct: 1 },
+        { text: "Narges Mohammadi, who was awarded the Nobel Peace Prize in 2023, is recognized for her fight against the oppression of women in which country?", options: ["Afghanistan", "Saudi Arabia", "Iran", "Syria"], correct: 2 },
+        { text: "The XPoSat (X-ray Polarimeter Satellite) mission, designed to study the dynamics of bright astronomical X-ray sources like black holes, was launched by:", options: ["NASA", "ESA (European Space Agency)", "ISRO", "Roscosmos"], correct: 2 },
+        { text: "Which country has been designated to host the 2026 Asian Games?", options: ["India", "China", "Japan", "South Korea"], correct: 2 },
+        { text: "The African Union (AU) was officially inducted as a permanent member of which major intergovernmental forum in 2023?", options: ["G7", "G20", "ASEAN", "BRICS"], correct: 1 },
+        { text: "In modern pedagogy, a \"flipped classroom\" approach primarily involves:", options: ["Teachers learning from the students", "Students reviewing lecture materials at home and doing interactive problem-solving in class", "Conducting classes entirely outdoors", "Replacing the teacher with artificial intelligence"], correct: 1 },
+        { text: "Which type of research design involves actively manipulating an independent variable to observe its direct effect on a dependent variable?", options: ["Descriptive Research", "Historical Research", "Experimental Research", "Correlational Research"], correct: 2 },
+        { text: "In research methodology, a 'Likert scale' (e.g., Strongly Agree to Strongly Disagree) is most commonly used by researchers to measure:", options: ["Physical weight and height", "Attitudes, opinions, and perceptions", "Absolute temperatures", "Financial income"], correct: 1 },
+        { text: "INFLIBNET is an autonomous inter-university centre of the UGC that promotes digital library databases. What does INFLIBNET stand for?", options: ["Information and Library Network", "Indian Network for Literature and Books", "International Forum for Library Networks", "Institutional File and Library Node"], correct: 0 },
+        { text: "The primary objective of 'Continuous and Comprehensive Evaluation' (CCE) in the education system is to:", options: ["Increase the number of exams students take per year", "Assess every aspect of the student's holistic development regularly", "Rank teachers based on student scores", "Reduce the syllabus for weaker students"], correct: 1 },
+        { text: "In computer operating systems like Windows or macOS, what does 'GUI' stand for?", options: ["General Utility Interface", "Graphical User Interface", "Global Universal Internet", "Guided User Instructions"], correct: 1 },
+        { text: "The term 'IoT' refers to a vast network of physical devices embedded with sensors that connect and exchange data. What does IoT mean?", options: ["Internet of Technology", "Intranet of Towers", "Internet of Things", "Integration of Telecommunications"], correct: 2 },
+        { text: "In web browsing terminology, what is the primary function of a 'Cache'?", options: ["To permanently delete browsing history", "To block unwanted pop-up advertisements", "To store web page data locally on the device to speed up future loading times", "To encrypt passwords securely"], correct: 2 },
+        { text: "A type of malware that disguises itself as legitimate and harmless software to trick a user into installing it is known as a:", options: ["Computer Worm", "Trojan Horse", "Keylogger", "Rootkit"], correct: 1 },
+        { text: "When writing an email, the 'Reply All' function does which of the following?", options: ["Sends your reply only to the original sender", "Forwards the email to a new contact", "Sends your reply to the sender and everyone else included in the 'To' and 'Cc' fields", "Automatically blind-copies your manager"], correct: 2 },
+        { text: "The specific terrestrial biome characterized by permanently frozen subsoil (permafrost) and extremely sparse vegetation is called the:", options: ["Savanna", "Taiga", "Tundra", "Chaparral"], correct: 2 },
+        { text: "The alarming phenomenon known as the \"Ozone Hole\" was first prominently discovered in the 1980s over which geographic region?", options: ["The Arctic", "Antarctica", "The Amazon Rainforest", "The Sahara Desert"], correct: 1 },
+        { text: "The International Solar Alliance (ISA), headquartered in India, was jointly launched in 2015 by India and which other nation?", options: ["United States", "Germany", "Japan", "France"], correct: 3 },
+        { text: "The National Green Tribunal (NGT) was established in India in 2010 primarily to ensure:", options: ["The promotion of green energy businesses", "Expeditious and effective disposal of cases relating to environmental protection", "The mapping of all green cover in the country", "The distribution of agricultural subsidies"], correct: 1 },
+        { text: "Biogas is a highly effective, renewable energy source produced by the breakdown of organic matter. Its primary constituent gas is:", options: ["Propane", "Butane", "Methane", "Hydrogen"], correct: 2 },
+        { text: "Out of the four ancient Vedas, which one is primarily associated with rules, rituals, and formulas for performing sacrifices?", options: ["Rigveda", "Samaveda", "Yajurveda", "Atharvaveda"], correct: 2 },
+        { text: "Who among the following founded the 'Ramakrishna Mission' in 1897 to carry out humanitarian and social work?", options: ["Ramakrishna Paramahamsa", "Swami Vivekananda", "Rabindranath Tagore", "Sri Aurobindo"], correct: 1 },
+        { text: "The famous 'Nathu La' mountain pass, a crucial historical trade route, connects the Indian state of Sikkim with which region?", options: ["Bhutan", "Nepal", "Tibet (China)", "Myanmar"], correct: 2 },
+        { text: "The Milky Way, the galaxy containing our solar system, is classified by astronomers as which type of galaxy?", options: ["Elliptical galaxy", "Irregular galaxy", "Spiral galaxy", "Lenticular galaxy"], correct: 2 },
+        { text: "The 'August Offer' of 1940, which promised the expansion of the Executive Council to include more Indians, was made by Viceroy:", options: ["Lord Linlithgow", "Lord Mountbatten", "Lord Wavell", "Lord Ripon"], correct: 0 },
+        { text: "Dr. B.R. Ambedkar famously described which Article of the Indian Constitution as the \"Heart and Soul of the Constitution\"?", options: ["Article 14 (Right to Equality)", "Article 19 (Right to Freedom)", "Article 21 (Right to Life)", "Article 32 (Right to Constitutional Remedies)"], correct: 3 },
+        { text: "The detailed constitutional procedure for the impeachment of the President of India is laid down in:", options: ["Article 52", "Article 61", "Article 72", "Article 123"], correct: 1 },
+        { text: "The Comptroller and Auditor General (CAG) of India, who audits all receipts and expenditures of the government, is appointed for a term of:", options: ["5 years or up to 60 years of age", "5 years or up to 65 years of age", "6 years or up to 65 years of age", "6 years or up to 62 years of age"], correct: 2 },
+        { text: "Which is the apex development financial institution in India specifically responsible for promoting agriculture and rural development?", options: ["SIDBI", "NABARD", "EXIM Bank", "SBI"], correct: 1 },
+        { text: "In the context of the Indian industrial economy, what does the abbreviation 'MSME' stand for?", options: ["Macro, Small and Medium Enterprises", "Micro, Small and Medium Enterprises", "Manufacturing, Sales and Marketing Enterprises", "Multinational, State and Marginal Enterprises"], correct: 1 }
+    ];
+
+    // ==================== STATE ====================
+    let currentQuestionIndex = 0;
+    let userAnswers = new Array(questions.length).fill(null);
+    let markedForReview = new Array(questions.length).fill(false);
+    let visited = new Array(questions.length).fill(false);
+    let timerSeconds = 120 * 60;
+    let timerInterval = null;
+    let testSubmitted = false;
+    let currentFilter = 'all';
+
+    const questionArea = document.getElementById('questionArea');
+    const paletteGrid = document.getElementById('paletteGrid');
+    const timerDisplay = document.getElementById('timerDisplay');
+    const paletteStats = document.getElementById('paletteStats');
+    const resultOverlay = document.getElementById('resultOverlay');
+    const resultBody = document.getElementById('resultBody');
+    const closeOverlayBtn = document.getElementById('closeOverlayBtn');
+    const downloadReportBtn = document.getElementById('downloadReportBtn');
+
+    function renderQuestion(index) {
+        if (testSubmitted) return;
+        if (!visited[index]) visited[index] = true;
+        currentQuestionIndex = index;
+        const q = questions[index];
+        const selectedOpt = userAnswers[index];
+        const isMarked = markedForReview[index];
+
+        let html = `<div class="question-text">Q${index + 1}. ${q.text}</div><div class="options">`;
+        q.options.forEach((opt, optIdx) => {
+            const selectedClass = (selectedOpt === optIdx) ? 'selected' : '';
+            html += `<div class="option-item ${selectedClass}" data-opt-index="${optIdx}">
+                        <span class="option-prefix">${String.fromCharCode(97 + optIdx)})</span>
+                        <span class="option-text">${opt}</span>
+                     </div>`;
+        });
+        html += `</div>`;
+        html += `<div class="nav-buttons">
+                    <button class="btn" id="prevBtn" ${index === 0 ? 'disabled' : ''}>← Previous</button>
+                    <button class="btn" id="nextBtn" ${index === questions.length - 1 ? 'disabled' : ''}>Next →</button>
+                    <button class="btn btn-outline" id="clearBtn">Clear Response</button>
+                    <button class="btn ${isMarked ? 'btn-warning' : 'btn-outline'}" id="markBtn">${isMarked ? 'Unmark' : 'Mark for Review'}</button>
+                    <button class="btn btn-danger" id="submitBtn">Submit Test</button>
+                 </div>`;
+        questionArea.innerHTML = html;
+
+        document.querySelectorAll('.option-item').forEach(el => {
+            el.addEventListener('click', () => {
+                const optIdx = parseInt(el.dataset.optIndex);
+                userAnswers[index] = (userAnswers[index] === optIdx) ? null : optIdx;
+                renderQuestion(index); updatePalette();
+            });
+        });
+        document.getElementById('prevBtn')?.addEventListener('click', () => { if (index > 0) { renderQuestion(index - 1); updatePalette(); } });
+        document.getElementById('nextBtn')?.addEventListener('click', () => { if (index < questions.length - 1) { renderQuestion(index + 1); updatePalette(); } });
+        document.getElementById('clearBtn')?.addEventListener('click', () => { userAnswers[index] = null; renderQuestion(index); updatePalette(); });
+        document.getElementById('markBtn')?.addEventListener('click', () => { markedForReview[index] = !markedForReview[index]; renderQuestion(index); updatePalette(); });
+        document.getElementById('submitBtn')?.addEventListener('click', () => { if (confirm('Are you sure you want to submit the test?')) submitTest(); });
+
+        if (window.MathJax && MathJax.typesetPromise) MathJax.typesetPromise([questionArea]).catch(() => {});
+    }
+
+    function updatePalette() {
+        const answeredCount = userAnswers.filter(a => a !== null).length;
+        paletteStats.textContent = `${answeredCount}/${questions.length}`;
+        let html = '';
+        for (let i = 0; i < questions.length; i++) {
+            let stateClass = 'not-visited';
+            if (markedForReview[i]) stateClass = 'marked';
+            else if (userAnswers[i] !== null) stateClass = 'answered';
+            else if (visited[i]) stateClass = 'not-answered';
+            const currentClass = (i === currentQuestionIndex) ? 'current' : '';
+            html += `<button class="palette-btn ${stateClass} ${currentClass}" data-index="${i}">${i + 1}</button>`;
+        }
+        paletteGrid.innerHTML = html;
+        paletteGrid.querySelectorAll('.palette-btn').forEach(btn => {
+            btn.addEventListener('click', () => { renderQuestion(parseInt(btn.dataset.index)); updatePalette(); });
+        });
+        const currentBtn = paletteGrid.querySelector(`.palette-btn[data-index="${currentQuestionIndex}"]`);
+        if (currentBtn) currentBtn.scrollIntoView({ block: 'nearest', behavior: 'smooth' });
+        if (window.MathJax && MathJax.typesetPromise) MathJax.typesetPromise([paletteGrid]).catch(() => {});
+    }
+
+    function startTimer() {
+        if (timerInterval) clearInterval(timerInterval);
+        timerInterval = setInterval(() => {
+            if (testSubmitted) return;
+            timerSeconds--;
+            if (timerSeconds <= 0) { timerSeconds = 0; clearInterval(timerInterval); timerInterval = null; submitTest(); }
+            updateTimerDisplay();
+        }, 1000);
+    }
+    function updateTimerDisplay() {
+        const mins = Math.floor(timerSeconds / 60);
+        const secs = timerSeconds % 60;
+        timerDisplay.textContent = `${String(mins).padStart(2, '0')}:${String(secs).padStart(2, '0')}`;
+    }
+
+    function submitTest() {
+        if (testSubmitted) return;
+        testSubmitted = true;
+        clearInterval(timerInterval); timerInterval = null;
+        let correct = 0, wrong = 0, skipped = 0;
+        questions.forEach((q, i) => {
+            const ans = userAnswers[i];
+            if (ans === null) skipped++;
+            else if (ans === q.correct) correct++;
+            else wrong++;
+        });
+        const totalScore = correct * 3 - wrong;
+        const attempted = correct + wrong;
+        const accuracy = attempted > 0 ? ((correct / attempted) * 100).toFixed(2) : '0.00';
+
+        let summaryHtml = `<div class="score-summary">
+            <div class="score-item"><span class="score-label">Total Score</span><span class="score-value">${totalScore}</span></div>
+            <div class="score-item"><span class="score-label">Correct</span><span class="score-value" style="color:#15803d;">${correct}</span></div>
+            <div class="score-item"><span class="score-label">Wrong</span><span class="score-value" style="color:#b91c1c;">${wrong}</span></div>
+            <div class="score-item"><span class="score-label">Skipped</span><span class="score-value" style="color:#64748b;">${skipped}</span></div>
+            <div class="score-item"><span class="score-label">Accuracy</span><span class="score-value">${accuracy}%</span></div>
+        </div>`;
+        summaryHtml += `<div class="filter-bar">
+            <button class="filter-btn active" data-filter="all">All</button>
+            <button class="filter-btn" data-filter="correct">Correct</button>
+            <button class="filter-btn" data-filter="incorrect">Incorrect</button>
+            <button class="filter-btn" data-filter="unattempted">Unattempted</button>
+        </div>`;
+        summaryHtml += `<div class="review-list" id="reviewList">`;
+        questions.forEach((q, i) => {
+            const userAns = userAnswers[i];
+            let status = 'unattempted';
+            if (userAns !== null) status = (userAns === q.correct) ? 'correct' : 'incorrect';
+            summaryHtml += `<div class="review-item ${status}" data-status="${status}">
+                <div class="review-question">Q${i + 1}. ${q.text}</div>
+                <div class="review-option">Your answer: ${userAns !== null ? String.fromCharCode(97 + userAns) + ') ' + q.options[userAns] : 'Not attempted'}</div>
+                <div class="review-option review-correct-ans">Correct answer: ${String.fromCharCode(97 + q.correct)}) ${q.options[q.correct]}</div>
+            </div>`;
+        });
+        summaryHtml += `</div>`;
+        resultBody.innerHTML = summaryHtml;
+        resultOverlay.classList.add('active');
+
+        resultBody.querySelectorAll('.filter-btn').forEach(btn => {
+            btn.addEventListener('click', () => {
+                resultBody.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+                btn.classList.add('active');
+                const filter = btn.dataset.filter;
+                resultBody.querySelectorAll('.review-item').forEach(item => {
+                    item.style.display = (filter === 'all' || item.dataset.status === filter) ? 'block' : 'none';
+                });
+            });
+        });
+        if (window.MathJax && MathJax.typesetPromise) MathJax.typesetPromise([resultBody]).catch(() => {});
+    }
+
+    function downloadReport() {
+        let report = "MCQ Test Performance Report\n\n";
+        resultBody.querySelectorAll('.score-item').forEach(el => {
+            report += el.querySelector('.score-label').textContent + ": " + el.querySelector('.score-value').textContent + "\n";
+        });
+        report += "\n--- Solutions ---\n\n";
+        resultBody.querySelectorAll('.review-item').forEach(item => {
+            if (item.style.display === 'none') return;
+            report += item.querySelector('.review-question').textContent + "\n";
+            item.querySelectorAll('.review-option').forEach(opt => { report += "  " + opt.textContent + "\n"; });
+            report += "\n";
+        });
+        const blob = new Blob([report], { type: 'text/plain' });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url; a.download = 'mcq_performance_report.txt'; a.click();
+        URL.revokeObjectURL(url);
+    }
+
+    function init() {
+        currentQuestionIndex = 0;
+        userAnswers = new Array(questions.length).fill(null);
+        markedForReview = new Array(questions.length).fill(false);
+        visited = new Array(questions.length).fill(false);
+        testSubmitted = false;
+        timerSeconds = 120 * 60;
+        updateTimerDisplay();
+        startTimer();
+        renderQuestion(0);
+        updatePalette();
+        closeOverlayBtn.addEventListener('click', () => resultOverlay.classList.remove('active'));
+        downloadReportBtn.addEventListener('click', downloadReport);
+    }
+
+    window.addEventListener('load', () => {
+        init();
+        if (window.MathJax && MathJax.typesetPromise) MathJax.typesetPromise([questionArea]).catch(() => {});
+    });
+</script>
+</body>
+</html>
