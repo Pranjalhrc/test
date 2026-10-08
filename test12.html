@@ -1,0 +1,885 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>MCQ Test App | Maths + GK</title>
+  <!-- MathJax for LaTeX rendering -->
+  <script>
+    window.MathJax = {
+      tex: { inlineMath: [['$', '$'], ['\\(', '\\)']] },
+      svg: { fontCache: 'global' }
+    };
+  </script>
+  <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-svg.js" async></script>
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+    body {
+      font-family: 'Segoe UI', Roboto, sans-serif;
+      background: #f5f7fc;
+      height: 100vh;
+      display: flex;
+      overflow: hidden;
+    }
+    /* main area */
+    .main {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      height: 100vh;
+      overflow-y: auto;
+      padding: 20px 20px 20px 30px;
+    }
+    .timer-bar {
+      background: #1e2b3c;
+      color: white;
+      padding: 12px 24px;
+      border-radius: 12px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 20px;
+      font-weight: 600;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.05);
+      flex-shrink: 0;
+    }
+    .timer {
+      font-size: 1.6rem;
+      font-family: monospace;
+      letter-spacing: 2px;
+      background: #2d3f54;
+      padding: 6px 18px;
+      border-radius: 40px;
+    }
+    .question-container {
+      background: white;
+      border-radius: 20px;
+      padding: 28px 30px;
+      box-shadow: 0 8px 24px rgba(0,0,0,0.05);
+      margin-bottom: 16px;
+      border: 1px solid #e9eef4;
+      flex-shrink: 0;
+    }
+    .q-num {
+      font-size: 0.9rem;
+      color: #3b6ea5;
+      font-weight: 600;
+      letter-spacing: 0.3px;
+      margin-bottom: 6px;
+    }
+    .q-text {
+      font-size: 1.2rem;
+      line-height: 1.6;
+      margin-bottom: 24px;
+      color: #1a2a3a;
+    }
+    .options {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      margin-bottom: 20px;
+    }
+    .option {
+      display: flex;
+      align-items: flex-start;
+      gap: 14px;
+      padding: 14px 18px;
+      background: #f9fbfd;
+      border: 1.5px solid #dbe2ea;
+      border-radius: 14px;
+      cursor: pointer;
+      transition: all 0.15s;
+      user-select: none;
+    }
+    .option:hover {
+      background: #eef3f9;
+      border-color: #b0c7dd;
+    }
+    .option.selected {
+      background: #e3edfa;
+      border-color: #2a6eb0;
+      box-shadow: 0 0 0 1px #2a6eb0;
+    }
+    .option .letter {
+      font-weight: 700;
+      color: #2a6eb0;
+      min-width: 24px;
+      font-size: 1rem;
+    }
+    .option .opt-text {
+      flex: 1;
+      font-size: 1rem;
+    }
+    /* buttons */
+    .action-buttons {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px;
+      margin-top: 12px;
+      align-items: center;
+    }
+    .btn {
+      padding: 10px 22px;
+      border-radius: 40px;
+      border: none;
+      font-weight: 600;
+      font-size: 0.9rem;
+      cursor: pointer;
+      background: white;
+      border: 1.5px solid #cbd5e1;
+      color: #1e2b3c;
+      transition: all 0.15s;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.02);
+    }
+    .btn:hover {
+      background: #f1f5f9;
+      border-color: #94a3b8;
+    }
+    .btn.primary {
+      background: #1e2b3c;
+      border-color: #1e2b3c;
+      color: white;
+    }
+    .btn.primary:hover {
+      background: #2d3f54;
+    }
+    .btn.warning {
+      background: #f59e0b;
+      border-color: #f59e0b;
+      color: white;
+    }
+    .btn.warning:hover {
+      background: #d97706;
+    }
+    .btn.danger {
+      background: #dc2626;
+      border-color: #dc2626;
+      color: white;
+    }
+    .btn.danger:hover {
+      background: #b91c1c;
+    }
+    .btn.success {
+      background: #0b6e4f;
+      border-color: #0b6e4f;
+      color: white;
+    }
+    .btn.success:hover {
+      background: #095a41;
+    }
+    .spacer {
+      flex: 1;
+    }
+    /* palette (right side) */
+    .palette {
+      width: 300px;
+      background: white;
+      border-left: 1px solid #dde3ec;
+      display: flex;
+      flex-direction: column;
+      height: 100vh;
+      padding: 20px 16px;
+      box-shadow: -4px 0 12px rgba(0,0,0,0.02);
+      flex-shrink: 0;
+      overflow: hidden;
+    }
+    .palette h3 {
+      font-size: 1rem;
+      margin-bottom: 12px;
+      color: #1e2b3c;
+      font-weight: 700;
+    }
+    .palette-legend {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      font-size: 0.7rem;
+      margin-bottom: 14px;
+      color: #4b5e71;
+    }
+    .legend-item {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .legend-box {
+      width: 14px;
+      height: 14px;
+      border-radius: 4px;
+    }
+    .legend-box.answered { background: #22c55e; }
+    .legend-box.not-answered { background: #ef4444; }
+    .legend-box.marked { background: #a855f7; }
+    .legend-box.not-visited { background: #e2e8f0; border: 1px solid #cbd5e1; }
+
+    .palette-grid {
+      flex: 1;
+      overflow-y: auto;
+      display: grid;
+      grid-template-columns: repeat(5, 1fr);
+      gap: 8px;
+      align-content: start;
+      padding-right: 4px;
+      margin-bottom: 8px;
+    }
+    .palette-grid::-webkit-scrollbar {
+      width: 6px;
+    }
+    .palette-grid::-webkit-scrollbar-thumb {
+      background: #cbd5e1;
+      border-radius: 10px;
+    }
+    .palette-btn {
+      aspect-ratio: 1;
+      border-radius: 10px;
+      border: 1.5px solid #cbd5e1;
+      background: #ffffff;
+      font-weight: 600;
+      font-size: 0.8rem;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      transition: all 0.1s;
+      color: #1e2b3c;
+    }
+    .palette-btn.answered {
+      background: #22c55e;
+      border-color: #16a34a;
+      color: white;
+    }
+    .palette-btn.not-answered {
+      background: #ef4444;
+      border-color: #dc2626;
+      color: white;
+    }
+    .palette-btn.marked {
+      background: #a855f7;
+      border-color: #9333ea;
+      color: white;
+    }
+    .palette-btn.not-visited {
+      background: #f1f5f9;
+      border-color: #cbd5e1;
+      color: #64748b;
+    }
+    .palette-btn.active {
+      outline: 3px solid #1e2b3c;
+      outline-offset: 2px;
+    }
+
+    /* overlay results */
+    .overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,0.5);
+      backdrop-filter: blur(3px);
+      display: none;
+      align-items: center;
+      justify-content: center;
+      z-index: 1000;
+      padding: 20px;
+    }
+    .overlay.active {
+      display: flex;
+    }
+    .overlay-card {
+      background: white;
+      border-radius: 32px;
+      max-width: 800px;
+      width: 100%;
+      max-height: 90vh;
+      overflow-y: auto;
+      padding: 32px 36px;
+      box-shadow: 0 25px 50px -12px rgba(0,0,0,0.3);
+    }
+    .overlay-card h2 {
+      font-size: 1.8rem;
+      margin-bottom: 12px;
+      color: #0b1e2e;
+    }
+    .score-row {
+      display: flex;
+      gap: 40px;
+      margin: 20px 0 28px;
+      flex-wrap: wrap;
+    }
+    .score-item {
+      background: #f1f5f9;
+      padding: 14px 22px;
+      border-radius: 20px;
+    }
+    .score-item .label {
+      font-size: 0.8rem;
+      text-transform: uppercase;
+      color: #4b5e71;
+      letter-spacing: 1px;
+    }
+    .score-item .value {
+      font-size: 2rem;
+      font-weight: 700;
+      color: #0b1e2e;
+    }
+    .review-list {
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+      margin-top: 20px;
+      max-height: 380px;
+      overflow-y: auto;
+      padding-right: 10px;
+    }
+    .review-item {
+      border-left: 6px solid #cbd5e1;
+      background: #fafcff;
+      padding: 14px 18px;
+      border-radius: 12px;
+    }
+    .review-item.correct { border-left-color: #22c55e; background: #f0fdf4; }
+    .review-item.wrong { border-left-color: #ef4444; background: #fef2f2; }
+    .review-item.skipped { border-left-color: #94a3b8; background: #f8fafc; }
+    .review-q {
+      font-weight: 600;
+      margin-bottom: 6px;
+    }
+    .review-meta {
+      font-size: 0.9rem;
+      display: flex;
+      gap: 24px;
+      flex-wrap: wrap;
+    }
+    .filter-bar {
+      display: flex;
+      gap: 10px;
+      margin: 10px 0 16px;
+    }
+    .filter-btn {
+      padding: 6px 16px;
+      border-radius: 30px;
+      border: 1px solid #cbd5e1;
+      background: white;
+      cursor: pointer;
+      font-weight: 500;
+    }
+    .filter-btn.active {
+      background: #1e2b3c;
+      color: white;
+      border-color: #1e2b3c;
+    }
+    .download-btn {
+      margin-top: 22px;
+      background: #0b6e4f;
+      color: white;
+      border: none;
+      padding: 12px 28px;
+      border-radius: 40px;
+      font-weight: 600;
+      cursor: pointer;
+      font-size: 1rem;
+    }
+    .download-btn:hover {
+      background: #095a41;
+    }
+    .hidden { display: none; }
+  </style>
+</head>
+<body>
+  <div class="main" id="mainApp">
+    <div class="timer-bar">
+      <span>⏳ Time Remaining</span>
+      <span class="timer" id="timerDisplay">120:00</span>
+    </div>
+    <div class="question-container">
+      <div class="q-num" id="qNumLabel">Question 1</div>
+      <div class="q-text" id="qText"></div>
+      <div class="options" id="optionsContainer"></div>
+      <div class="action-buttons">
+        <button class="btn" id="prevBtn">◀ Previous</button>
+        <button class="btn" id="nextBtn">Next ▶</button>
+        <button class="btn" id="clearBtn">Clear Response</button>
+        <button class="btn warning" id="markBtn">Mark for Review</button>
+        <div class="spacer"></div>
+        <button class="btn danger" id="submitBtn">Submit</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- right palette -->
+  <div class="palette">
+    <h3>Question Palette</h3>
+    <div class="palette-legend">
+      <div class="legend-item"><span class="legend-box answered"></span> Answered</div>
+      <div class="legend-item"><span class="legend-box not-answered"></span> Not Answered</div>
+      <div class="legend-item"><span class="legend-box marked"></span> Marked</div>
+      <div class="legend-item"><span class="legend-box not-visited"></span> Not Visited</div>
+    </div>
+    <div class="palette-grid" id="paletteGrid"></div>
+  </div>
+
+  <!-- result overlay -->
+  <div class="overlay" id="resultOverlay">
+    <div class="overlay-card" id="resultCard">
+      <h2>📊 Performance & Solutions</h2>
+      <div class="score-row" id="scoreRow"></div>
+      <div class="filter-bar" id="filterBar">
+        <button class="filter-btn active" data-filter="all">All</button>
+        <button class="filter-btn" data-filter="correct">Correct</button>
+        <button class="filter-btn" data-filter="wrong">Incorrect</button>
+        <button class="filter-btn" data-filter="skipped">Unattempted</button>
+      </div>
+      <div class="review-list" id="reviewList"></div>
+      <button class="download-btn" id="downloadBtn">⬇ Download Solutions (HTML)</button>
+      <button class="btn" id="closeOverlayBtn" style="margin-left: 12px;">Close</button>
+    </div>
+  </div>
+
+  <script>
+    // ------------------------------
+    // 1. QUESTIONS DATA (120 items)
+    // ------------------------------
+    const questions = [
+      // Maths: 1-90
+      { text: "$(p\\rightarrow q)\\wedge(r\\rightarrow q)$ is equivalent to", options: ["$p\\vee(r\\rightarrow q)$", "$p\\rightarrow(q\\rightarrow r)$", "$(p\\vee r)\\rightarrow q$", "$p\\vee(r\\rightarrow p)$"], correct: 2 },
+      { text: "The statement $p\\wedge\\sim p$ is", options: ["Contradiction", "Tautology", "Both (A) and (B)", "None of these"], correct: 0 },
+      { text: "The condition when two roots $\\alpha, \\beta$ of the equation $x^{3}-px^{2}+qx-r=0$ are such that $\\alpha+\\beta=0$ is given by", options: ["$pq-r=0$", "$p=q$", "$q=r$", "$pq+r=0$"], correct: 0 },
+      { text: "The value of $\\cosh 3x$ is given by", options: ["$4\\cosh x-3\\cosh^{3}x$", "$4\\cosh^{3}x-3\\cosh x$", "$4\\cosh x+3\\cosh^{3}x$", "$4\\cosh^{3}x+3\\cosh x$"], correct: 1 },
+      { text: "If $x_{1}, x_{2}, x_{3}$ are the roots of an equation $x^{3}-3Ax+B=0$, then the value of $\\Sigma(x_{1}-x_{2})(x_{1}-x_{3})$ is given by", options: ["$6A$", "$9A$", "$-6A$", "$-9A$"], correct: 1 },
+      { text: "The algebraic sum of deviations from arithmetic mean of all variables is", options: ["$0$", "$1$", "$2$", "$\\infty$"], correct: 0 },
+      { text: "A group of 10 students were randomly drawn from class 12 and was given yoga training for three weeks, Their wellness life style was compared with another similarly selected group which did not undergo such training. Which type of statistical test will be appropriate for testing the tenability of null hypothesis?", options: ["Dependent t-test", "Wilcoxon t-test", "Independent t-test", "Sign test"], correct: 2 },
+      { text: "The data sets of sizes 6 and 9 have standard deviations 3 and 4 respectively and arithmetic means 4 and 4 respectively. The standard deviation of the combined data set of size 15 is", options: ["$\\sqrt{70}/5$", "$\\sqrt{72}/5$", "$\\sqrt{68}/5$", "$\\sqrt{66}/5$"], correct: 3 },
+      { text: "A teacher-researcher has obtained data from questionnaire used for teachers and head teachers in the form of contingency table of $3 \\times 3$ for anxiety and awareness levels. Which statistical test will indicate whether the two variables are interdependent?", options: ["Wilcoxon signed rank test", "Chi-square test", "Spearman's Rank difference method of correlation", "Eta ($\\eta$) co-efficient"], correct: 1 },
+      { text: "The Student's t-test is typically used", options: ["in comparing multiple groups to see if their means differ", "in testing the stationarity of a time series", "in comparing two groups to see if their means differ", "in testing the goodness of fit of a model"], correct: 2 },
+      { text: "Let $f_{n}(x)=\\frac{\\sin nx}{\\sqrt{n}}$ ($x$ real, $n=1,2,3,\\dots$) and $f(x)=\\lim_{n\\rightarrow\\infty}f_{n}(x)=0$, then (for the case, when $\\{f_{n}'\\}$ does not converge to $f'$), $f'(x)$ and $f_{n}'(x)$ shall be", options: ["$0$ and $\\sqrt{n}\\cos nx$", "$0$ and $1$", "$0$ and $\\frac{1}{\\sqrt{n}}\\cos nx$", "$\\sqrt{n}\\cos nx$ and $\\cos nx$"], correct: 0 },
+      { text: "Suppose $f \\in \\mathcal{R}(\\alpha)$ on $[a, b]$, $m \\le f \\le M$, $\\phi$ is continuous on $[m, M]$ and $h(x)=\\phi(f(x))$ on $[a, b]$. Then", options: ["$h \\in \\mathcal{R}(\\alpha)$ on $(a, b)$", "$h \\in \\mathcal{R}(\\alpha)$ on $[a, b]$", "$f(x)=h(x)=\\phi(x)$ on $[a, b]$", "$h \\in \\mathcal{R}(\\alpha)$ on $[a, b]$"], correct: 1 },
+      { text: "Let $A$ be a countable set, and let $B_{n}$ be the set of all n-tuples $(a_{1},a_{2},\\dots,a_{n})$ where $a_{k} \\in A$ ($k=1,2,\\dots,n$) and the elements $a_{1},a_{2},\\dots,a_{n}$ need not be distinct. Then $B_{n}$ is", options: ["Unbounded", "Bounded", "Uncountable", "Countable"], correct: 3 },
+      { text: "The subsequential limits of a sequence $\\{p_{n}\\}$ in a metric space $X$ form a/an", options: ["Open subset of $X$", "Closed subset of $X$", "Bounded sequence", "Uniformly convergent sequence"], correct: 1 },
+      { text: "If $K_{n}$ is a sequence of compact sets in $X$, such that $K_{n} \\supset K_{n+1}$ ($n=1,2,3,\\dots$) and if $\\lim_{n\\rightarrow\\infty} \\text{diam } K_{n}=0$, then $\\bigcap_{n=1}^{\\infty} K_{n}$ consists of exactly", options: ["$n$ points", "one point", "more than $n$ points", "not any point"], correct: 1 },
+      { text: "If $\\vec{a}$ is a constant vector and $\\vec{r}=2x^{2}\\hat{i}+y\\hat{j}+z\\hat{k}$, then $\\nabla \\cdot (\\vec{r} \\times \\vec{a})=$", options: ["$2$", "$2x^{2}+y+z$", "$0$", "$4x+y^{2}+z^{2}$"], correct: 2 },
+      { text: "If $|\\vec{r}|=r$, where $\\vec{r}=x\\hat{i}+y\\hat{j}+z\\hat{k}$, then $\\nabla \\left(\\frac{1}{r}\\right)=$", options: ["$-\\frac{\\vec{r}}{r^{3}}$", "$\\frac{\\vec{r}}{r^{3}}$", "$-\\frac{\\vec{r}}{r^{2}}$", "$\\frac{\\vec{r}}{r^{2}}$"], correct: 0 },
+      { text: "Which of the following alternative is true?", options: ["$\\nabla(\\vec{a} \\cdot \\vec{b})=(\\vec{a} \\cdot \\nabla)\\vec{b}+(\\vec{b} \\cdot \\nabla)\\vec{a}$", "$\\nabla \\times (\\vec{a} \\times \\vec{b})=(\\vec{b} \\cdot \\nabla)\\vec{a}-(\\vec{a} \\cdot \\nabla)\\vec{b}+\\vec{a}(\\nabla \\cdot \\vec{b})-\\vec{b}(\\nabla \\cdot \\vec{a})$", "$\\nabla \\times (u\\vec{a})=(\\nabla u) \\times \\vec{a}-u(\\nabla \\times \\vec{a})$", "$\\nabla \\times (\\vec{a} \\times \\vec{b})=(\\vec{a} \\cdot \\nabla)\\vec{b}$"], correct: 1 },
+      { text: "If $C$ is square cut from the first quadrant by the line $x=1$ and $y=2$, then the integration $\\int_{C} (xy \\, dy - y^{2} \\, dx)=$", options: ["$6$", "$3$", "$2$", "$-2$"], correct: 0 },
+      { text: "If $\\vec{r}=x\\hat{i}+y\\hat{j}+z\\hat{k}$ and $V$ be the volume enclosed by surface $S$, then what is the value of $\\iint_{S} \\vec{r} \\cdot \\hat{n} \\, dS$, where $S$ is a closed surface?", options: ["$\\frac{V}{2}$", "$2V$", "$3V$", "$V$"], correct: 2 },
+      { text: "Let $H$ be a Hilbert space. $T$ be an operator defined on $H$. Identify the correct statement from the below statements.", options: ["$T$ is a self adjoint operator if $T^{*}=T$", "$T$ is a normal operator if $T^{*}T=TT^{*}$", "$T$ is a unitary operator if $T^{*}T=TT^{*}=I$", "All are correct"], correct: 0 },
+      { text: "Identify the incorrect statement from the following.", options: ["$l_{p}$, $1<p<\\infty$ is a reflexive space", "$l_{1}$ is a reflexive space", "A Banach space need not be a reflexive space", "Every finite dimensional space is a reflexive space"], correct: 2 },
+      { text: "Let $X$ be a set and $E \\subset X$. A subset $E$ is nowhere dense if", options: ["$(\\overline{E})^{\\circ}=\\emptyset$", "$(\\overline{E})^{\\circ} \\neq \\emptyset$", "$E=X$", "$E$ contains non-empty open set"], correct: 0 },
+      { text: "Consider the following statements: \\\\ A. Strong convergence is weaker than standard convergence. \\\\ B. Weak convergence is weaker than strong convergence. Then", options: ["Only (A) is true", "Only (B) is true", "Both (A) and (B) are true", "Neither (A) nor (B) is true"], correct: 1 },
+      { text: "Identify the correct statement/statements. \\\\ A. If $B$ and $B'$ are Banach spaces and $T$ is a linear transformation of $B$ into $B'$, then $T$ is continuous iff its graph $G_{T}$ is closed. \\\\ B. If $B$ and $B'$ are Banach spaces and if $T$ is a continuous linear transformation of $B$ onto $B'$, then $T$ is an open mapping.", options: ["Only statement (A) is true", "Only statement (B) is true", "Both statements (A) and (B) are true", "Neither statement (A) true nor statement (B) true"], correct: 2 },
+      { text: "Number of generators of a cyclic group of order 60 will be", options: ["$14$", "$16$", "$18$", "$20$"], correct: 1 },
+      { text: "Which among the following is/are possible class equation for some finite group? \\\\ I. $1+3+3+3+3+13+13=39$ \\\\ II. $1+1+1+2+5+5=15$ \\\\ III. $1+3+3+7+7=21$", options: ["Only I", "Only II", "Only III", "Both I and III"], correct: 3 },
+      { text: "If $p$ is a prime number, then any group $G$ of order $2p$ has a normal subgroup of order", options: ["$p-1$", "$\\frac{p-1}{2}$", "$\\frac{p}{2}$", "$p$"], correct: 3 },
+      { text: "If $G$ is a group of order 4725, then the order of 3-sylow subgroup is", options: ["$3$", "$9$", "$27$", "$175$"], correct: 1 },
+      { text: "Which of the following statement is wrong?", options: ["A commutative ring with unity is a field if it has proper ideals.", "Set of integers $I$ is not an ideal of the ring of rational numbers $(Q, +, \\cdot)$", "Set of rational numbers $Q$ is not an ideal of the ring of real numbers $(R, +, \\cdot)$", "Intersection of two ideals of a ring is again an ideal of the ring."], correct: 0 },
+      { text: "The modified Euler method, also known as the improved Euler method overcomes a limitation of the standard Euler method by", options: ["Using smaller step sizes", "Increasing the order of accuracy", "Applying adaptive step-size control", "Incorporating an average of function values of two points."], correct: 3 },
+      { text: "The convergence of Bisection method is", options: ["Quadratic", "Cubic", "Linear", "None of these"], correct: 2 },
+      { text: "To find out the root of the equation $f(x)=0$ by Secant method, the formula used is", options: ["$x_{i+1}=x_{i}+\\frac{f(x_{i})(x_{i}-x_{i-1})}{f(x_{i})-f(x_{i-1})}$", "$x_{i+1}=x_{i}-\\frac{f(x_{i})(x_{i}+x_{i-1})}{f(x_{i})+f(x_{i-1})}$", "$x_{i+1}=x_{i}+\\frac{f(x_{i})(x_{i}+x_{i-1})}{f(x_{i})+f(x_{i-1})}$", "$x_{i+1}=x_{i}-\\frac{f(x_{i})(x_{i}-x_{i-1})}{f(x_{i})-f(x_{i-1})}$"], correct: 3 },
+      { text: "Picard's method for $(i+1)^{\\text{th}}$ iterate of $y$ is", options: ["$y^{(i+1)}=y_{0}+\\int_{x_{0}}^{x} f(x,y^{(i)}) \\, dx$", "$y^{(i+1)}=y_{0}-\\int_{x_{0}}^{x} f(x,y^{(i)}) \\, dx$", "$y^{(i+1)}=y_{0}+\\int_{x}^{x_{0}} f(x,y^{(i)}) \\, dx$", "$y^{(i+1)}=y_{0}-\\int_{x}^{x_{0}} f(x,y^{(i)}) \\, dx$"], correct: 0 },
+      { text: "Milne's predictor formula for the solution of $\\frac{dy}{dx}=f(x,y)$ with $y(x_{0})=y_{0}$ is", options: ["$y_{i+1}=y_{i-2}-\\frac{4}{3}h(2f_{i-2}-f_{i-1}+2f_{i})$", "$y_{i+1}=y_{i-3}+\\frac{4}{3}h(2f_{i-2}-f_{i-1}+2f_{i})$", "$y_{i+1}=y_{i}+\\frac{h}{3}(f_{i-1}+4f_{i}+2f_{i+1})$", "$y_{i+1}=y_{i}-\\frac{h}{3}(f_{i-1}+4f_{i}+f_{i+1})$"], correct: 1 },
+      { text: "Using Taylor's theorem, what will be the expansion of $\\tan^{-1}(x+h)$?", options: ["$\\tan^{-1}x+\\frac{(\\tan^{-1}x)^{2}}{2!}+\\frac{(\\tan^{-1}x)^{3}}{3!}+\\dots$", "$\\tan^{-1}\\theta+h\\sin^{2}z+\\frac{(h\\sin z)^{2}}{2!}\\sin 2z+(h\\sin z)^{3}\\frac{\\sin 3z}{3}+\\dots$, where $z=\\cot^{-1}x$", "$\\tan^{-1}x+h\\sin z \\cdot \\sin z-(h\\sin z)^{2}\\frac{\\sin 2z}{2}+(h\\sin z)^{3}\\frac{\\sin 3z}{3}+\\dots$, where $z=\\cot^{-1}x$", "$\\tan^{-1}\\theta+h\\sin^{2}z-(h\\sin z)^{2}\\frac{\\sin 2z}{2}+(h\\sin z)^{3}\\frac{\\sin 3z}{3}+\\dots$, where $z=\\cot^{-1}x$"], correct: 2 },
+      { text: "The point of inflexion of the curve $y=x^{3}$ is", options: ["$1$", "$0$", "$2$", "$-1$"], correct: 1 },
+      { text: "What is the radius of curvature at the point $(x, y)$ for the curve $a^{2}y=x^{3}-a^{3}$?", options: ["$\\frac{(a^{4}+9x^{4})^{3/2}}{6a^{4}x}$", "$\\frac{(a^{4}-9x^{4})^{3/2}}{6a^{4}x}$", "$\\frac{(a^{4}+9x^{4})^{3/2}}{6a^{2}x}$", "$\\frac{(a^{4}-9x^{4})^{3/2}}{6a^{2}x}$"], correct: 0 },
+      { text: "What will be the value of the definite integral $\\int_{0}^{\\pi}\\frac{x\\sin x}{1+\\cos^{2}x}\\,dx$?", options: ["$\\frac{\\pi^{2}}{2}$", "$\\frac{\\pi}{4}$", "$\\frac{\\pi^{2}}{4}$", "$\\frac{\\pi}{2}$"], correct: 2 },
+      { text: "Length of the arc of the semi-cubical parabola $ay^{2}=x^{3}$ from its vertex to the point $(a, a)$ is", options: ["$\\frac{a}{27}(13\\sqrt{13}+8)$", "$\\frac{a}{27}(13\\sqrt{13}-7)$", "$\\frac{a}{27}(169-\\sqrt{8})$", "$\\frac{a}{27}(13\\sqrt{13}-8)$"], correct: 3 },
+      { text: "If the series $\\sum a_{n}$, $\\sum b_{n}$, $\\sum c_{n}$ converges to $A, B, C$ respectively and $c_{n}=a_{0}b_{n}+a_{1}b_{n-1}+\\dots+a_{n}b_{0}$, then", options: ["$A=BC$", "$C=A+B$", "$C=AB$", "$B=AC$"], correct: 2 },
+      { text: "Let $f(x)=\\begin{cases}1, & x \\text{ is rational} \\\\ 0, & x \\text{ is irrational}\\end{cases}$ and $f(x+)$ and $f(x-)$ does not exists, then $f$ has a", options: ["Uniformly continuous function", "Continuous function", "Discontinuity of the first kind", "Discontinuity of the second kind"], correct: 3 },
+      { text: "If $f$ is a real continuous function on $[a, b]$ which is differentiable in $(a, b)$, then there is a point $x \\in (a, b)$ at which", options: ["$f(b)-f(a)=(b-a)f'(x)$", "$f(b)-f(a)=(a-b)f'(x)$", "$f(b)-f(a)=n(a-b)f'(x)$", "$f(a)-f(b)=(a-b)f'(x)$"], correct: 3 },
+      { text: "Suppose $a$ and $c$ are real numbers, $c>0$ and $f(x)$ is defined on $[-1, 1]$ by $f(x)=\\begin{cases}x^{a}\\sin(x^{-c}) & (\\text{if } x \\neq 0) \\\\ 0 & (\\text{if } x = 0)\\end{cases}$. Then", options: ["$f''(x)$ is continuous if and only if $a > 2+2c$", "$f''(x)$ is continuous if and only if $a < 2+3c$", "$f''(x)$ is continuous if and only if $a > c$", "$f''(x)$ is continuous if and only if $a < c$"], correct: 0 },
+      { text: "Riemann's zeta function is", options: ["$\\zeta(s)=\\sum_{n=1}^{\\infty}\\frac{1}{n^{s}}$, $1<s<\\infty$", "$\\zeta(s)=\\sum_{n=1}^{\\infty}\\frac{1}{n^{s+1}}$, $1<s<\\infty$", "$\\zeta(s)=\\sum_{n=1}^{\\infty}\\frac{1}{(n+1)(n-1)}$, $1<s<\\infty$", "$\\zeta(s)=\\sum_{n=1}^{\\infty}\\frac{1}{n^{2s}}$, $1<s<\\infty$"], correct: 0 },
+      { text: "If $\\vec{F}=(x^{2}+y-4)\\hat{i}+3xy\\hat{j}+(2xz+z^{2})\\hat{k}$ and $S$ is surface of paraboloid $x^{2}+y^{2}+z=4$ above the $xy$-plane, then $\\iint_{S}(\\nabla \\times \\vec{F}) \\cdot \\hat{n} \\, dS=$", options: ["$-2\\pi$", "$2\\pi$", "$3\\pi$", "$-4\\pi$"], correct: 3 },
+      { text: "In any conic, the sum of reciprocals of the segments of any focal chord is", options: ["remain constant", "equal to zero", "equal to sum of segment of focal chords", "not able to determined"], correct: 0 },
+      { text: "The coordinate of centre of a conic $x^{2}-3xy+y^{2}+10x-10y+21=0$ is", options: ["$(-2,-2)$", "$(2,-2)$", "$(-2,2)$", "$(2,2)$"], correct: 2 },
+      { text: "If a general equation of second degree $ax^{2}+by^{2}+2hxy+2gx+2fy+c=0$, where $\\Delta \\neq 0$, $h^{2}-ab>0$, $a+b=0$, then this equation represents", options: ["a rectangular hyperbola", "a parabola", "a circle", "an ellipse"], correct: 0 },
+      { text: "What is the equation of right circular cone whose vertex is at origin $O$, axis $OZ$ and semivertical angle $\\alpha$?", options: ["$x^{2}+y^{2}=z^{2}\\tan^{2}\\alpha$", "$(x^{2}+y^{2})\\tan^{2}\\alpha=z^{2}$", "$x^{2}+z^{2}=y^{2}\\tan^{2}\\alpha$", "$y^{2}+z^{2}=x^{2}\\tan^{2}\\alpha$"], correct: 0 },
+      { text: "If $x \\in R$, $y \\in R$ and $x > 0$, then there is a positive integer $n$ such that $nx > y$, refer to", options: ["Archimedean property of R", "Archimedean property of Z", "Bolzano-Weierstrass property", "Riemann-Stieltjes property"], correct: 0 },
+      { text: "Every neighbourhood is a/an", options: ["Closed set", "Open set", "Dense set", "Bounded set"], correct: 1 },
+      { text: "Every unbounded infinite subset of $R^{k}$ has", options: ["Finite open sub cover", "Finite closed cover", "No limit point in $R^{k}$", "A limit point in $R^{k}$"], correct: 2 },
+      { text: "Let $\\{p_{n}\\}$ be a sequence in a metric space $X$. If $p \\in X$, $p' \\in X$ and if $\\{p_{n}\\}$ converges to $p$ and $p'$, then", options: ["$p'=p$", "$p' \\neq p$", "$p'>p$", "$p'<p$"], correct: 0 },
+      { text: "If $\\{p_{n}\\}$ is a sequence in $X$ and if $E_{N}$ consists of the points $p_{N}, p_{N+1}, p_{N+2}, \\dots$ then sequence $\\{p_{n}\\}$ shall be Cauchy sequence if and only if", options: ["$\\lim_{N\\rightarrow\\infty}\\text{diam } E_{N}=0$", "$\\lim_{N\\rightarrow\\infty}\\text{diam } E_{N} \\neq 0$", "$\\lim_{N\\rightarrow\\infty}\\text{diam } E_{N}=1$", "$\\lim_{N\\rightarrow\\infty}\\text{diam } E_{N}=\\infty$"], correct: 0 },
+      { text: "What will be the area of the region bounded by the curve $x^{2/3}+y^{2/3}=a^{2/3}$ in the first quadrant?", options: ["$3\\pi a^{2}$", "$\\frac{3\\pi a^{2}}{8}$", "$\\frac{3\\pi a^{2}}{32}$", "$\\frac{3\\pi a^{2}}{16}$"], correct: 1 },
+      { text: "If $\\{u_{n}\\}$ and $\\{v_{n}\\}$ are the sequences of positive real numbers, where $u_{n}=\\frac{(3n)!}{(n!)^{3}}$ and $v_{n}=\\frac{n^{n}}{(n+1)(n+2)\\dots(n+n)}$, then consider the following \\\\ Statement (a): $\\lim_{n\\rightarrow\\infty}(u_{n})^{1/n}=27$ \\\\ Statement (b): $\\lim_{n\\rightarrow\\infty}(v_{n})^{1/n}=\\frac{e}{4}$ \\\\ Which of the following alternatives is correct?", options: ["Statement (a) is correct buy statement (b) is incorrect.", "Statement (a) is incorrect but statement (b) is correct.", "Statement (a) and statement (b) both are correct.", "Statement (a) and statement (b) both are incorrect."], correct: 2 },
+      { text: "If the series $\\sum_{n=1}^{\\infty}\\frac{(n+1)}{n^{p}}$ is convergent, then", options: ["$2>p\\ge 1$", "$p<2$", "$p=2$", "$p>2$"], correct: 3 },
+      { text: "For the series $\\sum_{n=1}^{\\infty}\\frac{1}{n^{2}}\\cos n\\theta$, which of the following is correct?", options: ["Absolutely convergent", "Conditionally convergent", "Convergent but not absolutely convergent", "Divergent"], correct: 0 },
+      { text: "If a function $f(x)$ is continuous on a closed interval $[a, b]$ and $f(a)f(b)<0$, then there exists at least one point $c$ such that $f(c)=0$ when", options: ["$c \\in (a, b)$", "$c \\in (a, b)$", "$c \\in [a, b]$", "$c \\in [a, b]$"], correct: 0 },
+      { text: "For computation of F-value in one-way ANOVA, what is the final procedural step?", options: ["Finding out the within sum of squares", "Finding out the between sum of squares", "Finding out the ratio of within and between sum of squares", "Finding out the ratio of between variance and within variance"], correct: 3 },
+      { text: "In Bayes Theorem, $P(A|B)$ represents the probability of event A", options: ["Given that event B has occurred", "Independent of the occurrence of event B", "Before the occurrence of event B", "Conditioned on the union of events A and B"], correct: 0 },
+      { text: "In a box there are 8 orange, 7 white and 6 blue balls. If a ball is picked up randomly, what is the probability that it is neither orange nor blue?", options: ["$\\frac{1}{3}$", "$\\frac{5}{21}$", "$\\frac{2}{21}$", "$\\frac{1}{7}$"], correct: 0 },
+      { text: "A bike manufacturing company has two plants P and Q. Plant P manufactures 60\\% of bikes and plant Q manufactures 40\\%. 80\\% of the bikes at plant P and 90\\% of the bikes at plant Q are rated of standard quality. A bike is chosen at random and found to be of standard quality. What is the probability that it has come from plant P?", options: ["$\\frac{6}{7}$", "$\\frac{2}{7}$", "$\\frac{4}{7}$", "None of these"], correct: 2 },
+      { text: "What is the potential advantage of using the Gauss-Seidel method over the Gauss elimination method?", options: ["It requires fewer iteration", "It is less sensitive to the initial guess", "It always converges to the solution", "It is applicable only to square matrices"], correct: 2 },
+      { text: "In an inner product space $V(F)$ for any two vectors $\\alpha, \\beta$", options: ["|$(\\alpha,\\beta)| \\ge \\|\\alpha\\| \\|\\beta\\|$", "|$(\\alpha,\\beta)| \\ge |\\alpha| |\\beta|$", "|$(\\alpha,\\beta)| \\le \\|\\alpha\\| \\|\\beta\\|$", "|$(\\alpha,\\beta)| \\le |\\alpha| |\\beta|$"], correct: 2 },
+      { text: "If $\\alpha$ and $\\beta$ are vectors in a real inner product space, and if $\\alpha+\\beta$ is orthogonal to $\\alpha-\\beta$, then", options: ["$\\|\\alpha\\|=\\|\\beta\\|$", "$\\|\\alpha\\|<\\|\\beta\\|$", "$\\|\\alpha\\|>\\|\\beta\\|$", "$\\|\\alpha\\|=\\|\\beta\\|$"], correct: 0 },
+      { text: "Corresponding symmetric matrix of the quadratic form $q(x,y,z)=ax^{2}+by^{2}+cz^{2}+2fyz+2gzx+2hxy$", options: ["$\\begin{bmatrix}a&b&f\\\\ b&h&c\\\\ f&c&g\\end{bmatrix}$", "$\\begin{bmatrix}a&h&g\\\\ h&b&f\\\\ g&f&c\\end{bmatrix}$", "$\\begin{bmatrix}h&g&c\\\\ g&f&b\\\\ h&b&a\\end{bmatrix}$", "$\\begin{bmatrix}1&0&0\\\\ 0&1&0\\\\ 0&0&1\\end{bmatrix}$"], correct: 1 },
+      { text: "If a given quadratic form be reduced in an orthonormal quadratic form $q=z_{1}^{2}+z_{2}^{2}+z_{3}^{2}$, then their form is", options: ["Positive definite", "Negative definite", "Positive semidefinite", "Negative semidefinite"], correct: 0 },
+      { text: "If the invertible linear transformation $T:V_{3}\\rightarrow V_{3}$ is defined by $T(u_{1},u_{2},u_{3})=(u_{1}+u_{2}+u_{3},u_{2}+u_{3},u_{3})$, then the inverse transformation of $T$ is", options: ["$T^{-1}(u_{1},u_{2},u_{3})=(u_{1}-u_{2},u_{2}-u_{3},u_{3})$", "$T^{-1}(u_{1},u_{2},u_{3})=(u_{1}+u_{2},u_{2}-u_{3},u_{3})$", "$T^{-1}(u_{1},u_{2},u_{3})=(u_{1}+u_{2}-2u_{3},u_{2},u_{3})$", "None of these"], correct: 0 },
+      { text: "Let $M$ be a closed proper subspace of a normed linear space $N$ and let $a$ be a real number such that $0<a<1$. Then there exists a vector $x_{a} \\in N$ such that", options: ["$\\|x_{a}\\|=1$ and $\\|x-x_{a}\\| \\ge a$, $\\forall x \\in M$", "$\\|x-x_{a}\\|=a$ and $\\|x-x_{a}\\| \\le a$, $\\forall x \\in N$", "$\\|x_{a}\\|=a$ and $\\|x-x_{a}\\| \\ge a$, $\\forall x \\in M$", "$\\|x_{a}\\|=0$ and $\\|x-x_{a}\\| \\ge a$, $\\forall x \\in N$"], correct: 0 },
+      { text: "If $x$ and $y$ are any two vectors in a Hilbert space $H$, then Schwarz inequality is", options: ["$|\\langle x,y \\rangle| \\le \\|x\\| \\|y\\|$", "$|\\langle x,y \\rangle| \\le \\|x\\| + \\|y\\|$", "$|\\langle x,y \\rangle| \\ge \\|x\\| \\|y\\|$", "$|\\langle x,y \\rangle| \\ge \\|x\\| + \\|y\\|$"], correct: 0 },
+      { text: "If $\\{e_{1},e_{2}\\}$ be a orthonormal set in a Hilbert space $H$, then distance between $e_{1}$ and $e_{2}$ is", options: ["$0$", "$\\sqrt{2}$", "$2$", "None of these"], correct: 1 },
+      { text: "Let $\\{e_{1},e_{2},\\dots,e_{n}\\}$ be a finite orthonormal set in a Hilbert space $H$. Then Bessel's inequality is the following.", options: ["$\\sum_{i=1}^{n}|\\langle x,e_{i}\\rangle|^{2} \\le \\|x\\|^{2} \\forall x \\in H$", "$\\sum_{i=1}^{n}|\\langle x,e_{i}\\rangle| \\le \\|x\\|^{2} \\forall x \\in H$", "$\\sum_{i=1}^{n}|\\langle x,e_{i}\\rangle|^{2} \\le \\|x\\| \\forall x \\in H$", "$\\sum_{i=1}^{n}|\\langle x,e_{i}\\rangle| \\le \\|x\\| \\forall x \\in H$"], correct: 0 },
+      { text: "Let $T:l_{2}\\rightarrow l_{2}$ defined as $Tx=\\lambda_{n}x_{n}$ where $x=\\langle x_{n} \\rangle \\in l_{2}$ and $\\langle \\lambda_{n} \\rangle$ be a sequence of scalars. Find when $T$ is unitary.", options: ["$|\\lambda_{n}|^{2}<1$", "$|\\lambda_{n}|^{2}>1$", "$|\\lambda_{n}|^{2}=1$", "$|\\lambda_{n}|^{2}=\\frac{1}{2}$"], correct: 2 },
+      { text: "What is the value of $\\lim_{x\\rightarrow 0}\\frac{\\{(1+x)^{n}-1\\}}{x}$?", options: ["$\\frac{1}{n}$", "$0$", "$1$", "$n$"], correct: 3 },
+      { text: "If the function $u(x,y)=x^{3}+y^{3}-3axy$ then", options: ["$u$ will be maximum at the point $(a, a)$ when $a>0$", "$u$ will be minimum at the point $(a, a)$ when $a<0$", "$u$ will be maximum at the point $(a, a)$ when $a<0$", "$u$ will be minimum at the point $(a, a)$ when $a=-1$"], correct: 2 },
+      { text: "If $0<n<1$, then what will be the value of $\\Gamma(n)\\Gamma(1-n)$?", options: ["$n\\pi$", "$\\frac{n\\pi}{2}$", "$\\frac{\\pi}{\\sin(n\\pi)}$", "$\\frac{n\\pi}{\\sin(n\\pi)}$"], correct: 2 },
+      { text: "What will be the volume of the solid generated by the revolution, about the x-axis of the area bounded by the curve $y=x^{3}$ the x-axis and $x=a, x=b$?", options: ["$\\pi^{2}\\int_{a}^{b} x^{3} \\, dx$", "$\\pi \\int y \\, dx$", "$\\int y^{2} \\, dx$", "$\\pi \\frac{(b^{7}-a^{7})}{7}$"], correct: 3 },
+      { text: "If $f(x, y)$ is a function of two variables $x$ and $y$, then which of the following statement will not be true always?", options: ["$\\delta u = \\frac{\\partial u}{\\partial x}\\delta x + \\frac{\\partial u}{\\partial y}\\delta y + \\epsilon_{1}\\delta x + \\epsilon_{2}\\delta y$ where $\\epsilon_{1}, \\epsilon_{2}\\rightarrow 0$ when $\\delta x\\rightarrow 0$ and $\\delta y\\rightarrow 0$", "$\\delta u = \\frac{\\partial u}{\\partial x}\\delta x + \\frac{\\partial u}{\\partial y}\\delta y$", "$du = \\frac{\\partial u}{\\partial x}dx + \\frac{\\partial u}{\\partial y}dy$", "$\\delta u = \\delta x f_{x}(x+\\theta_{1}\\delta x, y+\\delta y) + \\delta y f_{y}(x, y+\\theta_{2}\\delta y)$ where $0 < \\theta_{1}, \\theta_{2} < 1$; $f_{x}$ and $f_{y}$ represent partial derivatives of $f$ w.r.t. $x, y$ respectively."], correct: 3 },
+      { text: "The condition that the cone $ax^{2}+by^{2}+cz^{2}+2fyz+2gzx+2hxy=0$ may have three mutually perpendicular generators, is", options: ["$a-b+c=0$", "$a+b+c=0$", "$a+b-c=0$", "none of these"], correct: 1 },
+      { text: "What is equation of cylinder whose generators parallel to z-axis and $x^{2}+y^{2}=z^{2}$, intersects the curve $x+y+z=1$?", options: ["$x^{2}+y^{2}+(1-x-y)^{2}=0$", "$x^{2}-y^{2}=(1-x-y)^{2}$", "$x^{2}+y^{2}=(1-x-y)^{2}$", "$y^{2}-x^{2}=(1-x-y)^{2}$"], correct: 2 },
+      { text: "The coordinate of point of contact, at which the plane $3x+12y-6z=17$ touches the conicoid $3x^{2}-6y^{2}+9z^{2}=-17$ is", options: ["$(1,2,-\\frac{2}{3})$", "$(3, 12, -6)$", "$(3,-6,9)$", "$(-1,2,\\frac{2}{3})$"], correct: 3 },
+      { text: "The equation of the normal to the conicoid $\\frac{x^{2}}{4}+\\frac{y^{2}}{9}-\\frac{z^{2}}{36}=1$ at the point $(2, 3, 6)$ is", options: ["$\\frac{x-2}{3}=\\frac{y-3}{2}=\\frac{z-6}{-1}$", "$\\frac{x-2}{3}=\\frac{2(y-3)}{4}=\\frac{z-6}{-1}$", "$\\frac{x-2}{3}=\\frac{y-3}{-2}=\\frac{z-6}{1}$", "$\\frac{x-2}{3}=\\frac{y-3}{2}=\\frac{z-6}{1}$"], correct: 0 },
+      { text: "The tangent plane to the surface $x^{2}+12y^{2}+4z^{2}=8$ at the point $(1,\\frac{1}{2},1)$ meets the axis at the points A, B and C. The coordinate of centroid of $\\Delta ABC$ is", options: ["$(\\frac{8}{9},\\frac{4}{9},\\frac{2}{3})$", "$(\\frac{8}{3},\\frac{4}{9},\\frac{2}{3})$", "$(\\frac{8}{3},\\frac{4}{9},\\frac{2}{3})$", "$(\\frac{8}{3},\\frac{4}{9},\\frac{2}{9})$"], correct: 2 },
+      // GK 91-120 (30 questions)
+      { text: "The LIGO-India gravitational-wave observatory, approved for construction to join the global gravitational-wave network, is located in which district of Maharashtra?", options: ["Pune", "Hingoli", "Nagpur", "Ratnagiri"], correct: 1 },
+      { text: "The prestigious Abel Prize, often described as the \"Nobel Prize of Mathematics\", is awarded annually by the King of which country?", options: ["Sweden", "Norway", "Denmark", "United Kingdom"], correct: 1 },
+      { text: "The 'Loss and Damage Fund', established to financially assist vulnerable nations facing the impacts of climate change, was formally operationalized at which COP summit?", options: ["COP26 (Glasgow)", "COP27 (Sharm El-Sheikh)", "COP28 (Dubai)", "COP29 (Baku)"], correct: 2 },
+      { text: "In which Indian state were the 37th National Games held in late 2023?", options: ["Gujarat", "Goa", "Kerala", "Uttarakhand"], correct: 1 },
+      { text: "The United Nations General Assembly declared the year 2025 as the International Year of:", options: ["Quantum Science and Technology", "Glaciers' Preservation", "Peace and Trust", "Both A and B"], correct: 3 },
+      { text: "According to Robert Gagné’s Nine Events of Instruction, what is the very first step in the instructional sequence?", options: ["Presenting the content", "Gaining attention", "Informing learners of the objective", "Stimulating recall of prior learning"], correct: 1 },
+      { text: "A research methodology where the investigator aims to generate a comprehensive, inductively derived theory grounded in systematically gathered and analyzed data is known as:", options: ["Grounded Theory", "Phenomenological study", "Ex-post facto analysis", "Historical analysis"], correct: 0 },
+      { text: "In hypothesis testing, committing a \"Type II error\" ($\\beta$) means:", options: ["Rejecting a true null hypothesis", "Failing to reject (accepting) a false null hypothesis", "Rejecting a true alternative hypothesis", "Selecting an unrepresentative sample"], correct: 1 },
+      { text: "The UGC initiative 'GIAN' was launched primarily to:", options: ["Provide free laptops to undergraduate students", "Invite foreign faculty and international scientists to teach in Indian higher education institutions", "Fund physical laboratory equipment in primary schools", "Digitize ancient Sanskrit manuscripts"], correct: 1 },
+      { text: "An assessment that compares a student's current performance with their own past performance rather than against peers or external benchmarks is called:", options: ["Norm-referenced assessment", "Criterion-referenced assessment", "Ipsative assessment", "Diagnostic assessment"], correct: 2 },
+      { text: "In digital text encoding, what does 'ASCII' stand for?", options: ["American Standard Code for Information Interchange", "Automated Standard Code for Internet Instructions", "Advanced Serial Code for Internal Interface", "Applied System Communication Information Index"], correct: 0 },
+      { text: "On the World Wide Web, which default TCP port is utilized by encrypted and secure web traffic (HTTPS)?", options: ["Port 21", "Port 25", "Port 80", "Port 443"], correct: 3 },
+      { text: "The malicious redirection of a user from a legitimate website to a bogus, fraudulent site by manipulating the local host file or DNS server is called:", options: ["Phishing", "Pharming", "Spoofing", "Salami slicing"], correct: 1 },
+      { text: "Which email protocol standard enables email clients to send non-ASCII text, attachments (images, PDFs, audio), and rich formatted messages?", options: ["MIME (Multipurpose Internet Mail Extensions)", "SMTP", "POP3", "Telnet"], correct: 0 },
+      { text: "In central computer processing, which component acts as the high-speed temporary buffer between the CPU registers and main memory (RAM) to minimize latency?", options: ["Flash drive", "Cache memory", "Virtual memory", "Hard disk swap space"], correct: 1 },
+      { text: "The 'Ten Percent Law', which states that roughly only 10% of energy is transferred from one trophic level to the next in an ecological pyramid, was formulated by:", options: ["Charles Elton", "Raymond Lindeman", "Arthur Tansley", "Eugene Odum"], correct: 1 },
+      { text: "The medical condition commonly known as 'Blue Baby Syndrome' (Methemoglobinemia) in infants is caused by excessive concentration of which chemical in drinking water?", options: ["Arsenic", "Fluoride", "Nitrate", "Mercury"], correct: 2 },
+      { text: "The Basel Convention (1989) is an international environmental treaty primarily focused on the control of:", options: ["Greenhouse gas emissions", "Transboundary movements and disposal of hazardous wastes", "Depletion of marine fishery stocks", "International trade in wild fauna and flora"], correct: 1 },
+      { text: "Which statutory authority in India regulates and manages the conservation of groundwater resources across the country?", options: ["Central Pollution Control Board (CPCB)", "Central Ground Water Authority (CGWA)", "National Water Mission", "National Green Tribunal (NGT)"], correct: 1 },
+      { text: "'Project Elephant' was launched by the Government of India to protect Asian elephants and secure migratory corridors in the year:", options: ["1973", "1982", "1992", "2002"], correct: 2 },
+      { text: "Grey and bluish-grey schist stone was the predominant material used for sculpturing by artists belonging to which ancient Indian school of art?", options: ["Gandhara School", "Mathura School", "Amaravati School", "Sarnath School"], correct: 0 },
+      { text: "The Ilbert Bill controversy of 1883, which caused immense friction between the British community and Indian nationalists, took place during the viceroyalty of:", options: ["Lord Lytton", "Lord Ripon", "Lord Dufferin", "Lord Curzon"], correct: 1 },
+      { text: "The vast spherical shell of icy cometary bodies that surrounds the solar system at the outermost boundary of the Sun's gravitational influence is called the:", options: ["Kuiper Belt", "Oort Cloud", "Asteroid Belt", "Van Allen Belt"], correct: 1 },
+      { text: "The 'Palghat Gap' (Palakkad Gap) is a major mountain pass in the Western Ghats connecting Kerala with which Indian state?", options: ["Karnataka", "Tamil Nadu", "Andhra Pradesh", "Goa"], correct: 1 },
+      { text: "Following the successful leadership of the Bardoli Satyagraha (1928), the women of Bardoli conferred the title of 'Sardar' upon:", options: ["Bal Gangadhar Tilak", "Vallabhbhai Patel", "Bhagat Singh", "Lala Lajpat Rai"], correct: 1 },
+      { text: "Which constitutional writ is issued to quash the order of a lower judicial court or tribunal when it has acted in excess of its jurisdiction or against principles of natural justice?", options: ["Mandamus", "Certiorari", "Quo Warranto", "Prohibition"], correct: 1 },
+      { text: "The Tenth Schedule (popularly known as the Anti-Defection Law) was added to the Constitution of India by which Constitutional Amendment Act?", options: ["42nd Amendment Act, 1976", "44th Amendment Act, 1978", "52nd Amendment Act, 1985", "91st Amendment Act, 2003"], correct: 2 },
+      { text: "The expenses, including salaries, allowances, and pensions of the members of the Union Public Service Commission (UPSC), are charged upon the:", options: ["Consolidated Fund of India", "Contingency Fund of India", "Public Account of India", "Annual Budget Allocation of the Home Ministry"], correct: 0 },
+      { text: "What portion of a commercial bank's net demand and time liabilities (NDTL) must be maintained in the form of specified liquid assets (such as gold or approved government securities) under RBI guidelines?", options: ["Cash Reserve Ratio (CRR)", "Statutory Liquidity Ratio (SLR)", "Capital Adequacy Ratio (CAR)", "Marginal Standing Facility (MSF)"], correct: 1 },
+      { text: "In developmental economics, 'Engel’s Law' states that as household income increases, the proportion of income spent on:", options: ["Luxury goods decreases", "Food decreases, even if total food expenditure increases", "Recreation and education decreases", "Savings strictly remains zero"], correct: 1 }
+    ];
+
+    // -------------------------------------------------
+    // 2. STATE MANAGEMENT
+    // -------------------------------------------------
+    const TOTAL = questions.length; // 120
+    let currentIndex = 0;
+    // each entry: { selected: null|0..3, visited: bool, marked: bool }
+    let questionState = Array(TOTAL).fill().map(() => ({
+      selected: null,
+      visited: false,
+      marked: false
+    }));
+    // mark first question as visited
+    questionState[0].visited = true;
+
+    let timerInterval = null;
+    let timeLeft = 120 * 60; // 120 minutes in seconds
+    let quizSubmitted = false;
+    let reviewFilter = 'all'; // 'all' | 'correct' | 'wrong' | 'skipped'
+
+    // DOM references
+    const qNumLabel = document.getElementById('qNumLabel');
+    const qText = document.getElementById('qText');
+    const optionsContainer = document.getElementById('optionsContainer');
+    const prevBtn = document.getElementById('prevBtn');
+    const nextBtn = document.getElementById('nextBtn');
+    const clearBtn = document.getElementById('clearBtn');
+    const markBtn = document.getElementById('markBtn');
+    const submitBtn = document.getElementById('submitBtn');
+    const timerDisplay = document.getElementById('timerDisplay');
+    const paletteGrid = document.getElementById('paletteGrid');
+    const resultOverlay = document.getElementById('resultOverlay');
+    const scoreRow = document.getElementById('scoreRow');
+    const reviewList = document.getElementById('reviewList');
+    const filterBar = document.getElementById('filterBar');
+    const downloadBtn = document.getElementById('downloadBtn');
+    const closeOverlayBtn = document.getElementById('closeOverlayBtn');
+
+    // -------------------------------------------------
+    // 3. RENDER FUNCTIONS
+    // -------------------------------------------------
+    function renderQuestion(index) {
+      const q = questions[index];
+      const state = questionState[index];
+      qNumLabel.textContent = `Question ${index + 1} of ${TOTAL}`;
+      qText.innerHTML = q.text;
+
+      // options
+      optionsContainer.innerHTML = '';
+      const letters = ['A', 'B', 'C', 'D'];
+      q.options.forEach((opt, i) => {
+        const optDiv = document.createElement('div');
+        optDiv.className = 'option' + (state.selected === i ? ' selected' : '');
+        optDiv.innerHTML = `<span class="letter">${letters[i]}.</span><span class="opt-text">${opt}</span>`;
+        optDiv.addEventListener('click', () => {
+          if (quizSubmitted) return;
+          // toggle selection
+          if (questionState[currentIndex].selected === i) {
+            questionState[currentIndex].selected = null;
+          } else {
+            questionState[currentIndex].selected = i;
+          }
+          questionState[currentIndex].visited = true;
+          renderQuestion(currentIndex);
+          renderPalette();
+        });
+        optionsContainer.appendChild(optDiv);
+      });
+
+      // re-render MathJax
+      if (window.MathJax && MathJax.typesetPromise) {
+        MathJax.typesetPromise([qText, optionsContainer]).catch(() => {});
+      }
+
+      // update button states
+      prevBtn.disabled = (index === 0);
+      nextBtn.disabled = (index === TOTAL - 1);
+      renderPalette();
+    }
+
+    function renderPalette() {
+      paletteGrid.innerHTML = '';
+      for (let i = 0; i < TOTAL; i++) {
+        const st = questionState[i];
+        const btn = document.createElement('button');
+        btn.className = 'palette-btn';
+        if (st.selected !== null) {
+          btn.classList.add('answered');
+        } else if (st.visited && st.selected === null) {
+          btn.classList.add('not-answered');
+        } else if (!st.visited && st.selected === null) {
+          btn.classList.add('not-visited');
+        }
+        if (st.marked) {
+          // Marked overrides background but we keep state
+          btn.classList.remove('answered', 'not-answered', 'not-visited');
+          btn.classList.add('marked');
+        }
+        if (i === currentIndex) btn.classList.add('active');
+        btn.textContent = i + 1;
+        btn.addEventListener('click', () => {
+          if (quizSubmitted) return;
+          // mark current as visited before moving
+          questionState[currentIndex].visited = true;
+          currentIndex = i;
+          questionState[i].visited = true;
+          renderQuestion(i);
+        });
+        paletteGrid.appendChild(btn);
+      }
+    }
+
+    // -------------------------------------------------
+    // 4. TIMER
+    // -------------------------------------------------
+    function startTimer() {
+      if (timerInterval) clearInterval(timerInterval);
+      timerInterval = setInterval(() => {
+        if (quizSubmitted) return;
+        timeLeft--;
+        updateTimerDisplay();
+        if (timeLeft <= 0) {
+          clearInterval(timerInterval);
+          timeLeft = 0;
+          updateTimerDisplay();
+          submitQuiz(true);
+        }
+      }, 1000);
+    }
+
+    function updateTimerDisplay() {
+      const mins = Math.floor(timeLeft / 60);
+      const secs = timeLeft % 60;
+      timerDisplay.textContent = `${String(mins).padStart(2, '0')}:${String(secs).padStart(2, '0')}`;
+    }
+
+    // -------------------------------------------------
+    // 5. SUBMIT / SCORING
+    // -------------------------------------------------
+    function submitQuiz(auto = false) {
+      if (quizSubmitted) return;
+      if (!auto && !confirm('Are you sure you want to submit? You cannot change answers after submission.')) return;
+      quizSubmitted = true;
+      clearInterval(timerInterval);
+
+      let correctCount = 0, wrongCount = 0, skippedCount = 0;
+      for (let i = 0; i < TOTAL; i++) {
+        const st = questionState[i];
+        if (st.selected === null) {
+          skippedCount++;
+        } else if (st.selected === questions[i].correct) {
+          correctCount++;
+        } else {
+          wrongCount++;
+        }
+      }
+      const score = correctCount * 3 - wrongCount * 1; // wrong negative
+      const attempted = correctCount + wrongCount;
+      const accuracy = attempted > 0 ? ((correctCount / attempted) * 100).toFixed(2) : '0.00';
+
+      // display results
+      scoreRow.innerHTML = `
+        <div class="score-item"><div class="label">Total Score</div><div class="value">${score}</div></div>
+        <div class="score-item"><div class="label">Correct</div><div class="value" style="color:#22c55e">${correctCount}</div></div>
+        <div class="score-item"><div class="label">Wrong</div><div class="value" style="color:#ef4444">${wrongCount}</div></div>
+        <div class="score-item"><div class="label">Skipped</div><div class="value" style="color:#94a3b8">${skippedCount}</div></div>
+        <div class="score-item"><div class="label">Accuracy</div><div class="value">${accuracy}%</div></div>
+      `;
+
+      renderReview(reviewFilter);
+      resultOverlay.classList.add('active');
+
+      // disable all interaction in main area
+      document.querySelectorAll('.option').forEach(el => el.style.pointerEvents = 'none');
+      prevBtn.disabled = true;
+      nextBtn.disabled = true;
+      clearBtn.disabled = true;
+      markBtn.disabled = true;
+      submitBtn.disabled = true;
+    }
+
+    function renderReview(filter) {
+      reviewFilter = filter;
+      // update active filter button
+      document.querySelectorAll('.filter-btn').forEach(btn => {
+        if (btn.dataset.filter === filter) btn.classList.add('active');
+        else btn.classList.remove('active');
+      });
+
+      let html = '';
+      for (let i = 0; i < TOTAL; i++) {
+        const q = questions[i];
+        const st = questionState[i];
+        const selected = st.selected;
+        let status = 'skipped';
+        if (selected !== null) {
+          status = (selected === q.correct) ? 'correct' : 'wrong';
+        }
+        if (filter !== 'all' && filter !== status) continue;
+
+        const selectedText = selected !== null ? q.options[selected] : 'Not Attempted';
+        const correctText = q.options[q.correct];
+
+        html += `
+          <div class="review-item ${status}">
+            <div class="review-q">Q${i+1}. ${q.text}</div>
+            <div class="review-meta">
+              <span><strong>Your answer:</strong> ${selected !== null ? selectedText : '—'}</span>
+              <span><strong>Correct answer:</strong> ${correctText}</span>
+            </div>
+          </div>
+        `;
+      }
+      reviewList.innerHTML = html || '<p style="color:#64748b;padding:10px;">No questions match this filter.</p>';
+      // re-render math inside review items
+      if (window.MathJax && MathJax.typesetPromise) {
+        MathJax.typesetPromise([reviewList]).catch(() => {});
+      }
+    }
+
+    // -------------------------------------------------
+    // 6. EVENT LISTENERS
+    // -------------------------------------------------
+    prevBtn.addEventListener('click', () => {
+      if (quizSubmitted) return;
+      if (currentIndex > 0) {
+        questionState[currentIndex].visited = true;
+        currentIndex--;
+        questionState[currentIndex].visited = true;
+        renderQuestion(currentIndex);
+      }
+    });
+
+    nextBtn.addEventListener('click', () => {
+      if (quizSubmitted) return;
+      if (currentIndex < TOTAL - 1) {
+        questionState[currentIndex].visited = true;
+        currentIndex++;
+        questionState[currentIndex].visited = true;
+        renderQuestion(currentIndex);
+      }
+    });
+
+    clearBtn.addEventListener('click', () => {
+      if (quizSubmitted) return;
+      questionState[currentIndex].selected = null;
+      questionState[currentIndex].visited = true;
+      renderQuestion(currentIndex);
+    });
+
+    markBtn.addEventListener('click', () => {
+      if (quizSubmitted) return;
+      questionState[currentIndex].marked = !questionState[currentIndex].marked;
+      renderPalette();
+    });
+
+    submitBtn.addEventListener('click', () => submitQuiz(false));
+
+    // filter buttons in overlay
+    filterBar.addEventListener('click', (e) => {
+      const btn = e.target.closest('.filter-btn');
+      if (!btn) return;
+      renderReview(btn.dataset.filter);
+    });
+
+    // download as HTML
+    downloadBtn.addEventListener('click', () => {
+      const scoreHTML = scoreRow.innerHTML;
+      const reviewHTML = reviewList.innerHTML;
+      const fullHTML = `<!DOCTYPE html>
+<html><head><meta charset="UTF-8"><title>Performance & Solutions</title>
+<script>window.MathJax={tex:{inlineMath:[['$','$']]}};<\/script>
+<script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-svg.js" async><\/script>
+<style>
+  body{font-family:'Segoe UI',sans-serif;padding:30px;max-width:1000px;margin:auto;background:#f5f7fc}
+  .score-row{display:flex;gap:20px;flex-wrap:wrap;margin:20px 0}
+  .score-item{background:#eef2f6;padding:12px 22px;border-radius:18px}
+  .review-item{padding:14px;margin:12px 0;border-left:6px solid #cbd5e1;background:#fff;border-radius:12px}
+  .review-item.correct{border-left-color:#22c55e;background:#f0fdf4}
+  .review-item.wrong{border-left-color:#ef4444;background:#fef2f2}
+  .review-item.skipped{border-left-color:#94a3b8;background:#f8fafc}
+</style></head><body>
+<h1>📊 Performance Report</h1>
+<div class="score-row">${scoreHTML}</div>
+<h2>Solutions Review</h2>
+${reviewHTML}
+</body></html>`;
+      const blob = new Blob([fullHTML], {type: 'text/html'});
+      const a = document.createElement('a');
+      a.href = URL.createObjectURL(blob);
+      a.download = 'performance_solutions.html';
+      a.click();
+      URL.revokeObjectURL(a.href);
+    });
+
+    closeOverlayBtn.addEventListener('click', () => {
+      resultOverlay.classList.remove('active');
+    });
+
+    // -------------------------------------------------
+    // 7. INIT
+    // -------------------------------------------------
+    function init() {
+      renderQuestion(0);
+      startTimer();
+      updateTimerDisplay();
+      renderPalette();
+    }
+
+    init();
+
+    // ensure MathJax renders after any updates
+    window.addEventListener('load', () => {
+      if (window.MathJax && MathJax.typesetPromise) {
+        MathJax.typesetPromise([document.body]).catch(() => {});
+      }
+    });
+  </script>
+</body>
+</html>
