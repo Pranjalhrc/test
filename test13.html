@@ -1,0 +1,672 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Mock Test – Mathematics &amp; GK</title>
+<style id="appcss">
+:root{--ink:#17212b;--mut:#64707d;--line:#d9e0e7;--bg:#eef2f5;--card:#fff;--pri:#0f766e;--pri-soft:#e1f3f1;--ok:#1e9e5a;--ok-soft:#e5f6ec;--bad:#d64550;--bad-soft:#fcebec;--mark:#7c4dff;--warn:#d98a00}
+*{box-sizing:border-box}
+html,body{height:100%;margin:0}
+body{font-family:system-ui,-apple-system,"Segoe UI",Roboto,Arial,sans-serif;background:var(--bg);color:var(--ink);display:flex;flex-direction:column;height:100vh;height:100dvh;overflow:hidden;font-size:15px}
+body.standalone{display:block;height:auto;overflow:auto}
+math{font-family:"Cambria Math","STIX Two Math","Latin Modern Math","Noto Sans Math","DejaVu Math TeX Gyre",serif;font-size:1.15em;math-style:normal}
+math[display=block]{margin:.6em 0}
+mtd{text-align:left;padding:.12em .4em}
+button{font:inherit;cursor:pointer}
+button:focus-visible,.opt:focus-visible,.pb:focus-visible{outline:3px solid #7fb8b2;outline-offset:2px}
+
+/* header */
+#top{flex:none;height:56px;background:#fff;border-bottom:1px solid var(--line);display:flex;align-items:center;justify-content:space-between;padding:0 18px;gap:12px}
+#top .brand{font-weight:700;font-size:17px}
+#top .brand small{display:block;font-weight:400;color:var(--mut);font-size:12px}
+.timer{display:flex;align-items:center;gap:10px;background:var(--ink);color:#fff;border-radius:8px;padding:6px 14px}
+.timer span{font-size:12px;opacity:.75}
+.timer b{font-variant-numeric:tabular-nums;font-size:20px;letter-spacing:.03em}
+.timer.warn{background:var(--warn)}
+.timer.danger{background:var(--bad)}
+#palToggle{display:none;border:1px solid var(--line);background:#fff;border-radius:8px;padding:8px 12px;font-weight:600}
+
+/* layout */
+#app{flex:1;min-height:0;display:grid;grid-template-columns:minmax(0,1fr) 330px}
+#qpane{display:flex;flex-direction:column;min-height:0;min-width:0}
+#qhead{flex:none;display:flex;justify-content:space-between;align-items:center;gap:10px;padding:14px 22px;border-bottom:1px solid var(--line);background:#fff}
+#qhead .qn{font-weight:700;font-size:17px}
+#qhead .meta{color:var(--mut);font-size:13px;text-align:right}
+#qbody{flex:1;min-height:0;overflow:auto;padding:22px 26px}
+.qtext{font-family:Georgia,"Times New Roman",serif;font-size:19px;line-height:1.6;max-width:880px}
+.dt{border-collapse:collapse;margin:12px 0;background:#fff}
+.dt th,.dt td{border:1px solid #aab4be;padding:6px 14px;text-align:center}
+.dt th{background:#f1f4f7}
+.opts{max-width:880px;margin-top:16px}
+.opt{display:flex;gap:12px;align-items:center;padding:12px 14px;margin:9px 0;background:#fff;border:1.5px solid var(--line);border-radius:10px;cursor:pointer;user-select:none}
+.opt:hover{border-color:#8fb9b4}
+.opt .ol{flex:none;width:30px;height:30px;border-radius:50%;border:1.5px solid #b5c0ca;display:grid;place-items:center;font-weight:700;font-size:13px;color:var(--mut)}
+.opt .ot{font-family:Georgia,"Times New Roman",serif;font-size:17px;line-height:1.5}
+.opt.sel{border-color:var(--pri);background:var(--pri-soft)}
+.opt.sel .ol{background:var(--pri);border-color:var(--pri);color:#fff}
+.hint{color:var(--mut);font-size:12.5px;margin-top:6px}
+#qfoot{flex:none;display:flex;flex-wrap:wrap;gap:8px;justify-content:space-between;padding:12px 22px;border-top:1px solid var(--line);background:#fff}
+#qfoot .g{display:flex;flex-wrap:wrap;gap:8px}
+.btn{border:1.5px solid var(--line);background:#fff;color:var(--ink);border-radius:8px;padding:9px 16px;font-weight:600}
+.btn:hover:not(:disabled){border-color:#8fb9b4;background:#f6fbfa}
+.btn:disabled{opacity:.45;cursor:not-allowed}
+.btn.pri{background:var(--pri);border-color:var(--pri);color:#fff}
+.btn.pri:hover:not(:disabled){background:#0b5f58}
+.btn.mk{border-color:var(--mark);color:var(--mark)}
+.btn.mk.on{background:var(--mark);color:#fff}
+.btn.sub{background:var(--ink);border-color:var(--ink);color:#fff}
+.btn.sub:hover{background:#000}
+
+/* palette: scrolls on its own */
+#palette{display:flex;flex-direction:column;min-height:0;background:#fff;border-left:1px solid var(--line)}
+#palette h3{flex:none;margin:0;padding:14px 16px 8px;font-size:15px}
+.legend{flex:none;display:grid;grid-template-columns:1fr 1fr;gap:6px 10px;padding:0 16px 12px;font-size:12px;color:var(--mut);border-bottom:1px solid var(--line)}
+.legend div{display:flex;align-items:center;gap:7px}
+.lg{width:22px;height:22px;border-radius:6px;display:grid;place-items:center;color:#fff;font-size:11px;font-weight:700;border:1.5px solid #aab4be;background:#fff;position:relative}
+#pgrid{flex:1;min-height:0;overflow-y:auto;padding:12px 16px;overscroll-behavior:contain}
+#pgrid h4{margin:10px 0 8px;font-size:12.5px;color:var(--mut);font-weight:600}
+#pgrid h4:first-child{margin-top:0}
+.pg{display:grid;grid-template-columns:repeat(5,1fr);gap:8px}
+.pb{aspect-ratio:1;border:1.5px solid #aab4be;background:#fff;border-radius:7px;font-weight:600;font-size:13px;color:var(--ink);padding:0;position:relative}
+.pb.na,.lg.na{background:var(--bad);border-color:var(--bad);color:#fff}
+.pb.an,.lg.an{background:var(--ok);border-color:var(--ok);color:#fff}
+.pb.mk,.lg.mk,.pb.am,.lg.am{background:var(--mark);border-color:var(--mark);color:#fff;border-radius:50%}
+.pb.am::after,.lg.am::after{content:"";position:absolute;right:-2px;bottom:-2px;width:10px;height:10px;border-radius:50%;background:var(--ok);border:2px solid #fff}
+.pb.cur{box-shadow:0 0 0 3px rgba(15,118,110,.45)}
+.pfoot{flex:none;padding:12px 16px;border-top:1px solid var(--line)}
+.pfoot .btn{width:100%}
+
+/* modal */
+#modal{position:fixed;inset:0;background:rgba(18,28,38,.55);display:none;place-items:center;z-index:40;padding:16px}
+#modal.show{display:grid}
+.mbox{background:#fff;border-radius:14px;padding:24px;max-width:430px;width:100%}
+.mbox h2{margin:0 0 6px;font-size:20px}
+.mbox p{margin:0 0 14px;color:var(--mut)}
+.mstats{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:18px}
+.mstats div{border:1px solid var(--line);border-radius:8px;padding:8px 12px;font-size:13px;color:var(--mut)}
+.mstats b{display:block;font-size:20px;color:var(--ink)}
+.mbtn{display:flex;gap:8px;justify-content:flex-end}
+
+/* result / report */
+#result{position:fixed;inset:0;background:var(--bg);overflow:auto;z-index:50;display:none}
+#result.show{display:block}
+.rep{max-width:980px;margin:0 auto;padding:26px 16px 70px}
+.rep h1{margin:0 0 4px;font-size:27px}
+.rep .sub{color:var(--mut);margin-bottom:6px}
+.rep .actions{display:flex;gap:8px;flex-wrap:wrap;margin:14px 0 0}
+.cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:12px;margin:20px 0}
+.sc{background:#fff;border:1px solid var(--line);border-radius:12px;padding:14px 16px}
+.sc span{font-size:13px;color:var(--mut)}
+.sc b{display:block;font-size:28px;margin-top:2px}
+.sc small{color:var(--mut)}
+.sc.main{background:var(--ink);border-color:var(--ink);color:#fff}
+.sc.main span,.sc.main small{color:#b9c6d2}
+.sc.c b{color:var(--ok)}.sc.w b{color:var(--bad)}
+table.secs{width:100%;border-collapse:collapse;background:#fff;border:1px solid var(--line);border-radius:10px;overflow:hidden;margin-bottom:18px}
+.secs th,.secs td{padding:9px 12px;text-align:center;border-bottom:1px solid var(--line)}
+.secs th:first-child,.secs td:first-child{text-align:left}
+.secs th{background:#f4f7f9;font-size:13px;color:var(--mut)}
+.filters{position:sticky;top:0;z-index:5;background:var(--bg);padding:10px 0;display:flex;gap:8px;flex-wrap:wrap;align-items:center}
+.filters .btn.active{background:var(--pri);border-color:var(--pri);color:#fff}
+.key{margin-left:auto;font-size:12.5px;color:var(--mut);display:flex;gap:12px}
+.key i{display:inline-block;width:11px;height:11px;border-radius:3px;margin-right:5px;vertical-align:-1px}
+.sol{background:#fff;border:1px solid var(--line);border-left:5px solid #aab4be;border-radius:10px;padding:16px 18px;margin:14px 0}
+.sol[data-s=c]{border-left-color:var(--ok)}
+.sol[data-s=w]{border-left-color:var(--bad)}
+.sol-h{display:flex;flex-wrap:wrap;gap:10px;align-items:center;margin-bottom:10px}
+.sol-h .qn{font-weight:700;font-size:16px}
+.badge{font-size:12.5px;font-weight:700;padding:3px 10px;border-radius:99px;background:#eceff2;color:var(--mut)}
+.badge.c{background:var(--ok-soft);color:#157a43}
+.badge.w{background:var(--bad-soft);color:#b02a34}
+.tag{font-size:12.5px;color:var(--mut);margin-left:auto}
+.sol .qtext{font-size:17px}
+.sol .o{display:flex;gap:10px;align-items:flex-start;padding:9px 12px;margin:6px 0;border:1.5px solid var(--line);border-radius:9px;background:#fff}
+.sol .o b{flex:none;width:26px;height:26px;border-radius:50%;border:1.5px solid #b5c0ca;display:grid;place-items:center;font-size:12px;color:var(--mut)}
+.sol .o .ot{font-family:Georgia,"Times New Roman",serif;font-size:16px;line-height:1.5}
+.sol .o.correct{background:var(--ok-soft);border-color:var(--ok)}
+.sol .o.correct b{background:var(--ok);border-color:var(--ok);color:#fff}
+.sol .o.wrong{background:var(--bad-soft);border-color:var(--bad)}
+.sol .o.wrong b{background:var(--bad);border-color:var(--bad);color:#fff}
+.note{margin-left:auto;font-size:12px;font-weight:700;white-space:nowrap;padding-left:8px}
+.o.correct .note{color:#157a43}.o.wrong .note{color:#b02a34}
+.ansline{margin-top:10px;font-size:14px;color:var(--mut)}
+.ansline b{color:var(--ink)}
+.empty{display:none;text-align:center;color:var(--mut);padding:40px 0}
+
+@media(max-width:900px){
+  #app{grid-template-columns:1fr}
+  #palToggle{display:inline-block}
+  #palette{position:fixed;top:56px;right:0;bottom:0;width:min(340px,92vw);transform:translateX(105%);transition:transform .2s;z-index:30;box-shadow:-8px 0 24px rgba(0,0,0,.15)}
+  #palette.open{transform:none}
+  #qbody{padding:16px}
+  .qtext{font-size:17px}
+  .timer span{display:none}
+  .key{margin-left:0}
+}
+@media(prefers-reduced-motion:reduce){#palette{transition:none}}
+</style>
+</head>
+<body>
+
+<header id="top">
+  <div class="brand">Mock Test<small>Mathematics (Q1–90) · General Knowledge (Q91–120)</small></div>
+  <div class="timer" id="timerBox"><span>Time left</span><b id="timer">02:00:00</b></div>
+  <button id="palToggle" type="button">Questions</button>
+</header>
+
+<main id="app">
+  <section id="qpane">
+    <div id="qhead"></div>
+    <div id="qbody"></div>
+    <div id="qfoot">
+      <div class="g">
+        <button class="btn mk" id="bMark" type="button">Mark for Review</button>
+        <button class="btn" id="bClear" type="button">Clear Response</button>
+      </div>
+      <div class="g">
+        <button class="btn" id="bPrev" type="button">Previous</button>
+        <button class="btn pri" id="bNext" type="button">Next</button>
+        <button class="btn sub" id="bSubmit" type="button">Submit</button>
+      </div>
+    </div>
+  </section>
+  <aside id="palette">
+    <h3>Question Palette</h3>
+    <div class="legend" id="legend"></div>
+    <div id="pgrid"></div>
+    <div class="pfoot"><button class="btn sub" id="bSubmit2" type="button">Submit Test</button></div>
+  </aside>
+</main>
+
+<div id="modal"><div class="mbox" id="mbox"></div></div>
+<div id="result"></div>
+
+<script>
+const R=String.raw;
+const Q=(t,o,a,x)=>Object.assign({t,o,a},x||{});
+
+/* ---------------- QUESTIONS (120): text, 4 options, correct index ---------------- */
+const QS=[
+/* 1 */ Q(R`Uttarakhand Public Service Commission Assistant Professor (GDC) 2017 Solved Paper\\
+Two eigen values of a $3\times3$ non-singular matrix are 2 and 3. If the sum products of two eigen values taken at a time is 11 then the characteristic equation of the matrix is:`,[R`$\lambda^{3}-5\lambda^{2}+6\lambda=0$`,R`$\lambda^{3}-6\lambda^{2}+11\lambda-6=0$`,R`$\lambda^{3}+6\lambda^{2}-11\lambda+6=0$`,R`$\lambda^{3}-4\lambda^{2}+\lambda+6=0$`],1),
+/* 2 */ Q(R`The quadratic form $x^{2}+y^{2}+3xy$ can be reduced to the canonical form:`,[R`$\frac{5}{2}x_{1}^{2}+\frac{1}{2}x_{2}^{2}$`,R`$\frac{5}{2}x_{1}^{2}-\frac{3}{2}x_{2}^{2}$`,R`$-\frac{1}{2}x_{1}^{2}+\frac{3}{2}x_{2}^{2}$`,R`$-\frac{1}{2}x_{1}^{2}+\frac{5}{2}x_{2}^{2}$`],3),
+/* 3 */ Q(R`Which of the following series in $\mathbb{R}$ is not uniformly convergent?`,[R`$\sum_{n=1}^{\infty}\frac{\cos nx}{\sqrt{n}}$`,R`$\sum_{n=1}^{\infty}\frac{\cos nx}{n^{3/2}}$`,R`$\sum_{n=1}^{\infty}\frac{\cos nx}{n^{2}}$`,R`$\sum_{n=1}^{\infty}\frac{\cos nx}{n^{p}},p>1$`],0),
+/* 4 */ Q(R`The function $f(x)=\lim_{n\rightarrow\infty}\frac{x^{n}}{1+x^{n}e^{x}}\forall x\in[0,\infty)$ at $x=1$:`,[R`Is continuous`,R`Is uniformly continuous`,R`Has discontinuity of first kind`,R`Has discontinuity of second kind`],1),
+/* 5 */ Q(R`The directional derivative of the surface $x^{2}-5y^{2}+2z^{2}=12$ at the point $(3, 1, 2)$ in the direction of the vector $(\hat{i}+\hat{j}+\hat{k})$ is:`,[R`$\frac{1}{\sqrt{3}}$`,R`$\frac{2}{\sqrt{3}}$`,R`$\sqrt{3}$`,R`$\frac{4}{\sqrt{3}}$`],3),
+/* 6 */ Q(R`The order of the element 4 in the group $(\{0, 1, 2, 3, 4, 5\}, +_{6})$ is:`,[R`1`,R`2`,R`3`,R`4`],2),
+/* 7 */ Q(R`If in a ring $(R,+,\cdot)$, $x^{2}=x, \forall x\in R$, then $(x+x)$ is:`,[R`$x^{2}$`,R`0`,R`$-x$`,R`$-2x$`],1),
+/* 8 */ Q(R`The generators of the multiplicative cyclic group $\{1, \omega, \omega^{2}\}$, where $\omega$ is the cube root of unity are:`,[R`1 and $\omega$`,R`$\omega$ and $\omega^{2}$`,R`1 and $\omega^{2}$`,R`Only $\omega$`],1),
+/* 9 */ Q(R`A subgroup $H$ of a group $G$ is normal if and only if:`,[R`$xHx=xH$`,R`$x^{-1}Hx=Hx^{-1}, \forall x\in G$`,R`$xHx^{-1}=H, \forall x\in G$`,R`$x^{2}Hx^{-1}=Hx^{3}, \forall x\in G$`],2),
+/* 10 */ Q(R`A division ring is:`,[R`A field`,R`An integral domain`,R`A ring with division as one operation`,R`None of the above`],1),
+/* 11 */ Q(R`If $H$ is a normal subgroup of a finite group $G$ and $O(G/H)=3, O(G)=12$, then $O(H)$ is:`,[R`4`,R`3`,R`2`,R`1`],0),
+/* 12 */ Q(R`If $x, y$ are elements of a group $G$ and $O(y)=3$, then $O(xyx^{-1})$ is:`,[R`1`,R`2`,R`3`,R`5`],2),
+/* 13 */ Q(R`Every finite group is isomorphic to which of the following?`,[R`An abelian group`,R`A permutation group`,R`A cyclic group`,R`The group $(Z, +)$`],1),
+/* 14 */ Q(R`The value of $\frac{1}{2\pi i}\int_{|z|=3}\frac{e^{z}}{z-2}dz$ is:`,[R`$e$`,R`$2\pi i e^{2}$`,R`$2\pi i e^{1}$`,R`$e^{2}$`],3),
+/* 15 */ Q(R`If $f(z)$ is an analytic function of $z$ and if $f'(z)$ is continuous within and on a closed contour $C$, then $\int_{C} f(z)dz$ is equal to:`,[R`$2\pi i$`,R`$\pi i$`,R`$\frac{1}{2}\pi i$`,R`0`],3),
+/* 16 */ Q(R`The bilinear transformation, which maps the points $z=1,0,-1$ of $z$-plane into the points $w=i, 0, -i$, respectively, of the $w$-plane, is:`,[R`$w=12z$`,R`$w=iz$`,R`$w=-iz$`,R`$w=-\frac{1}{2}iz$`],1),
+/* 17 */ Q(R`The value of $\int_{0}^{\infty}\frac{x\sin x}{x^{2}+9}dx$ is:`,[R`$\frac{\pi}{2}e^{-3}$`,R`$\frac{\pi}{2}e^{3}$`,R`$\pi e^{-3}$`,R`$\pi e^{3}$`],0),
+/* 18 */ Q(R`The value of the integral $\int_{C}\frac{3z+4}{z(2z+1)}dz$ where $C$ is the circle $|z|=1$, is:`,[R`$2\pi i$`,R`$4\pi i$`,R`$3\pi i$`,R`$-4\pi i$`],2),
+/* 19 */ Q(R`The theorem: "A bounded entire function is constant", is named after which of the following mathematician?`,[R`Cauchy`,R`Schwarz`,R`Liouville`,R`Morera`],2),
+/* 20 */ Q(R`The value of the integral $\int_{C}\frac{e^{2z}}{(z+1)^{4}}dz$ where $C$ is the circle $|z|=2$ is:`,[R`$\frac{8}{3}\pi i e^{-3}$`,R`$\frac{8}{3}\pi i e^{-2}$`,R`$8\pi i e^{-2}$`,R`$5\pi i e^{-2}$`],1),
+/* 21 */ Q(R`The locus of the complex number satisfying $\arg\left(\frac{z-1}{z+1}\right)=\frac{\pi}{3}$ is a:`,[R`Straight line`,R`Circle`,R`Parabola`,R`Hyperbola`],1),
+/* 22 */ Q(R`In the Argand diagram the point $z$ satisfying $|z+5|^{2}+|z-5|^{2}=75$ lies on:`,[R`A circle`,R`An ellipse`,R`A hyperbola`,R`A straight line`],0),
+/* 23 */ Q(R`If $w=f(re^{i\theta})$, then $\frac{dw}{dz}$ is:`,[R`$(\cos\theta+i\sin\theta)\frac{\partial w}{\partial r}$`,R`$(\sin\theta+i\cos\theta)\frac{\partial w}{\partial r}$`,R`$(\sin\theta-i\cos\theta)\frac{\partial w}{\partial r}$`,R`$(\cos\theta-i\sin\theta)\frac{\partial w}{\partial r}$`],3),
+/* 24 */ Q(R`The fixed points of the bilinear transformation $w=\frac{5z+4}{z+5}$ are:`,[R`$2, -2$`,R`$2, 2i$`,R`$-2, -3$`,R`$-4, -5$`],0),
+/* 25 */ Q(R`Laurent's series expansion of the function $\frac{1}{1-z}$ in the region $1<|z|$ is:`,[R`$-\sum_{n=0}^{\infty}\frac{1}{z^{n}}$`,R`$\sum_{n=0}^{\infty}\frac{1}{z^{n+1}}$`,R`$-\sum_{n=0}^{\infty}\frac{1}{z^{n+1}}$`,R`$\sum_{n=0}^{\infty}z^{n}$`],3),
+/* 26 */ Q(R`Value of $\int_{C}\frac{dz}{z^{2}+4}$, where $C$ is the unit circle, is:`,[R`$2i$`,R`$-2i$`,R`$\pi i$`,R`0`],3),
+/* 27 */ Q(R`In the Taylor's series expansion of $f(z)=\log_{e}z$ about point $z=1$, the coefficient of $(z-1)^{4}$ is:`,[R`1`,R`$-\frac{1}{4}$`,R`$\frac{1}{4}$`,R`$\frac{1}{4!}$`],1),
+/* 28 */ Q(R`The image of the region $|z-i|<2$ under the mapping $w=\frac{1+i}{z+i}$ in the $w$-plane is:`,[R`$u<v$`,R`$2u<v+1$`,R`$u+v<1$`,R`$2v-2u+1<0$`],2),
+/* 29 */ Q(R`Let $m$ be a positive integer and $x, y$ be integers then which of the following is not true:`,[R`$(x+y)\pmod m = ((x\pmod m)+(y\pmod m))\pmod m$`,R`$(x-y)\pmod m = ((x\pmod m)-(y\pmod m))\pmod m$`,R`$(xy)\pmod m = ((x\pmod m)(y\pmod m))\pmod m$`,R`$(x-y)\pmod m = (x\pmod m(-y\pmod m))\pmod m$`],2),
+/* 30 */ Q(R`The residue at the simple pole $z=i$ of the function $f(z)=\frac{9z+i}{z^{3}+z}$ is:`,[R`$5i$`,R`$-5i$`,R`$-10i$`,R`$10i$`],1),
+/* 31 */ Q(R`Solution of the differential equation $(D-D'-1)(D+D'-2)z=e^{2x-y}$ is:`,[R`$z=e^{x}\phi(y+x)+e^{2x}\psi(y+x)+\frac{1}{2}e^{2x-y}$`,R`$z=e^{-x}\phi(y+x)+e^{-2x}\psi(y+x)+\frac{1}{2}e^{2x-y}$`,R`$z=e^{-x}\phi(y-x)+e^{-2x}\psi(y-x)+\frac{1}{2}e^{2x-y}$`,R`$z=e^{x}\phi(y+x)+e^{2x}\psi(y-x)-\frac{1}{2}e^{2x-y}$`],3),
+/* 32 */ Q(R`Particular integral of the differential equation $(D^{2}-4D+4)y=x e^{2x}$ is:`,[R`$\frac{1}{6}x^{2}e^{2x}$`,R`$\frac{1}{6}x^{4}e^{2x}$`,R`$\frac{1}{2}x^{3}e^{2x}$`,R`$\frac{1}{6}x^{3}e^{2x}$`],3),
+/* 33 */ Q(R`Solution of the differential equation $\frac{dy}{dx}=\frac{x+2y-3}{2x+y-3}$ is:`,[R`$x-y+2=a(x+y)^{2}$`,R`$x+y-2=a(x-y)^{3}$`,R`$x+y-2=b(x+y)^{3}$`,R`$x+y+2=a(x-y)^{2}$`],1),
+/* 34 */ Q(R`General solution of partial differential equation $(y-z)p+(x-y)q=z-x$ is:`,[R`$\phi(x+y+z, y^{2}+2xy)=0$`,R`$\phi(x+y+z, x^{2}+2yz)=0$`,R`$\phi(x+y+z, y^{2}+2xz)=0$`,R`$\phi(x+y+z, x^{2}+2xy)=0$`],1),
+/* 35 */ Q(R`The general solution of the partial differential equation $\frac{\partial^{2}z}{\partial x\partial y}=x+y$ is of the form:`,[R`$\frac{1}{2}xy(x+y)+F(x)+G(y)$`,R`$\frac{1}{2}xy(x+y)+F(x)G(y)$`,R`$\frac{1}{2}xy(x-y)+F(x)+G(y)$`,R`$\frac{1}{2}xy(x-y)+F(x)\cdot G(\frac{x}{y})$`],0),
+/* 36 */ Q(R`Solution of the partial differential equation $pq+p+q=0$ is:`,[R`$z=ax+\frac{a}{1+a}y+b$`,R`$z=ax+\frac{a}{1-a}y+b$`,R`$z=ax-\frac{a}{1+a}y+b$`,R`$z=ax+\frac{a}{1+2a}y+b$`],2),
+/* 37 */ Q(R`Solution of the partial differential equation $z^{2}=1+p^{2}+q^{2}$ is:`,[R`$z=\cosh\frac{y+ax+c}{\sqrt{1+a^{2}}}$`,R`$z=\cosh^{-1}\frac{y+ax+c}{\sqrt{1+a^{2}}}$`,R`$z=\sinh\frac{y+ax+c}{\sqrt{1-a^{2}}}$`,R`$z=\cosh\frac{y+ax+c}{\sqrt{1-a^{2}}}$`],0),
+/* 38 */ Q(R`The integral surface satisfying the partial differential equation $\frac{\partial z}{\partial x}+z^{2}\frac{\partial z}{\partial y}=0$ and passing through the straight line $x=1, y=z$ is:`,[R`$(x-1)z+z^{2}=y^{2}$`,R`$(y-z)x+x^{2}=1$`,R`$(x-1)z^{2}+z=y$`,R`$x^{2}+y^{2}-z^{2}=1$`],2),
+/* 39 */ Q(R`Singular solution of the differential equation $y=xy'-(y')^{2}$ is:`,[R`$x^{2}=4y$`,R`$x=4y^{2}$`,R`$y^{2}=4x$`,R`$x^{2}=y$`],0),
+/* 40 */ Q(R`Let $u(x,y)=f(xe^{y})+g(y^{2}\cos y)$, where $f$ and $g$ are infinitely differentiable functions, then the partial differential equation of minimum order satisfied by $u(x, y)$ is:`,[R`$u_{xy}+xu_{xx}=u_{x}$`,R`$u_{xy}+xu_{xx}=xu_{x}$`,R`$u_{xy}-xu_{xx}=u_{x}$`,R`$u_{xy}-xu_{xx}=xu_{x}$`],2),
+/* 41 */ Q(R`The solution of the differential equation $(xy^{2}+x)dx+(yx^{2}+y)dy=0$ is:`,[R`$(x^{2}+1)(y^{2}+1)=C$`,R`$x^{2}+1=C(y^{2}+1)$`,R`$x^{2}+y^{2}=c$`,R`$x^{2}-y^{2}=c^{2}$`],0),
+/* 42 */ Q(R`The value of $\Delta^{n}(e^{3x+5})$ is:`,[R`$e^{30}(e^{3x+5})$`,R`$(e^{30}-1)e^{3x+5}$`,R`$(e-1)^{3n}e^{3x+5}$`,R`$(e^{3}-1)^{n}e^{3x+5}$`],3),
+/* 43 */ Q(R`If $f(0)=-3, f(1)=6, f(2)=8$ and $f(3)=12$, then $\Delta^{3}f(0)$ is:`,[R`3`,R`5`,R`6`,R`9`],3),
+/* 44 */ Q(R`In solving a system of non-homogeneous linear equations $AX=B$ by Gauss-elimination method the coefficient matrix $A$ is reduced to:`,[R`A diagonal matrix`,R`A lower triangular matrix`,R`An upper triangular matrix`,R`A scalar matrix`],2),
+/* 45 */ Q(R`Given the following values of $f(x)$ in the following table:`,[R`$\frac{11}{8}$`,R`$\frac{5}{8}$`,R`$\frac{3}{8}$`,R`$\frac{1}{8}$`],0,{tbl:{head:true,rows:[[R`$x$`,R`$f(x)$`,R`$f'(x)$`],[R`$-1$`,'1',R`$-5$`],['0','1','1'],['1','3','7']]},t2:R`The value of $f(0.5)$ by using Hermite interpolation is:`}),
+/* 46 */ Q(R`In the evaluation of $\int_{a}^{b} f(x)dx$ by Simpson's one-third rule, the curve $y=f(x)$ is assumed as:`,[R`Circle`,R`Parabola`,R`Hyperbola`,R`Line segment`],1),
+/* 47 */ Q(R`The order of convergence in Newton-Raphson for solving $f(x)=0$ is:`,[R`1`,R`2`,R`3`,R`4`],1),
+/* 48 */ Q(R`The extremum of the functional $I=\int_{0}^{1}(y'^{2}+12xy)dx$, satisfying the conditions $y(0)=0$ and $y(1)=1$ is:`,[R`$y=\sin^{2}(\frac{\pi x}{2})$`,R`$y=\frac{1}{2}(x^{2}+\sin\frac{\pi x}{2})$`,R`$y=x^{3}$`,R`$y=\sin\frac{\pi x}{2}$`],2),
+/* 49 */ Q(R`Extremals of $\int_{1}^{3}(3x-y)ydx$ that satisfy the functional conditions $y(1)=1, y(3)=\frac{9}{2}$ are:`,[R`Two`,R`Infinite`,R`One`,R`None`],2),
+/* 50 */ Q(R`The curve through $(1, 0)$ and $(2, 1)$ which minimizes $\int_{1}^{2}\left\{\frac{1+y'^{2}}{x}\right\}^{\frac{1}{2}}dx$ is:`,[R`Circle`,R`Ellipse`,R`Hyperbola`,R`Straight line`],3),
+/* 51 */ Q(R`The functional $\int_{0}^{1}(y'^{2}+4y^{2}+8ye^{x})dx, y(0)=-\frac{4}{3}, y(1)=-\frac{4e}{3}$ has:`,[R`Strong minima on $y=\frac{1}{3}e^{x}$`,R`Strong minima on $y=-\frac{4}{3}e^{x}$`,R`Weak maxima on $y=-\frac{1}{3}e^{x}$`,R`Strong maxima on $y=-\frac{4}{3}e^{x}$`],1),
+/* 52 */ Q(R`The eigenvalues of the integral equation $y(x)=\lambda\int_{0}^{2\pi}\sin(x+t)y(t)dt$ are:`,[R`$\pi, -\pi$`,R`$\frac{1}{\pi}, -\frac{1}{\pi}$`,R`$\frac{1}{2\pi}, -\frac{1}{2\pi}$`,R`$2\pi, -2\pi$`],1),
+/* 53 */ Q(R`The solution of the integral equation $y(x)=x+\int_{0}^{1}xt^{2}y(t)dt$ is:`,[R`$y(x)=\frac{2x}{3}$`,R`$y(x)=\frac{3x}{4}$`,R`$y(x)=\frac{4x}{3}$`,R`$y(x)=\frac{3x}{2}$`],2),
+/* 54 */ Q(R`Consider a planet of mass $m$ orbiting around the sun under inverse square law of attraction $\frac{\mu m}{r^{2}}, \mu>0$. If the position of the planet at time $t$ is given by the polar coordinates $(r, \theta)$, then Lagrangian $L$ of the system is:`,[R`$\frac{1}{2}m(\dot{r}^{2}+r^{2}\dot{\theta}^{2})-\frac{\mu m}{r}$`,R`$\frac{1}{2}m(\dot{r}^{2}+\dot{\theta}^{2})+\frac{\mu m}{r}$`,R`$\frac{1}{2}m(\dot{r}^{2}+r\dot{\theta}^{2})-\frac{\mu m}{r}$`,R`$\frac{1}{2}m(\dot{r}^{2}+r^{2}\dot{\theta}^{2})+\frac{\mu m}{r}$`],3),
+/* 55 */ Q(R`A rigid body turns about a fixed point $O$ and has angular velocity $(\omega_{1}, \omega_{2}, \omega_{3})$ referred to three principal axes at $O$. If $A, B, C$ are the principal moments of inertia about these axes, then the incorrect statement is:`,[R`$A+B+C=\text{constant}$`,R`$A^{2}\omega_{1}+B^{2}\omega_{2}+C^{2}\omega_{3}=\text{constant}$`,R`$A^{2}\omega_{1}^{2}+B^{2}\omega_{2}^{2}+C^{2}\omega_{3}^{2}=\text{constant}$`,R`Kinetic energy during the motion remains constant.`],2),
+/* 56 */ Q(R`Mean and standard deviation of 200 items were 60 and 20, respectively. At the time of checking it was found that two values were wrongly recorded as 3 and 67 instead of 13 and 17. The correct mean and standard deviation, respectively, are:`,[R`$49.8, 20.09$`,R`$51.8, 12.09$`,R`$59.8, 20.09$`,R`$61.8, 20.09$`],2),
+/* 57 */ Q(R`If for a series the arithmetic mean is 25 and harmonic mean is 9 then the geometric mean of the series is:`,[R`12`,R`13`,R`14`,R`15`],3),
+/* 58 */ Q(R`If two different numbers are taken from the set $\{0, 1, 2, 3, \dots, 10\}$ then the probability that their sum as well as absolute difference are both multiple of 4, is:`,[R`$\frac{7}{55}$`,R`$\frac{6}{55}$`,R`$\frac{8}{55}$`,R`$\frac{12}{55}$`],1),
+/* 59 */ Q(R`For three events $A, B$ and $C$, $P(\text{Exactly one of } A \text{ or } B \text{ occurs}) = P(\text{Exactly one of } B \text{ or } C \text{ occurs}) = P(\text{Exactly one of } C \text{ or } A \text{ occurs}) = \frac{1}{4}$ and $P(\text{All the three events occur simultaneously}) = \frac{1}{16}$. Then the probability that at least one of the events occurs is:`,[R`$\frac{3}{16}$`,R`$\frac{5}{16}$`,R`$\frac{7}{16}$`,R`$\frac{7}{64}$`],2),
+/* 60 */ Q(R`Given $n=10, \Sigma x=4, \Sigma y=3, \Sigma x^{2}=8, \Sigma y^{2}=9$ and $\Sigma xy=3$ then coefficient of correlation is:`,[R`$\frac{1}{4}$`,R`$\frac{7}{14}$`,R`$\frac{15}{4}$`,R`$\frac{14}{3}$`],0),
+/* 61 */ Q(R`Rejecting a true hypothesis is:`,[R`Type II error`,R`Type I error`,R`Type I and II error`,R`None of the above`],1),
+/* 62 */ Q(R`A null hypothesis is accepted when:`,[R`$x_{\text{cal}}^{2}\le x_{\text{tab}}^{2}$`,R`$x_{\text{cal}}^{2}>x_{\text{tab}}^{2}$`,R`$x_{\text{cal}}^{2}<x_{\text{tab}}^{2}$`,R`$x_{\text{cal}}^{2}\ge x_{\text{tab}}^{2}$`],0),
+/* 63 */ Q(R`Two regression lines are perpendicular to each other when coefficient of correlation $r$ is equal to:`,[R`0`,R`$\frac{1}{3}$`,R`$-\frac{1}{2}$`,R`$\pm 1$`],0),
+/* 64 */ Q(R`Two regression lines are $y=a+bx$ and $x=c+dy$, then the ratio of standard deviations of $x$ and $y$ are:`,[R`$\sqrt{\frac{c}{b}}$`,R`$\sqrt{\frac{c}{d}}$`,R`$\sqrt{\frac{d}{a}}$`,R`$\sqrt{\frac{d}{b}}$`],3),
+/* 65 */ Q(R`The range of partial correlation coefficient $r_{12.3}$ is:`,[R`$-1 \text{ to } 1$`,R`$0 \text{ to } \infty$`,R`$0 \text{ to } 1$`,R`$-\frac{1}{2} \text{ to } \frac{1}{2}$`],0),
+/* 66 */ Q(R`The arithmetic mean of two numbers is 10 and their geometric mean is 8. Then the numbers are:`,[R`16, 14`,R`10, 10`,R`16, 4`,R`4, 8`],2),
+/* 67 */ Q(R`From the following information $n=10, \Sigma x=250, \Sigma y=310, \Sigma(x-35)^{2}=162, \Sigma(y-31)^{2}=222, \Sigma(x-35)(y-31)=92$, both the regression coefficients are:`,[R`$0.321, 0.365$`,R`$0.414, 0.568$`,R`$0.142, 0.217$`,R`$0.704, 0.319$`],0),
+/* 68 */ Q(R`In a binomial distribution $p=\frac{1}{4}, q=\frac{3}{4}, n=12$ then the ratio arithmetic mean : standard deviation is:`,[R`$3:1$`,R`$1:3$`,R`$1:2$`,R`$2:1$`],3),
+/* 69 */ Q(R`For a normal distribution $\text{mode}=20$, then its mean is:`,[R`20`,R`40`,R`15`,R`None of these`],0),
+/* 70 */ Q(R`For a certain normal distribution, the first moment about the value 8 is 22 and the fourth moment about the value 30 is 243. Then coefficient of variation of the distribution is:`,[R`$5\%$`,R`$10\%$`,R`$15\%$`,R`$20\%$`],1),
+/* 71 */ Q(R`The economic order quantity for the inventory problem:
+Annual demand $=36000$ units,
+Cost per unit $= \text{Rs } 1$,
+Ordering cost $= \text{Rs } 25$,
+Cost of capital $= 15\%$,
+Store charge $= 5\%$ is:`,[R`300 units`,R`30 units`,R`130 units`,R`3000 units`],3),
+/* 72 */ Q(R`The re-order level from the following data: Annual Demand $=2400$ units, Lead Time $=\frac{1}{2}$ month, is:`,[R`10 units`,R`15 units`,R`100 units`,R`1200 units`],2),
+/* 73 */ Q(R`If $m$ is the number of rows and $n$ is the number of columns in a contingency table then degree of freedom is:`,[R`$(m-1)$`,R`$mn-1$`,R`$(m-1)(n-1)$`,R`$mn$`],2),
+/* 74 */ Q(R`Solution of the linear programming problem:
+Subject to $2x+y\ge8, 2x+5y\ge10, x, y\ge0$ is:`,[R`4.25`,R`8.0`,R`4.5`,R`5.0`],2),
+/* 75 */ Q(R`The linear programming problem Max. $Z=x_{1}+x_{2}$ Subject to $x_{1}+x_{2}\le1, -3x_{1}+x_{2}\ge3, x_{1}, x_{2}\ge0$ has:`,[R`One solution`,R`No solution`,R`Unbounded solution`,R`Infinitely many solutions`],1),
+/* 76 */ Q(R`If the number of basic solutions of the system of equations
+$x_{1}+2x_{2}+x_{3}=4$, $2x_{1}+x_{2}+5x_{3}=5$ is $n$ and the number of non-degenerate solutions is $m$ then the value of $n$ and $m$ are respectively:`,[R`2, 2`,R`3, 2`,R`3, 3`,R`3, 1`],3),
+/* 77 */ Q(R`The maximum value of the function $Z=\{\min(3x_{1}-10), \min(-5x_{1}+5)\}$ Subject to $0\le x_{1}\le5$, is:`,[R`$-20$`,R`$-10$`,R`5`,R`15`],1),
+/* 78 */ Q(R`Consider the transportation problem given below. Elements in the circles indicate a feasible solution and the elements on the left hand corner are the costs.`,[R`This solution is not a basic feasible solution.`,R`This solution is an optimal solution.`,R`This solution can be made basic feasible.`,R`This solution is a basic feasible solution but not an optimal solution.`],2,{tbl:{head:false,rows:[['7','4','0','5'],['6','8','0','15'],['3','9','0','9']]}}),
+/* 79 */ Q(R`Consider the problem of assigning five jobs to five persons. The assignment costs are given in the table below:`,[R`$A\rightarrow5, B\rightarrow1, C\rightarrow4, D\rightarrow3 \text{ and } E\rightarrow2$`,R`$A\rightarrow5, B\rightarrow1, C\rightarrow3, D\rightarrow4 \text{ and } E\rightarrow2$`,R`$A\rightarrow3, B\rightarrow1, C\rightarrow4, D\rightarrow2 \text{ and } E\rightarrow5$`,R`$A\rightarrow5, B\rightarrow4, C\rightarrow1, D\rightarrow3 \text{ and } E\rightarrow2$`],2,{tbl:{head:true,rows:[['Jobs/Person','1','2','3','4','5'],['A','8','4','2','6','1'],['B','0','9','5','5','4'],['C','3','8','9','2','6'],['D','4','3','1','0','3'],['E','9','5','8','9','5']]},t2:R`The optimal assignment schedule is:`}),
+/* 80 */ Q(R`The MODI method to solve transportation problem uses the stepping stones path:`,[R`To calculate the marginal cost of unused cells.`,R`To determine how many times to allocate to the selected unused cell.`,R`To determine the values of the row and column index numbers.`,R`To none of the above.`],0),
+/* 81 */ Q(R`The function $f$ defined on the interval $[-1,1]$ as $$f(x)=\begin{cases}x, & \text{when } x \text{ is irrational} \\ 0, & \text{when } x \text{ is rational}\end{cases}$$ is continuous at:`,[R`0`,R`1`,R`$-1, 1$`,R`None of these`],0),
+/* 82 */ Q(R`Let $\langle f_n \rangle$ be a sequence of real-valued functions defined on the closed and bounded interval $[a, b]$ and let $f_{n}\in R[a, b]$ for $n=1,2,3,\dots$. If $f_n$ converges uniformly to the function $f$ defined on $[a, b]$ and $f\in R[a, b]$, then $\int_{a}^{b} f(x)dx$ is equal to:`,[R`$\lim_{n\rightarrow\infty}\int_{a}^{b} f_{n}(x)dx$`,R`$\lim_{n\rightarrow\infty}\int_{a}^{b} f_{n}(x)dx$`,R`$\lim_{n\rightarrow\infty}\int_{b}^{b} f_{n}(x)dx$`,R`None of these`],1),
+/* 83 */ Q(R`If $f$ is bounded on $[a, b]$ and $p$ is a partition of $[a, b]$, then $\lim_{|p|\rightarrow0} U(p, f)$ is:`,[R`$Integal -a to b f$`,R`$integral a to -b f$`,R`$integral -a to -b f$`,R`None of these`],3),
+/* 84 */ Q(R`Let $f\in R[a,b]$, then there exists a number $\mu$ lying between the bounds $m$ and $M$ of $f$ such that $\int_{a}^{b} f(x)dx$ is equal to:`,[R`$\mu(a+b)$`,R`$\mu(a\cdot b)$`,R`$\mu(b-a)$`,R`$\mu(a-b)$`],2),
+/* 85 */ Q(R`If the function $f$ is defined on the interval $[-1, 1]$ as $$f(x)=\begin{cases}x^{2}\sin\frac{1}{x^{2}}, & \text{for } x\ne0 \\ 0, & \text{for } x=0\end{cases}$$ then $f$ is:`,[R`Unbounded`,R`Uniformly continuous`,R`Not continuous`,R`None of these`],1),
+/* 86 */ Q(R`If $A_{1}$ and $A_{2}$ are measurable subsets of $[a, b]$, then:`,[R`Neither $A_{1}\cup A_{2}$ nor $A_{1}\cap A_{2}$ are measurable`,R`$A_{1}\cap A_{2}$ is not measurable`,R`$A_{1}\cup A_{2}$ is not measurable`,R`Both $A_{1}\cup A_{2}$ and $A_{1}\cap A_{2}$ are measurable`],3),
+/* 87 */ Q(R`If $f$ is measurable, then $|f|$ is:`,[R`Not measurable`,R`Discontinuous`,R`Measurable`,R`Not uniformly continuous`],2),
+/* 88 */ Q(R`If $f(x)=\begin{cases}\frac{1}{x}, & \text{when } 0<x\le1 \\ 9, & \text{when } x=0\end{cases}$, then $f$ is:`,[R`Lebesgue integrable on $[0, 1]$`,R`Not Lebesgue integrable on $[0, 1]$`,R`Riemann-integrable on $[0, 1]$`,R`None of these`],1),
+/* 89 */ Q(R`Every closed subset of a compact metric space is:`,[R`Compact`,R`Bounded`,R`Complete`,R`None of these`],0),
+/* 90 */ Q(R`Let $X=[0,1]$ and $(X, d)$ be a discrete space, then the subset $A=\{1, \frac{1}{2}, \frac{1}{3}, \dots\}$ is:`,[R`Not closed`,R`Unbounded`,R`Not compact`,R`Every one of these`],3),
+
+/* ---- GK ---- Unit-1: Current Affairs */
+/* 91 */ Q(R`Personalities in News: Who among the following took oath as the 53rd Chief Justice of India (CJI) in November 2025, succeeding Justice B.R. Gavai?`,[R`Justice D.Y. Chandrachud`,R`Justice Sanjiv Khanna`,R`Justice Surya Kant`,R`Justice B.V. Nagarathna`],2),
+/* 92 */ Q(R`Current Research in the field of Science: The 2024 Nobel Prize in Physics was awarded to John J. Hopfield and Geoffrey E. Hinton for their foundational discoveries and inventions that enable machine learning with:`,[R`Quantum computing bits`,R`Artificial neural networks`,R`Graphene synthesis`,R`Attosecond physics`],1),
+/* 93 */ Q(R`Major events & Current Affairs: The BRICS Summit held in October 2024 (the first after its major expansion) was hosted by which city?`,[R`Johannesburg, South Africa`,R`Kazan, Russia`,R`Beijing, China`,R`Fortaleza, Brazil`],1),
+/* 94 */ Q(R`Sports News: Who secured the gold medal in the men's javelin throw event at the 2024 Paris Olympic Games?`,[R`Neeraj Chopra`,R`Jakub Vadlejch`,R`Arshad Nadeem`,R`Anderson Peters`],2),
+/* 95 */ Q(R`National/International Events: The United Nations officially declared 2024 as the International Year of:`,[R`Millets`,R`Camelids`,R`Glass`,R`Artisanal Fisheries`],1),
+/* Unit-2: Teaching and Research Aptitude */
+/* 96 */ Q(R`Factor Affecting Teaching: According to Edgar Dale’s 'Cone of Experience,' which learning activity typically results in the highest retention rate for students?`,[R`Reading a text`,R`Listening to a lecture`,R`Watching a demonstration`,R`Participating in a direct, purposeful, hands-on experience`],3),
+/* 97 */ Q(R`Research Methods: Research that focuses primarily on generating new theories and expanding the fundamental knowledge base without immediate practical application is called:`,[R`Action Research`,R`Applied Research`,R`Basic/Pure Research`,R`Evaluation Research`],2),
+/* 98 */ Q(R`Data Analysis: In a normal probability distribution curve, what percentage of data falls within one standard deviation ($\pm 1 \sigma$) of the mean?`,[R`50%`,R`68%`,R`95%`,R`99.7%`],1),
+/* 99 */ Q(R`Role of UGC: The University Grants Commission (UGC) operates six Inter-University Centres (IUCs) in India. The Consortium for Educational Communication (CEC) in New Delhi was set up to address the needs of:`,[R`Astrophysics research`,R`Higher education through television and ICT`,R`Nuclear science`,R`Library automation`],1),
+/* 100 */ Q(R`Teaching Methods: In a typical 'Asynchronous' learning environment, students:`,[R`Must attend live video lectures at a scheduled time`,R`Access learning materials and complete coursework at their own pace within a timeframe`,R`Gather in a physical classroom for direct instruction`,R`Only use printed books without internet access`],1),
+/* Unit-3: ICT */
+/* 101 */ Q(R`General Abbreviation: In computer networking and telecom, what does the abbreviation 'Wi-Fi' officially stand for?`,[R`Wireless Fidelity`,R`Wireless Fiber`,R`Wide Field`,R`It doesn't stand for anything; it's just a trademarked name`],3),
+/* 102 */ Q(R`Basics of Internet: Which internet protocol is primarily utilized to securely transfer files between a client computer and a web server?`,[R`SFTP (Secure File Transfer Protocol)`,R`SMTP (Simple Mail Transfer Protocol)`,R`VoIP (Voice over IP)`,R`DHCP`],0),
+/* 103 */ Q(R`Terminology: A 'Search Engine Optimization' (SEO) strategy is primarily implemented by website owners to:`,[R`Protect user passwords from hackers`,R`Increase the quantity and quality of traffic to their site from organic search engine results`,R`Optimize high-resolution images for faster loading`,R`Design visually appealing graphics`],1),
+/* 104 */ Q(R`ICT Disadvantages: The deceptive practice of registering domain names that are visually similar or one letter off from highly popular websites (e.g., googel.com) to exploit user typos is called:`,[R`Typosquatting`,R`Phishing`,R`Cryptojacking`,R`Packet sniffing`],0),
+/* 105 */ Q(R`Basics of Internet: The first operational packet switching network that laid the technological foundation for the modern Internet was:`,[R`NSFNET`,R`ARPANET`,R`Ethernet`,R`BITNET`],1),
+/* Unit-4: People and Environment */
+/* 106 */ Q(R`People & Environment Interaction: The 'Albedo effect' of the Earth refers to its ability to:`,[R`Absorb carbon dioxide from the atmosphere`,R`Reflect incoming solar radiation back into space`,R`Generate geothermal energy`,R`Support deep-ocean biodiversity`],1),
+/* 107 */ Q(R`Environmental Depredation Cause: The process of 'Desertification' is most accurately defined as:`,[R`The natural expansion of deserts due to tectonic shifts`,R`The degradation of land in arid, semi-arid, and dry sub-humid areas primarily due to human activities and climate variations`,R`The migration of animal species away from deserts`,R`The conversion of wetlands into urban infrastructure`],1),
+/* 108 */ Q(R`International Affairs for better Environment: The concept of 'Carbon Credit' and the establishment of carbon emission trading systems originally emerged from which historic protocol?`,[R`Montreal Protocol`,R`Kyoto Protocol`,R`Geneva Protocol`,R`Nagoya Protocol`],1),
+/* 109 */ Q(R`Environmental Control: Which of the following is considered a 'Secondary Air Pollutant' (formed in the atmosphere by chemical reactions) rather than a primary one?`,[R`Carbon Monoxide (CO)`,R`Sulfur Dioxide (SO2)`,R`Ground-level Ozone (O3)`,R`Particulate Matter (PM10)`],2),
+/* 110 */ Q(R`National Affairs for better Environment: The Government of India’s 'National Solar Mission' (part of the National Action Plan on Climate Change) was originally launched in the year:`,[R`2008`,R`2010`,R`2015`,R`2021`],1),
+/* Unit-5: Indian History and Geography */
+/* 111 */ Q(R`Salient Features of Indian Culture: The intricate and vibrant 'Madhubani' style of painting, historically created by women using natural dyes, is native to which state?`,[R`West Bengal`,R`Rajasthan`,R`Bihar`,R`Odisha`],2),
+/* 112 */ Q(R`Indian National Movement (1857-1950): The Ghadar Party, an international political movement founded by expatriate Indians to overthrow British rule, had its headquarters (Yugantar Ashram) located in:`,[R`London, UK`,R`San Francisco, USA`,R`Tokyo, Japan`,R`Berlin, Germany`],1),
+/* 113 */ Q(R`Origin of Universe: According to modern astronomical observations, the majority of the total energy density in the universe is composed of:`,[R`Ordinary visible matter (stars, planets, gas)`,R`Dark Matter`,R`Dark Energy`,R`Antimatter`],2),
+/* 114 */ Q(R`Indian Geography (General): Which Indian state shares its international land border with three different countries: Nepal, Bhutan, and China?`,[R`Arunachal Pradesh`,R`Uttarakhand`,R`West Bengal`,R`Sikkim`],3),
+/* 115 */ Q(R`Indian National Movement (1857-1950): Who among the following prominent freedom fighters is known as the "Grand Old Man of India" and wrote the influential book Poverty and Un-British Rule in India?`,[R`Bipin Chandra Pal`,R`Surendranath Banerjee`,R`Dadabhai Naoroji`,R`Womesh Chandra Bonnerjee`],2),
+/* Unit-6: Indian Constitution and Economy */
+/* 116 */ Q(R`Preamble & Constitution: The concept of "Liberty, Equality, and Fraternity" enshrined in the Preamble of the Indian Constitution was heavily inspired by the:`,[R`American Declaration of Independence`,R`French Revolution`,R`Russian Revolution`,R`Magna Carta`],1),
+/* 117 */ Q(R`Legislative Executive: Under the Indian Constitution, the President has the absolute power to pardon a death sentence under which Article?`,[R`Article 53`,R`Article 61`,R`Article 72`,R`Article 161`],2),
+/* 118 */ Q(R`Public Service Commission: The Constitution mandates that the Union Public Service Commission (UPSC) presents an annual report on the work done by the Commission directly to the:`,[R`Prime Minister of India`,R`Parliament of India`,R`President of India`,R`Ministry of Personnel, Public Grievances and Pensions`],2),
+/* 119 */ Q(R`Economy (Taxation): In macroeconomics, a tax whose rate increases as the payer's income increases (placing a higher burden on high-income earners) is known as a:`,[R`Regressive Tax`,R`Proportional Tax`,R`Progressive Tax`,R`Value Added Tax (VAT)`],2),
+/* 120 */ Q(R`Poverty & Unemployment: In the context of economic development, the "Gini coefficient" is a statistical measure frequently used to represent the:`,[R`Rate of economic growth (GDP)`,R`Level of income or wealth inequality within a nation`,R`Percentage of the population living below the poverty line`,R`Index of industrial production`],1)
+];
+
+const GKU=['Unit-1: Current Affairs','Unit-2: Teaching and Research Aptitude','Unit-3: ICT','Unit-4: People and Environment','Unit-5: Indian History and Geography','Unit-6: Indian Constitution and Economy'];
+const secOf=k=>k<90?'Mathematics':'GK – '+GKU[Math.floor((k-90)/5)];
+
+/* ---------------- LaTeX -> MathML (no libraries) ---------------- */
+function esc(s){return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');}
+const GREEK={alpha:'α',beta:'β',gamma:'γ',delta:'δ',epsilon:'ε',theta:'θ',lambda:'λ',mu:'μ',pi:'π',rho:'ρ',sigma:'σ',phi:'φ',psi:'ψ',omega:'ω',tau:'τ',eta:'η',xi:'ξ',nu:'ν',kappa:'κ',zeta:'ζ',chi:'χ'};
+const UGREEK={Delta:'Δ',Sigma:'Σ',Omega:'Ω',Gamma:'Γ',Theta:'Θ',Lambda:'Λ',Phi:'Φ',Psi:'Ψ',Pi:'Π'};
+const OPSYM={le:'≤',leq:'≤',ge:'≥',geq:'≥',ne:'≠',neq:'≠',pm:'±',mp:'∓',cdot:'⋅',times:'×',div:'÷',rightarrow:'→',to:'→',leftarrow:'←',in:'∈',notin:'∉',forall:'∀',exists:'∃',cup:'∪',cap:'∩',subset:'⊂',approx:'≈',equiv:'≡',dots:'…',ldots:'…',cdots:'⋯',langle:'⟨',rangle:'⟩'};
+const FUNCS=new Set(['sin','cos','tan','cot','sec','csc','log','ln','exp','min','max','arg','cosh','sinh','tanh','det','sup','inf','lim']);
+
+function tex2mml(src,display){
+  let i=0;const n=src.length;
+  const ws=()=>{while(i<n&&/\s/.test(src[i]))i++;};
+  const mrow=a=>a.length===1?a[0]:'<mrow>'+a.join('')+'</mrow>';
+  const EMPTY='<mrow></mrow>';
+  const chr=c=>{
+    if(/[a-zA-Z]/.test(c))return '<mi>'+c+'</mi>';
+    if(c==='-')return '<mo>−</mo>';
+    if(c==="'")return '<mo>′</mo>';
+    if(c==='*')return '<mo>∗</mo>';
+    return '<mo>'+esc(c)+'</mo>';
+  };
+  function atTerm(t){
+    if(i>=n)return true;
+    const c=src[i];
+    if(t.has('}')&&c==='}')return true;
+    if(t.has('&')&&c==='&')return true;
+    if(t.has('//')&&src.startsWith('\\\\',i))return true;
+    if(t.has('right')&&/^\\right(?![a-zA-Z])/.test(src.slice(i,i+7)))return true;
+    if(t.has('end')&&/^\\end(?![a-zA-Z])/.test(src.slice(i,i+5)))return true;
+    return false;
+  }
+  function seq(t){const out=[];for(;;){ws();if(atTerm(t))break;const m=atomS();if(m)out.push(m);}return out;}
+  function group(){i++;const a=seq(new Set(['}']));if(src[i]==='}')i++;return mrow(a.length?a:[EMPTY]);}
+  function arg(){
+    ws();
+    if(src[i]==='{')return group();
+    if(src[i]==='\\')return atom().m||EMPTY;
+    const c=src[i++]||'';
+    if(/[0-9]/.test(c))return '<mn>'+c+'</mn>';
+    return chr(c);
+  }
+  function rawGroup(){
+    ws();let s='';
+    if(src[i]==='{'){let d=1,j=i+1;while(j<n&&d>0){if(src[j]==='{')d++;else if(src[j]==='}')d--;j++;}s=src.slice(i+1,j-1);i=j;}
+    else s=src[i++]||'';
+    return s;
+  }
+  function delim(){
+    ws();let d=src[i];
+    if(d==='\\'){i++;const mm=/^[a-zA-Z]+/.exec(src.slice(i));
+      if(mm){d=mm[0];i+=d.length;d=({langle:'⟨',rangle:'⟩',lbrace:'{',rbrace:'}',vert:'|'})[d]||'';}
+      else{d=src[i];i++;}}
+    else i++;
+    return d==='.'?'':(d||'');
+  }
+  function atomS(){
+    const a=atom();let sub=null,sup=null,pr=0;
+    for(;;){
+      ws();const c=src[i];
+      if(c==='^'){i++;sup=arg();}
+      else if(c==='_'){i++;sub=arg();}
+      else if(c==="'"){i++;pr++;}
+      else break;
+    }
+    if(pr){const parts=[];for(let k=0;k<pr;k++)parts.push('<mo>′</mo>');if(sup!==null)parts.push(sup);sup=mrow(parts);}
+    let m=a.m;
+    if(!m)return '';
+    if(sub!==null||sup!==null){
+      const u=a.lim==='u';
+      if(sub!==null&&sup!==null)m=u?`<munderover>${m}${sub}${sup}</munderover>`:`<msubsup>${m}${sub}${sup}</msubsup>`;
+      else if(sub!==null)m=u?`<munder>${m}${sub}</munder>`:`<msub>${m}${sub}</msub>`;
+      else m=u?`<mover>${m}${sup}</mover>`:`<msup>${m}${sup}</msup>`;
+    }
+    if(a.fn)m+='<mo>&#x2061;</mo>';
+    return m;
+  }
+  function atom(){
+    const c=src[i];
+    if(c==='{')return {m:group()};
+    if(c==='}'){i++;return {m:''};}
+    if(c==='\\')return cmd();
+    if(/[0-9]/.test(c)||(c==='.'&&/[0-9]/.test(src[i+1]||''))){
+      let j=i;while(j<n&&(/[0-9]/.test(src[j])||(src[j]==='.'&&/[0-9]/.test(src[j+1]||''))))j++;
+      const s=src.slice(i,j);i=j;return {m:'<mn>'+s+'</mn>'};
+    }
+    i++;return {m:chr(c)};
+  }
+  function cmd(){
+    i++;
+    let name;const mm=/^[a-zA-Z]+/.exec(src.slice(i,i+24));
+    if(mm){name=mm[0];i+=name.length;}else{name=src[i]||'';i++;}
+    if(GREEK[name])return {m:'<mi>'+GREEK[name]+'</mi>'};
+    if(UGREEK[name])return {m:'<mi mathvariant="normal">'+UGREEK[name]+'</mi>'};
+    if(OPSYM[name])return {m:'<mo>'+OPSYM[name]+'</mo>'};
+    if(FUNCS.has(name))return name==='lim'?{m:'<mi>lim</mi>',lim:'u'}:{m:'<mi>'+name+'</mi>',fn:true};
+    switch(name){
+      case 'infty':return {m:'<mi mathvariant="normal">∞</mi>'};
+      case 'partial':return {m:'<mi mathvariant="normal">∂</mi>'};
+      case 'sum':return {m:'<mo>∑</mo>',lim:'u'};
+      case 'int':return {m:'<mo>∫</mo>'};
+      case 'frac':{const a=arg(),b=arg();return {m:`<mfrac>${a}${b}</mfrac>`};}
+      case 'sqrt':{const a=arg();return {m:`<msqrt>${a}</msqrt>`};}
+      case 'text':case 'mathrm':case 'textrm':{const s=rawGroup();return {m:'<mtext>'+esc(s).replace(/ /g,'\u00A0')+'</mtext>'};}
+      case 'mathbb':{const s=rawGroup();const mp={R:'ℝ',Z:'ℤ',N:'ℕ',Q:'ℚ',C:'ℂ'};return {m:'<mi mathvariant="normal">'+(mp[s]||esc(s))+'</mi>'};}
+      case 'hat':case 'dot':case 'bar':case 'vec':{const a=arg();const ch={hat:'\u02C6',dot:'\u02D9',bar:'\u00AF',vec:'→'}[name];return {m:`<mover accent="true">${a}<mo>${ch}</mo></mover>`};}
+      case 'pmod':{const a=arg();return {m:`<mrow><mspace width="0.9em"></mspace><mo>(</mo><mi>mod</mi><mspace width="0.25em"></mspace>${a}<mo>)</mo></mrow>`};}
+      case '{':case '}':return {m:'<mo>'+name+'</mo>'};
+      case '%':return {m:'<mo>%</mo>'};
+      case ',':return {m:'<mspace width="0.17em"></mspace>'};
+      case ';':return {m:'<mspace width="0.28em"></mspace>'};
+      case ' ':return {m:'<mspace width="0.25em"></mspace>'};
+      case 'quad':return {m:'<mspace width="1em"></mspace>'};
+      case 'qquad':return {m:'<mspace width="2em"></mspace>'};
+      case 'left':{
+        const l=delim();const a=seq(new Set(['right']));let r='';
+        if(/^\\right(?![a-zA-Z])/.test(src.slice(i,i+7))){i+=6;r=delim();}
+        const f=d=>d?`<mo fence="true" stretchy="true">${esc(d)}</mo>`:'';
+        return {m:`<mrow>${f(l)}${a.join('')}${f(r)}</mrow>`};
+      }
+      case 'begin':{
+        const env=rawGroup();const rows=[];let row=[];
+        for(;;){
+          const cell=seq(new Set(['&','//','end']));row.push(cell);
+          if(src[i]==='&'){i++;continue;}
+          if(src.startsWith('\\\\',i)){i+=2;rows.push(row);row=[];continue;}
+          if(/^\\end(?![a-zA-Z])/.test(src.slice(i,i+5))){i+=4;rawGroup();rows.push(row);break;}
+          rows.push(row);break;
+        }
+        const body=rows.filter(r=>r.some(c=>c.length)).map(r=>'<mtr>'+r.map(c=>'<mtd>'+mrow(c.length?c:[EMPTY])+'</mtd>').join('')+'</mtr>').join('');
+        const tab=`<mtable>${body}</mtable>`;
+        return env==='cases'?{m:`<mrow><mo fence="true" stretchy="true">{</mo>${tab}</mrow>`}:{m:tab};
+      }
+      case '\\':case '!':return {m:''};
+      default:return {m:'<mi>'+esc(name)+'</mi>'};
+    }
+  }
+  const nodes=seq(new Set());
+  return '<math display="'+(display?'block':'inline')+'">'+nodes.join('')+'</math>';
+}
+
+/* text with $...$ (inline) and $$...$$ (display) math */
+function fmt(s){
+  let out='',last=0,m;
+  const re=/\$\$([\s\S]+?)\$\$|\$([^$]+?)\$/g;
+  const plain=t=>esc(t.replace(/\\\\[ \t]*\n?/g,'\n')).replace(/\n/g,'<br>');
+  while((m=re.exec(s))){
+    out+=plain(s.slice(last,m.index));
+    out+=tex2mml(m[1]!==undefined?m[1]:m[2],m[1]!==undefined);
+    last=m.index+m[0].length;
+  }
+  return out+plain(s.slice(last));
+}
+function tblHTML(t){
+  if(!t)return '';
+  return '<table class="dt">'+t.rows.map((r,ri)=>'<tr>'+r.map(c=>{const tg=(t.head&&ri===0)?'th':'td';return '<'+tg+'>'+fmt(String(c))+'</'+tg+'>';}).join('')+'</tr>').join('')+'</table>';
+}
+/* cached rendered HTML per question */
+function qHTML(k){
+  const q=QS[k];
+  if(!q._h)q._h={t:fmt(q.t),tb:tblHTML(q.tbl),t2:q.t2?fmt(q.t2):'',o:q.o.map(fmt)};
+  return q._h;
+}
+/*END_PURE*/
+
+/* ---------------- test state ---------------- */
+const TOTAL=QS.length,DURATION=120*60,LET=['A','B','C','D'];
+let cur=0,submitted=false,autoSubmitted=false;
+const ans=new Array(TOTAL).fill(-1),marked=new Array(TOTAL).fill(false),visited=new Array(TOTAL).fill(false);
+const startAt=Date.now(),endAt=startAt+DURATION*1000;
+const $=id=>document.getElementById(id);
+
+function pState(k){
+  if(marked[k])return ans[k]>=0?'am':'mk';
+  if(ans[k]>=0)return 'an';
+  return visited[k]?'na':'nv';
+}
+/* palette */
+function buildPalette(){
+  let h='<h4>Mathematics (Q1–90)</h4><div class="pg">';
+  for(let k=0;k<TOTAL;k++){
+    if(k===90)h+='</div><h4>General Knowledge (Q91–120)</h4><div class="pg">';
+    h+='<button type="button" class="pb nv" data-k="'+k+'" aria-label="Question '+(k+1)+'">'+(k+1)+'</button>';
+  }
+  $('pgrid').innerHTML=h+'</div>';
+  $('legend').innerHTML=
+    '<div><span class="lg an"></span>Answered <b id="c_an">0</b></div>'+
+    '<div><span class="lg na"></span>Not answered <b id="c_na">0</b></div>'+
+    '<div><span class="lg mk"></span>Marked <b id="c_mk">0</b></div>'+
+    '<div><span class="lg"></span>Not visited <b id="c_nv">0</b></div>'+
+    '<div style="grid-column:1/3"><span class="lg am"></span>Answered &amp; marked for review <b id="c_am">0</b></div>';
+}
+function updatePalette(){
+  const btns=$('pgrid').querySelectorAll('.pb'),cnt={an:0,na:0,mk:0,nv:0,am:0};
+  btns.forEach((b,k)=>{const s=pState(k);cnt[s]++;b.className='pb '+s+(k===cur?' cur':'');});
+  for(const s in cnt)$('c_'+s).textContent=cnt[s];
+}
+/* question view */
+function render(){
+  visited[cur]=true;
+  const q=QS[cur],h=qHTML(cur);
+  $('qhead').innerHTML='<span class="qn">Question '+(cur+1)+' of '+TOTAL+'</span><span class="meta">'+esc(secOf(cur))+' · +3 correct, −1 wrong</span>';
+  let b='<div class="qtext">'+h.t+'</div>'+h.tb+(h.t2?'<div class="qtext">'+h.t2+'</div>':'');
+  b+='<div class="opts" role="radiogroup">';
+  h.o.forEach((o,i)=>{b+='<div class="opt'+(ans[cur]===i?' sel':'')+'" role="radio" tabindex="0" aria-checked="'+(ans[cur]===i)+'" data-i="'+i+'"><span class="ol">'+LET[i]+'</span><span class="ot">'+o+'</span></div>';});
+  b+='</div><div class="hint">Click a selected option again to deselect it.</div>';
+  $('qbody').innerHTML=b;$('qbody').scrollTop=0;
+  refreshControls();updatePalette();
+}
+function refreshControls(){
+  $('bPrev').disabled=cur===0;$('bNext').disabled=cur===TOTAL-1;
+  const m=$('bMark');m.classList.toggle('on',marked[cur]);m.textContent=marked[cur]?'Unmark Review':'Mark for Review';
+  $('bClear').disabled=ans[cur]<0;
+}
+function select(i){
+  ans[cur]=ans[cur]===i?-1:i;
+  $('qbody').querySelectorAll('.opt').forEach((o,j)=>{o.classList.toggle('sel',ans[cur]===j);o.setAttribute('aria-checked',ans[cur]===j);});
+  refreshControls();updatePalette();
+}
+function go(k){if(k<0||k>=TOTAL)return;cur=k;render();}
+
+$('qbody').addEventListener('click',e=>{const o=e.target.closest('.opt');if(o&&!submitted)select(+o.dataset.i);});
+$('qbody').addEventListener('keydown',e=>{const o=e.target.closest('.opt');if(o&&(e.key==='Enter'||e.key===' ')){e.preventDefault();select(+o.dataset.i);}});
+$('pgrid').addEventListener('click',e=>{const b=e.target.closest('.pb');if(b){go(+b.dataset.k);$('palette').classList.remove('open');}});
+$('bPrev').onclick=()=>go(cur-1);
+$('bNext').onclick=()=>go(cur+1);
+$('bClear').onclick=()=>{ans[cur]=-1;render();};
+$('bMark').onclick=()=>{marked[cur]=!marked[cur];refreshControls();updatePalette();};
+$('palToggle').onclick=()=>$('palette').classList.toggle('open');
+
+/* timer */
+const pad=n=>String(n).padStart(2,'0');
+function tick(){
+  if(submitted)return;
+  const rem=Math.max(0,Math.ceil((endAt-Date.now())/1000));
+  $('timer').textContent=pad(Math.floor(rem/3600))+':'+pad(Math.floor(rem%3600/60))+':'+pad(rem%60);
+  $('timerBox').className='timer'+(rem<=300?' danger':rem<=900?' warn':'');
+  if(rem<=0){autoSubmitted=true;finish();}
+}
+const timerId=setInterval(tick,250);tick();
+
+/* submit */
+function counts(){const c={an:0,na:0,mk:0,nv:0,am:0};for(let k=0;k<TOTAL;k++)c[pState(k)]++;return c;}
+function askSubmit(){
+  if(submitted)return;
+  const c=counts(),answered=ans.filter(a=>a>=0).length,mk=c.mk+c.am;
+  $('mbox').innerHTML='<h2>Submit the test?</h2><p>You cannot change answers after submitting.</p><div class="mstats">'+
+    '<div><b>'+answered+'</b>Answered</div><div><b>'+(TOTAL-answered)+'</b>Not answered</div>'+
+    '<div><b>'+mk+'</b>Marked for review</div><div><b>'+c.nv+'</b>Not visited</div></div>'+
+    '<div class="mbtn"><button class="btn" id="mNo" type="button">Keep working</button><button class="btn pri" id="mYes" type="button">Yes, submit</button></div>';
+  $('modal').classList.add('show');
+  $('mNo').onclick=()=>$('modal').classList.remove('show');
+  $('mYes').onclick=()=>{$('modal').classList.remove('show');finish();};
+  $('mYes').focus();
+}
+$('bSubmit').onclick=askSubmit;$('bSubmit2').onclick=askSubmit;
+
+/* results */
+function evaluate(){
+  let c=0,w=0,s=0;const st=[],sec=[{c:0,w:0,s:0,n:90},{c:0,w:0,s:0,n:30}];
+  for(let k=0;k<TOTAL;k++){
+    const g=k<90?0:1;let x;
+    if(ans[k]<0){x='s';s++;sec[g].s++;}
+    else if(ans[k]===QS[k].a){x='c';c++;sec[g].c++;}
+    else{x='w';w++;sec[g].w++;}
+    st.push(x);
+  }
+  return {c,w,s,st,sec,score:3*c-w,attempted:c+w};
+}
+function reportHTML(forFile,ev,spent,auto){
+  const acc=ev.attempted?(ev.c/ev.attempted*100).toFixed(1)+'%':'0.0%';
+  const mm=Math.floor(spent/60),ss=spent%60;
+  let h='<h1>Performance &amp; Solutions</h1><div class="sub">'+(auto?'Time was up – the test was submitted automatically. ':'')+'Marking: +3 correct, −1 wrong, 0 skipped.</div>';
+  if(!forFile)h+='<div class="actions"><button class="btn pri" id="bDl" type="button">Download Performance &amp; Solutions</button><button class="btn" id="bRe" type="button">Start a new attempt</button></div>';
+  h+='<div class="cards">'+
+    '<div class="sc main"><span>Total score</span><b>'+ev.score+'</b><small>out of '+TOTAL*3+'</small></div>'+
+    '<div class="sc"><span>Accuracy</span><b>'+acc+'</b><small>'+ev.c+' of '+ev.attempted+' attempted</small></div>'+
+    '<div class="sc c"><span>Correct</span><b>'+ev.c+'</b><small>+'+ev.c*3+' marks</small></div>'+
+    '<div class="sc w"><span>Wrong</span><b>'+ev.w+'</b><small>−'+ev.w+' marks</small></div>'+
+    '<div class="sc"><span>Skipped</span><b>'+ev.s+'</b><small>0 marks</small></div>'+
+    '<div class="sc"><span>Time taken</span><b>'+mm+'m '+pad(ss)+'s</b><small>of 120 minutes</small></div></div>';
+  const row=(nm,o)=>'<tr><td>'+nm+'</td><td>'+o.c+'</td><td>'+o.w+'</td><td>'+o.s+'</td><td><b>'+(3*o.c-o.w)+'</b> / '+o.n*3+'</td></tr>';
+  h+='<table class="secs"><tr><th>Section</th><th>Correct</th><th>Wrong</th><th>Skipped</th><th>Score</th></tr>'+row('Mathematics (Q1–90)',ev.sec[0])+row('General Knowledge (Q91–120)',ev.sec[1])+'</table>';
+  h+='<div class="filters"><button class="btn active" data-f="all" type="button">All ('+TOTAL+')</button>'+
+    '<button class="btn" data-f="c" type="button">Correct ('+ev.c+')</button>'+
+    '<button class="btn" data-f="w" type="button">Incorrect ('+ev.w+')</button>'+
+    '<button class="btn" data-f="s" type="button">Unattempted ('+ev.s+')</button>'+
+    '<span class="key"><span><i style="background:#1e9e5a"></i>Correct answer</span><span><i style="background:#d64550"></i>Your wrong answer</span></span></div>';
+  h+='<div class="empty">No questions in this category.</div>';
+  for(let k=0;k<TOTAL;k++){
+    const q=QS[k],x=ev.st[k],hh=qHTML(k),u=ans[k];
+    const badge=x==='c'?'<span class="badge c">Correct +3</span>':x==='w'?'<span class="badge w">Incorrect −1</span>':'<span class="badge">Unattempted 0</span>';
+    h+='<article class="sol" data-s="'+x+'"><div class="sol-h"><span class="qn">Q'+(k+1)+'</span>'+badge+'<span class="tag">'+esc(secOf(k))+(marked[k]?' · marked for review':'')+'</span></div>'+
+      '<div class="qtext">'+hh.t+'</div>'+hh.tb+(hh.t2?'<div class="qtext">'+hh.t2+'</div>':'')+'<div class="opts">';
+    hh.o.forEach((o,i)=>{
+      let cls='',note='';
+      if(i===q.a){cls=' correct';note=u===i?'Your answer · Correct':'Correct answer';}
+      else if(i===u){cls=' wrong';note='Your answer';}
+      h+='<div class="o'+cls+'"><b>'+LET[i]+'</b><span class="ot">'+o+'</span>'+(note?'<span class="note">'+note+'</span>':'')+'</div>';
+    });
+    h+='</div><div class="ansline">Your answer: <b>'+(u<0?'Not attempted':LET[u])+'</b> &nbsp;·&nbsp; Correct answer: <b>'+LET[q.a]+'</b></div></article>';
+  }
+  return h;
+}
+/* ES5, self-contained: it is also copied into the downloaded file */
+function initFilters(root){
+  root.addEventListener('click',function(e){
+    var b=e.target.closest?e.target.closest('[data-f]'):null;if(!b)return;
+    var f=b.getAttribute('data-f'),btns=root.querySelectorAll('[data-f]'),i,shown=0;
+    for(i=0;i<btns.length;i++)btns[i].classList.toggle('active',btns[i]===b);
+    var sols=root.querySelectorAll('.sol');
+    for(i=0;i<sols.length;i++){var ok=(f==='all'||sols[i].getAttribute('data-s')===f);sols[i].style.display=ok?'':'none';if(ok)shown++;}
+    var em=root.querySelector('.empty');if(em)em.style.display=shown?'none':'block';
+  });
+}
+let lastEv=null,lastSpent=0;
+function finish(){
+  if(submitted)return;
+  submitted=true;clearInterval(timerId);
+  $('modal').classList.remove('show');$('palette').classList.remove('open');
+  lastEv=evaluate();
+  lastSpent=Math.min(DURATION,Math.round((Date.now()-startAt)/1000));
+  const r=$('result');
+  r.innerHTML='<div class="rep">'+reportHTML(false,lastEv,lastSpent,autoSubmitted)+'</div>';
+  r.classList.add('show');r.scrollTop=0;
+  initFilters(r);
+  $('bDl').onclick=downloadReport;
+  $('bRe').onclick=()=>location.reload();
+}
+function downloadReport(){
+  const css=$('appcss').textContent;
+  const html='<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Performance &amp; Solutions</title><style>'+css+'</style></head><body class="standalone"><div class="rep">'+
+    reportHTML(true,lastEv,lastSpent,autoSubmitted)+'</div><script>('+initFilters.toString()+')(document);<\/script></body></html>';
+  const a=document.createElement('a');
+  a.href=URL.createObjectURL(new Blob([html],{type:'text/html'}));
+  a.download='Performance_and_Solutions.html';
+  document.body.appendChild(a);a.click();a.remove();
+  setTimeout(()=>URL.revokeObjectURL(a.href),1500);
+}
+window.addEventListener('beforeunload',e=>{if(!submitted){e.preventDefault();e.returnValue='';}});
+
+buildPalette();render();
+</script>
+</body>
+</html>
