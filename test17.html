@@ -1,0 +1,765 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MCQ Test App · Mathematics & GK</title>
+    <!-- MathJax for LaTeX rendering -->
+    <script>
+        window.MathJax = {
+            tex: { inlineMath: [['$', '$'], ['\\(', '\\)']] },
+            svg: { fontCache: 'global' }
+        };
+    </script>
+    <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-svg.js" async></script>
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', Roboto, system-ui, sans-serif;
+        }
+        body {
+            background: #f0f2f5;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            padding: 16px;
+        }
+        .app-container {
+            width: 1400px;
+            max-width: 100%;
+            height: 95vh;
+            background: white;
+            border-radius: 24px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.15);
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+        }
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 16px 28px;
+            background: #1e293b;
+            color: white;
+            flex-shrink: 0;
+        }
+        .header h1 {
+            font-size: 1.3rem;
+            font-weight: 600;
+            letter-spacing: 0.3px;
+        }
+        .timer {
+            font-size: 1.6rem;
+            font-weight: 700;
+            background: #0f172a;
+            padding: 6px 24px;
+            border-radius: 40px;
+            font-variant-numeric: tabular-nums;
+            letter-spacing: 2px;
+            box-shadow: inset 0 2px 6px rgba(0,0,0,0.4);
+        }
+        .main-panel {
+            display: flex;
+            flex: 1;
+            overflow: hidden;
+        }
+        .question-area {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            padding: 24px 32px;
+            overflow-y: auto;
+            background: #ffffff;
+        }
+        .palette-area {
+            width: 280px;
+            background: #f8fafc;
+            border-left: 1px solid #e2e8f0;
+            display: flex;
+            flex-direction: column;
+            padding: 18px 14px;
+            overflow-y: auto;
+            flex-shrink: 0;
+        }
+        .palette-title {
+            font-weight: 600;
+            color: #1e293b;
+            margin-bottom: 12px;
+            font-size: 0.95rem;
+            letter-spacing: 0.5px;
+            display: flex;
+            justify-content: space-between;
+        }
+        .legend {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px 14px;
+            font-size: 0.7rem;
+            margin-bottom: 18px;
+            color: #334155;
+        }
+        .legend-item {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+        .legend-dot {
+            width: 12px;
+            height: 12px;
+            border-radius: 4px;
+        }
+        .palette-grid {
+            display: grid;
+            grid-template-columns: repeat(5, 1fr);
+            gap: 8px;
+            overflow-y: auto;
+            flex: 1;
+            padding-right: 2px;
+        }
+        .palette-btn {
+            aspect-ratio: 1/1;
+            border: none;
+            border-radius: 8px;
+            font-weight: 600;
+            font-size: 0.8rem;
+            background: #e2e8f0;
+            color: #1e293b;
+            cursor: pointer;
+            transition: all 0.1s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 1px 2px rgba(0,0,0,0.05);
+        }
+        .palette-btn.answered { background: #22c55e; color: white; }
+        .palette-btn.marked { background: #a855f7; color: white; }
+        .palette-btn.not-visited { background: #e2e8f0; color: #1e293b; }
+        .palette-btn.current {
+            outline: 3px solid #3b82f6;
+            outline-offset: 2px;
+            font-weight: 800;
+        }
+        .question-text {
+            font-size: 1.15rem;
+            line-height: 1.6;
+            color: #0f172a;
+            margin-bottom: 28px;
+            font-weight: 500;
+        }
+        .options {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            margin-bottom: 28px;
+        }
+        .option-item {
+            display: flex;
+            align-items: flex-start;
+            gap: 14px;
+            padding: 14px 20px;
+            background: #f1f5f9;
+            border-radius: 14px;
+            cursor: pointer;
+            transition: background 0.15s;
+            border: 1px solid transparent;
+        }
+        .option-item:hover {
+            background: #e9eef3;
+        }
+        .option-item.selected {
+            background: #dbeafe;
+            border-color: #3b82f6;
+        }
+        .option-prefix {
+            font-weight: 700;
+            color: #1e293b;
+            min-width: 24px;
+        }
+        .option-text {
+            flex: 1;
+            color: #0f172a;
+        }
+        .action-buttons {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 12px;
+            margin-top: auto;
+            padding-top: 20px;
+            border-top: 1px solid #e2e8f0;
+            flex-shrink: 0;
+        }
+        .btn {
+            padding: 10px 24px;
+            border-radius: 40px;
+            border: none;
+            font-weight: 600;
+            font-size: 0.9rem;
+            cursor: pointer;
+            background: #e2e8f0;
+            color: #1e293b;
+            transition: all 0.15s;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.02);
+        }
+        .btn:hover { background: #cbd5e1; }
+        .btn-primary { background: #3b82f6; color: white; }
+        .btn-primary:hover { background: #2563eb; }
+        .btn-success { background: #22c55e; color: white; }
+        .btn-success:hover { background: #16a34a; }
+        .btn-warning { background: #f59e0b; color: white; }
+        .btn-warning:hover { background: #d97706; }
+        .btn-danger { background: #ef4444; color: white; }
+        .btn-danger:hover { background: #dc2626; }
+        .overlay {
+            position: fixed;
+            inset: 0;
+            background: rgba(0,0,0,0.6);
+            backdrop-filter: blur(4px);
+            display: none;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+            padding: 20px;
+        }
+        .overlay.active { display: flex; }
+        .result-card {
+            background: white;
+            border-radius: 32px;
+            max-width: 1000px;
+            width: 100%;
+            max-height: 90vh;
+            overflow-y: auto;
+            padding: 30px 40px;
+            box-shadow: 0 30px 60px rgba(0,0,0,0.3);
+        }
+        .score-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 16px;
+            margin-bottom: 24px;
+        }
+        .score-badge {
+            background: #1e293b;
+            color: white;
+            border-radius: 100px;
+            padding: 12px 32px;
+            font-size: 1.5rem;
+            font-weight: 700;
+        }
+        .filter-bar {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+            margin: 16px 0 20px;
+        }
+        .filter-btn {
+            padding: 6px 18px;
+            border-radius: 30px;
+            border: 1px solid #cbd5e1;
+            background: white;
+            cursor: pointer;
+            font-weight: 500;
+            transition: 0.1s;
+        }
+        .filter-btn.active {
+            background: #1e293b;
+            color: white;
+            border-color: #1e293b;
+        }
+        .review-list {
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+        }
+        .review-item {
+            border-left: 6px solid #cbd5e1;
+            background: #f8fafc;
+            padding: 16px 20px;
+            border-radius: 12px;
+        }
+        .review-item.correct { border-left-color: #22c55e; }
+        .review-item.incorrect { border-left-color: #ef4444; }
+        .review-item.skipped { border-left-color: #94a3b8; }
+        .review-question {
+            font-weight: 600;
+            margin-bottom: 10px;
+        }
+        .review-detail {
+            font-size: 0.9rem;
+            color: #334155;
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+        }
+        .review-option {
+            padding: 4px 8px;
+            border-radius: 6px;
+        }
+        .review-option.correct-ans { background: #dcfce7; font-weight: 600; }
+        .review-option.user-wrong { background: #fee2e2; }
+        .download-btn {
+            margin-top: 24px;
+            display: flex;
+            justify-content: flex-end;
+        }
+        .hidden { display: none !important; }
+        /* scrollable palette area already has overflow-y auto */
+        .palette-grid::-webkit-scrollbar { width: 6px; }
+        .palette-grid::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 10px; }
+        .question-area::-webkit-scrollbar { width: 8px; }
+        .question-area::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 10px; }
+    </style>
+</head>
+<body>
+    <div class="app-container">
+        <div class="header">
+            <h1>📘 Comprehensive MCQ Test · Mathematics & GK</h1>
+            <div class="timer" id="timerDisplay">120:00</div>
+        </div>
+        <div class="main-panel">
+            <div class="question-area" id="questionArea">
+                <!-- dynamic -->
+            </div>
+            <div class="palette-area">
+                <div class="palette-title">
+                    <span>Question Palette</span>
+                    <span id="paletteStats"></span>
+                </div>
+                <div class="legend">
+                    <div class="legend-item"><span class="legend-dot" style="background:#22c55e;"></span> Answered</div>
+                    <div class="legend-item"><span class="legend-dot" style="background:#a855f7;"></span> Marked</div>
+                    <div class="legend-item"><span class="legend-dot" style="background:#e2e8f0;"></span> Not visited</div>
+                </div>
+                <div class="palette-grid" id="paletteGrid"></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Result Overlay -->
+    <div class="overlay" id="resultOverlay">
+        <div class="result-card" id="resultCard">
+            <!-- injected -->
+        </div>
+    </div>
+
+    <script>
+        // ============================================================
+        //  QUESTION BANK (120 questions) — exactly as provided
+        //  1–90 mathematics (LaTeX) , 91–120 GK
+        // ============================================================
+        const questions = [
+            // 1-90 MATHEMATICS (from LaTeX doc)
+            { text: "The condition that the cubic equation $x^{3}-lx^{2}+mx-n=0$ should have its roots in geometrical progression is:", options: ["$2l^{3}+9lm+27n=0$", "$2l^{3}+9lm+27n=0$", "$m^{3}+l^{3}n=0$", "$m^{3}=l^{3}n$", "$l^{3}=m^{3}n$"], correct: 3 },
+            { text: "Transform the equation $x^{3}-6x^{2}+5x+8=0$ into another in which the second term is missing. What is the resulting equation?", options: ["$x^{3}-2x+7=0$", "$x^{3}+7x+2=0$", "$x^{3}+7x-2=0$", "$x^{3}-7x-2=0$", "$x^{3}-7x+2=0$"], correct: 4 },
+            { text: "What are the roots of equation $6x^{5}-41x^{4}+97x^{3}-97x^{2}+41x-6=0$?", options: ["$1,-2,3,\\frac{1}{2},\\frac{1}{3}$", "$1,-2,-3,\\frac{1}{2},\\frac{1}{3}$", "$1,2,3,\\frac{1}{2},\\frac{1}{3}$", "$1,2,-3,\\frac{1}{2},\\frac{1}{3}$", "$-1,2,3,\\frac{1}{2},\\frac{1}{3}$"], correct: 2 },
+            { text: "The series $\\frac{x}{2}+\\frac{x^{2}}{3\\sqrt{2}}+\\frac{x^{3}}{4\\sqrt{3}}+\\frac{x^{4}}{5\\sqrt{4}}+\\dots$ is convergent, if:", options: ["$x^{2}\\le 1$", "$x^{2}\\ge 1$", "$x=1$", "$x\\le 1$", "$x\\ge 1$"], correct: 3 },
+            { text: "If $S_{1}=\\sum \\frac{1}{n\\sqrt{n+1}}$ and $S_{2}=\\sum \\frac{1}{(2n-1)(2n+1)}$, then which of the following statements is correct?", options: ["Both $S_{1}$ and $S_{2}$ are convergent", "$S_{1}$ is divergent and $S_{2}$ is convergent", "$S_{1}$ is convergent and $S_{2}$ is divergent", "Both $S_{1}$ and $S_{2}$ are divergent", "Both $S_{1}$ and $S_{2}$ are oscillatory"], correct: 0 },
+            { text: "For what values of $x$, is the infinite series $1+\\frac{x}{1!}+\\frac{2^{2}x^{2}}{2!}+\\frac{3^{3}x^{3}}{3!}+\\dots$ convergent?", options: ["$x<e$", "$x>e$", "$x<\\frac{1}{e}$", "$x>\\frac{1}{e}$", "$x=e$"], correct: 2 },
+            { text: "Let $a_{1}, a_{2}, a_{3}\\dots$ be a sequence of non-zero integers satisfying: (i) $a_{n}<a_{n+1}$ (ii) $a_{n}\\text{ divides }a_{n+1}$ (iii) The sequence must eventually include all divisors of any given integer. Then which of the following is correct about $\\sum_{n=1}^{\\infty} \\frac{1}{a_{n}}$?", options: ["It is absolutely convergent and its sum is a rational number", "It is absolutely convergent and its sum is an irrational number", "It is absolutely convergent and its sum is a positive number", "It is absolutely convergent and its sum is a negative number", "It is absolutely convergent and its sum is equal to 1."], correct: 1 },
+            { text: "If $A = \\begin{bmatrix} -5 & -8 & 0 \\\\ 3 & 5 & 0 \\\\ 1 & 2 & -1 \\end{bmatrix}$, then $A^{2}$ is:", options: ["idempotent", "nilpotent", "involutory", "periodic", "zero"], correct: 2 },
+            { text: "$X = [x_{1}, x_{2}, x_{3}, \\dots x_{n}]'$ is an $n$-tuple non-zero vector. Which of the following is true about the $n \\times n$ matrix $V = XX'$?", options: ["It has rank 0", "It has rank 2", "It has rank $n$", "It is orthogonal", "It has rank 1"], correct: 4 },
+            { text: "All the four entries of the $2 \\times 2$ matrix $P = \\begin{bmatrix} P_{11} & P_{12} \\\\ P_{21} & P_{22} \\end{bmatrix}$ are non-zero and one of its eigen values is zero. Which of the following statements is correct?", options: ["$P_{11}P_{22}-P_{21}P_{12}=-1$", "$P_{11}P_{22}-P_{21}P_{12}=1$", "$P_{11}P_{22}-P_{21}P_{12}=0$", "$P_{11}P_{22}+P_{21}P_{12}=0$", "$P_{11}P_{22}+P_{21}P_{12}=1$"], correct: 2 },
+            { text: "If $x, y, z$ are in A.P. with common difference $d$ and the rank of the matrix $\\begin{bmatrix} 4 & 5 & x \\\\ 5 & 6 & y \\\\ 6 & k & z \\end{bmatrix}$ is 2, then what are the values of $d$ and $k$?", options: ["$d=\\frac{1}{2}, k=5$", "$d \\text{ an arbitrary number}; k=7$", "$d=k; k=5$", "$d=k; k \\text{ an arbitrary number}$", "$d \\text{ an arbitrary number}; k \\text{ an arbitrary number}$"], correct: 1 },
+            { text: "Which of the following is an eigen vector of the matrix $\\begin{bmatrix} 5 & 0 & 0 & 0 \\\\ 0 & 5 & 5 & 0 \\\\ 0 & 0 & 2 & 1 \\\\ 0 & 0 & 3 & 1 \\end{bmatrix}$?", options: ["$[0, 0, 1, 0]'$", "$[1, 2, 0, 0]'$", "$[1, 0, 0, -2]'$", "$[1, -1, 0, -2]'$", "$[1, -2, 0, 0]'$"], correct: 4 },
+            { text: "If $A = \\begin{bmatrix} -3 & 2 \\\\ -1 & 0 \\end{bmatrix}$, then what is the value of $A^{9}$?", options: ["$309A+104I$", "$154A+155I$", "$511A+110I$", "$511A+510I$", "$511A-510I$"], correct: 3 },
+            { text: "The characteristic equation of a $3 \\times 3$ matrix $A$ is defined as $f(\\lambda) = \\lambda^{3} + \\lambda^{2} + 2\\lambda + 1 = 0$. If $I$ denotes the identity matrix, then what will be the inverse of matrix $A$?", options: ["$-(A^{2}+A+2I)$", "$A^{2}+A+2I$", "$A^{2}+A+I$", "$-(A^{2}+A+I)$", "$A^{2}+2A+2I$"], correct: 0 },
+            { text: "If the complex number $\\frac{3+2i\\sin\\theta}{1-2i\\sin\\theta}$ is purely imaginary, then what is the value of real $\\theta$?", options: ["$\\theta=-n\\pi+\\frac{\\pi}{3}$", "$\\theta=n\\pi\\pm\\frac{\\pi}{3}$", "$\\theta=n\\pi+\\frac{\\pi}{3}$", "$\\theta=-n\\pi-\\frac{\\pi}{3}$", "$\\theta=0$"], correct: 1 },
+            { text: "Which point in sphere corresponds to $z = (1+i)$?", options: ["$\\left(\\frac{2}{3}, \\frac{2}{3}, \\frac{1}{3}\\right)$", "$\\left(\\frac{2}{3}, \\frac{1}{3}, \\frac{2}{3}\\right)$", "$\\left(\\frac{1}{3}, \\frac{2}{3}, \\frac{2}{3}\\right)$", "$\\left(\\frac{1}{3}, \\frac{1}{3}, \\frac{2}{3}\\right)$", "$\\left(\\frac{2}{3}, \\frac{2}{3}, \\frac{2}{3}\\right)$"], correct: 2 },
+            { text: "If $(i)^{c+id} = \\alpha + i\\beta$, then what is the value of $(\\alpha^{2}+\\beta^{2})$?", options: ["$\\alpha^{2}+\\beta^{2} = e^{c\\ln(a^{2}+b^{2})-2d\\tan^{-1}\\left(\\frac{b}{a}\\right)}$", "$\\alpha^{2}+\\beta^{2} = e^{c\\ln(a^{2}+b^{2})-d\\tan^{-1}\\left(\\frac{b}{a}\\right)}$", "$\\alpha^{2}+\\beta^{2} = e^{c\\ln(a^{2}+b^{2})+d\\tan^{-1}\\left(\\frac{b}{a}\\right)}$", "$\\alpha^{2}+\\beta^{2} = e^{c\\ln(a^{2}+b^{2})-2d\\tan^{-1}\\left(\\frac{a}{b}\\right)}$", "$\\alpha^{2}+\\beta^{2} = e^{c\\ln(a^{2}+b^{2})+2d\\tan^{-1}\\left(\\frac{b}{a}\\right)}$"], correct: 0 },
+            { text: "What is the real part of the complex number $(1+i)^{n}$?", options: ["$2^{n/2}\\cos\\left(\\frac{n\\pi}{4}\\right)$", "$2^{n}\\cos\\left(\\frac{n\\pi}{4}\\right)$", "$2^{-n/2}\\cos\\left(\\frac{n\\pi}{4}\\right)$", "$2^{n/2}\\cos\\left(\\frac{n\\pi}{2}\\right)$", "$2^{n}\\cos\\left(\\frac{n\\pi}{2}\\right)$"], correct: 0 },
+            { text: "If $2\\cos\\alpha_{1} = a+\\frac{1}{a}, 2\\cos\\alpha_{2} = b+\\frac{1}{b}, \\dots$, then $abc\\dots + \\frac{1}{abc\\dots}$ will be given as:", options: ["$2\\sin(\\alpha_{1}+\\alpha_{2}+\\alpha_{3}+\\dots)$", "0", "$2\\cos(\\alpha_{1}+\\alpha_{2}+\\alpha_{3}+\\dots)$", "$\\sin 2(\\alpha_{1}+\\alpha_{2}+\\alpha_{3}+\\dots)$", "$\\cos 2(\\alpha_{1}+\\alpha_{2}+\\alpha_{3}+\\dots)$"], correct: 2 },
+            { text: "If $\\theta$ is positive acute angle, then real and imaginary part of $\\cos^{-1}(\\cos\\theta+i\\sin\\theta)$ are:", options: ["$\\sin^{-1}(\\sqrt{\\sin\\theta}) + i\\log(\\sqrt{1+\\sin\\theta}-\\sqrt{\\sin\\theta})$", "$\\cos^{-1}(\\sqrt{\\sin\\theta}) + i\\log(\\sqrt{1-\\sin\\theta}-\\sqrt{\\sin\\theta})$", "$\\sin^{-1}(\\sqrt{\\sin\\theta}) + i\\log(\\sqrt{1-\\sin\\theta}-\\sqrt{\\sin\\theta})$", "$\\sin^{-1}(\\sqrt{\\sin\\theta}) + i\\log(\\sqrt{1-\\sin\\theta}+\\sqrt{\\sin\\theta})$", "$\\sin^{-1}(\\sin\\theta) + i\\log(\\sqrt{1+\\sin\\theta}+\\sqrt{\\sin\\theta})$"], correct: 0 },
+            { text: "If $\\cosh(u+iv) = x+iy$, then which of the following is correct?", options: ["$\\frac{x^{2}}{\\cosh^{2}u} + \\frac{y^{2}}{\\cosh^{2}v} = 0$", "$\\frac{x^{2}}{\\cosh^{2}u} - \\frac{y^{2}}{\\sinh^{2}u} = 1$", "$\\frac{x^{2}}{\\cosh^{2}v} + \\frac{y^{2}}{\\cosh^{2}u} = 1$", "$\\frac{x^{2}}{\\cosh^{2}u} + \\frac{y^{2}}{\\sinh^{2}u} = 1$", "$\\frac{x^{2}}{\\cosh^{2}v} - \\frac{y^{2}}{\\sinh^{2}v} = 1$"], correct: 3 },
+            { text: "What is the angle between the lines whose direction cosines are given by the equations: $l+3m+5n=0$ and $5lm-2mn+6nl=0$?", options: ["$\\theta = \\tan^{-1}\\left(\\frac{1}{6}\\right)$", "$\\theta = \\sin^{-1}\\left(\\frac{1}{6}\\right)$", "$\\theta = \\sin^{-1}\\left(\\frac{1}{3}\\right)$", "$\\theta = \\sin^{-1}\\left(\\frac{1}{2}\\right)$", "$\\theta = \\cos^{-1}\\left(\\frac{1}{6}\\right)$"], correct: 4 },
+            { text: "What is the volume of the tetrahedron formed by the points $(1,1,1), (2,1,3), (3,2,2)$ and $(3,3,4)$?", options: ["$\\frac{1}{3}$", "$\\frac{1}{6}$", "$\\frac{5}{6}$", "$\\frac{1}{12}$", "0"], correct: 3 },
+            { text: "If $\\vec{A} = 4\\hat{i}+3\\hat{j}+\\hat{k}$ and $\\vec{B} = 2\\hat{i}-\\hat{j}+2\\hat{k}$ then the unit vector $\\vec{N}$ perpendicular to vectors $\\vec{A}$ and $\\vec{B}$ such that $\\vec{A}, \\vec{B}$ and $\\vec{N}$ form a right handed system is given as:", options: ["$\\vec{N} = \\frac{1}{\\sqrt{185}}(7\\hat{i}-6\\hat{j}-10\\hat{k})$", "$\\vec{N} = \\frac{1}{\\sqrt{185}}(-7\\hat{i}-6\\hat{j}+10\\hat{k})$", "$\\vec{N} = \\frac{1}{\\sqrt{185}}(7\\hat{i}-6\\hat{j}+10\\hat{k})$", "$\\vec{N} = \\frac{1}{\\sqrt{185}}(7\\hat{i}+6\\hat{j}+10\\hat{k})$", "$\\vec{N} = \\frac{1}{\\sqrt{185}}(7\\hat{i}+6\\hat{j}-10\\hat{k})$"], correct: 0 },
+            { text: "If $\\vec{A}, \\vec{B}, \\vec{C}$ and $\\vec{D}$ are four vectors, then which of the following is correct?", options: ["$(\\vec{A}\\times\\vec{B})\\times(\\vec{C}\\times\\vec{D}) = [\\vec{A}\\vec{C}\\vec{D}]\\vec{B} - [\\vec{B}\\vec{C}\\vec{D}]\\vec{A}$", "$(\\vec{A}\\times\\vec{B})\\times(\\vec{C}\\times\\vec{D}) = [\\vec{A}\\vec{C}\\vec{D}]\\vec{B} + [\\vec{B}\\vec{C}\\vec{D}]\\vec{A}$", "$(\\vec{A}\\times\\vec{B})\\times(\\vec{C}\\times\\vec{D}) = [\\vec{A}\\vec{C}\\vec{D}]\\vec{B} - [\\vec{B}\\vec{C}\\vec{D}]\\vec{A}$", "$(\\vec{A}\\times\\vec{B})\\times(\\vec{C}\\times\\vec{D}) = [\\vec{A}\\vec{C}\\vec{D}]\\vec{B} + [\\vec{B}\\vec{C}\\vec{D}]\\vec{A}$", "$(\\vec{A}\\times\\vec{B})\\times(\\vec{C}\\times\\vec{D}) = [\\vec{A}\\vec{C}\\vec{D}]\\vec{B} - [\\vec{B}\\vec{C}\\vec{D}]\\vec{A}$"], correct: 2 },
+            { text: "A particle moves along the curve $x=t^{2}+1, y=t^{2}, z=2t+3$ where $t$ is time. The component of acceleration at $t=1$ in the direction $\\hat{i}+\\hat{j}+3\\hat{k}$ is given as:", options: ["$3\\hat{i}-2\\hat{j}-2\\hat{k}$", "$3\\hat{i}+2\\hat{j}+2\\hat{k}$", "$3\\hat{i}-2\\hat{j}+2\\hat{k}$", "$3\\hat{i}+2\\hat{j}-2\\hat{k}$", "$-3\\hat{i}-2\\hat{j}-2\\hat{k}$"], correct: 1 },
+            { text: "For what values of $a$ and $b$ do the surface $ax^{2}-byz = (a+2)x$ and $4x^{2}y+z^{3} = 4$ cut orthogonally at $(1,-1,2)$?", options: ["$a=\\frac{5}{2} \\text{ and } b=1$", "$a=\\frac{3}{2} \\text{ and } b=1$", "$a=-\\frac{5}{2} \\text{ and } b=1$", "$a=\\frac{2}{5} \\text{ and } b=1$", "$a=-\\frac{2}{5} \\text{ and } b=1$"], correct: 4 },
+            { text: "If $\\vec{R}(t) = 3t^{2}\\hat{i}+t\\hat{j}-t^{3}\\hat{k}$, then what is the value of $\\int \\left(\\vec{R}\\times\\frac{d^{2}\\vec{R}}{dt^{2}}\\right)dt$?", options: ["$-2t^{3}\\hat{i}-3t^{4}\\hat{j}-3t^{2}\\hat{k}$", "$-2t^{3}\\hat{i}+3t^{4}\\hat{j}-3t^{2}\\hat{k}$", "$2t^{3}\\hat{i}+3t^{4}\\hat{j}-3t^{2}\\hat{k}$", "$2t^{3}\\hat{i}-3t^{4}\\hat{j}-3t^{2}\\hat{k}$", "$2t^{3}\\hat{i}+3t^{4}\\hat{j}+3t^{2}\\hat{k}$"], correct: 1 },
+            { text: "If $u\\vec{F} = \\nabla v$ where $u$ and $v$ are scalar fields and $\\vec{F}$ is a vector field, then what is the value of $\\vec{F} \\cdot \\text{curl }\\vec{F}$?", options: ["1", "-1", "$\\frac{1}{2}$", "$-\\frac{1}{2}$", "0"], correct: 4 },
+            { text: "What is the equation of the circle whose radius is $5$ and that touches the circle $x^{2}+y^{2}-2x-4y=20$ externally at the point $(5,5)$?", options: ["$(x+9)^{2}+(y-8)^{2}=25$", "$(x-9)^{2}+(y+8)^{2}=25$", "$(x+9)^{2}+(y+8)^{2}=25$", "$(x-9)^{2}+(y-8)^{2}=25$", "$(x-9)^{2}+(y-8)^{2}+25=0$"], correct: 3 },
+            { text: "A rectangle $ABCD$ is inscribed in a circle with a diameter lying along the line $3y = x+10$. If $A$ and $B$ are the points, $(-6,7)$ and $(4,7)$ respectively, then what is the area of the rectangle?", options: ["$60\\text{ sq units}$", "$40\\text{ sq units}$", "$50\\text{ sq units}$", "$75\\text{ sq units}$", "$80\\text{ sq units}$"], correct: 4 },
+            { text: "What is the equation of the parabola whose vertex is at $(2,1)$ and directrix is $x = y - 1$?", options: ["$x^{2}+y^{2}-14x-2y+2xy+17=0$", "$x^{2}+y^{2}-14x+2y-2xy+17=0$", "$x^{2}+y^{2}-14x+2y+2xy+17=0$", "$x^{2}+y^{2}-14x+2y+2xy-17=0$", "$x^{2}+y^{2}+14x+2y+2xy+17=0$"], correct: 2 },
+            { text: "An equilateral triangle is inscribed in the parabola $y^{2} = 4ax$ whose vertex is at the vertex of the parabola, then what is the length of the side of the triangle?", options: ["$8a\\sqrt{3}$", "$4a\\sqrt{3}$", "$2a\\sqrt{3}$", "$a\\sqrt{3}$", "$8a$"], correct: 3 },
+            { text: "What is the equation of the ellipse whose focus is at $(1,1)$, eccentricity is $\\frac{1}{2}$ and directrix is $x-y+3=0$?", options: ["$7x^{2}+7y^{2}+2xy-22x-10y+7=0$", "$7x^{2}+7y^{2}+2xy+22x-10y+7=0$", "$7x^{2}+7y^{2}+2xy-22x+10y+7=0$", "$7x^{2}+7y^{2}+2xy-22x-10y-7=0$", "$7x^{2}+7y^{2}+2xy-22x-10y+7=0$"], correct: 0 },
+            { text: "A rod $AB$ of length $15\\text{ cm}$ rests in between two coordinate axes in such a way that the end point $A$ lie on the $x$-axis and end point $B$ lies on the $y$-axis. A point $P$ is taken on the rod in such a way that $AP = 6\\text{ cm}$. What is the eccentricity of the ellipse?", options: ["$\\frac{\\sqrt{5}}{3}$", "$\\frac{\\sqrt{5}}{2}$", "$\\frac{\\sqrt{3}}{2}$", "$\\frac{\\sqrt{6}}{3}$", "$\\frac{\\sqrt{2}}{2}$"], correct: 1 },
+            { text: "The foci of a hyperbola coincide with the foci of the ellipse $9x^{2}+25y^{2} = 225$. If the eccentricity of the hyperbola is $2$, then what is the equation of the hyperbola?", options: ["$12x^{2}+4y^{2} = 48$", "$12x^{2}-4y^{2}+48=0$", "$12x^{2}-4y^{2} = 48$", "$12x^{2}+4y^{2}=48$", "$-12x^{2}+4y^{2}+48=0$"], correct: 2 },
+            { text: "What is the equation of the hyperbola whose conjugate axis is $5$ and the distance between the foci is $13$?", options: ["$7x^{2}-9y^{2}+56x+54y-32=0$", "$7x^{2}-9y^{2}-56x-54y-32=0$", "$7x^{2}-9y^{2}-56x+54y+32=0$", "$7x^{2}-9y^{2}-56x-54y+32=0$", "$7x^{2}-9y^{2}-56x+54y-32=0$"], correct: 4 },
+            { text: "If $\\alpha, \\beta$ and $\\gamma$ are the angles which a given line makes with the positive direction of axes, then what is the value of $\\sin^{2}\\alpha + \\sin^{2}\\beta + \\sin^{2}\\gamma$?", options: ["1", "0", "2", "$\\frac{1}{2}$", "$\\frac{1}{4}$"], correct: 2 },
+            { text: "What is the equation of the plane passing through the point $(1,1,0), (1,2,1)$ and $(-2,2,-1)$?", options: ["$2x-3y-3z=5$", "$2x+3y+3z=5$", "$2x+3y-3z+5=0$", "$2x+3y-3z=5$", "$2x-3y+3z=5$"], correct: 3 },
+            { text: "What is the distance of the point $(1,-2,3)$ from the plane $x-y+z=5$ measured parallel to the line $\\frac{x}{2}=\\frac{y}{3}=\\frac{z}{-6}$?", options: ["1", "-1", "0", "2", "-2"], correct: 0 },
+            { text: "What is the equation of the sphere passing through the points $(0,0,0), (0,1,-1), (-1,2,0)$ and $(1,2,3)$?", options: ["$14(x^{2}+y^{2}+z^{2})+2x-36y-8z=0$", "$14(x^{2}+y^{2}+z^{2})-2x-36y-8z=0$", "$14(x^{2}+y^{2}+z^{2})-2x+36y-8z=0$", "$14(x^{2}+y^{2}+z^{2})-2x-36y+8z=0$", "$14(x^{2}+y^{2}+z^{2})-2x+36y+8z=0$"], correct: 1 },
+            { text: "What is the equation of the cone whose vertex is the point $(0,0,0)$ and whose base is the curve $x^{2}+y^{2}=4, z=2$?", options: ["$x^{2}-y^{2}=z^{2}$", "$x^{2}+y^{2}+z^{2}=0$", "$x^{2}+y^{2}=z^{2}$", "$-x^{2}+y^{2}=z^{2}$", "$-x^{2}-y^{2}-z^{2}=0$"], correct: 2 },
+            { text: "What is the shortest distance between the given lines? $\\frac{x-1}{2}=\\frac{y-2}{3}=\\frac{z-3}{4}$ and $\\frac{x-2}{3}=\\frac{y-3}{4}=\\frac{z-4}{5}$", options: ["2", "$\\frac{1}{2}$", "$\\frac{1}{3}$", "0", "1"], correct: 3 },
+            { text: "What is the equation of the right circular cone whose axis is $x=y=z$ vertex is origin and semi vertical angle is $45^{\\circ}$?", options: ["$x^{2}+y^{2}+z^{2}+4yz-4zx-4xy=0$", "$x^{2}+y^{2}+z^{2}-4yz+4zx-4xy=0$", "$x^{2}+y^{2}+z^{2}-4yz-4zx+4xy=0$", "$x^{2}+y^{2}+z^{2}-4yz-4zx-4xy=0$", "$x^{2}+y^{2}+z^{2}-4yz-4zx-4xy=0$"], correct: 4 },
+            { text: "If $y = (\\sin x)^{\\sin x}$, then which of the following is correct?", options: ["$(1-x^{2})y_{n+2}-(2n+1)xy_{n+1}-n^{2}y_{n}=0$", "$(1-x^{2})y_{n+2}-(2n-1)xy_{n+1}+y_{n}=0$", "$(1-x^{2})y_{n+2}+(2n+1)xy_{n+1}+y_{n}=0$", "$(1-x^{2})y_{n+2}+(2n+1)xy_{n+1}+ny_{n}=0$", "$(1-x^{2})y_{n+2}+(2n+1)xy_{n+1}-n^{2}y_{n}=0$"], correct: 3 },
+            { text: "What is the value of $\\lim_{x\\to 0} \\frac{\\log x}{\\cot x}$?", options: ["1", "0", "-1", "2", "$\\infty$"], correct: 1 },
+            { text: "$\\frac{1}{r}\\frac{\\partial}{\\partial r}\\left(r\\frac{\\partial u}{\\partial r}\\right) = \\frac{1}{k}\\frac{\\partial u}{\\partial t}$, then what value of $n$ will make $u = t^{n}e^{-r^{2}/(4kt)}$?", options: ["$n=1$", "$n=\\frac{2}{3}$", "$n=\\frac{1}{2}$", "$n=-1$", "$n=-2$"], correct: 3 },
+            { text: "The function $y = \\sin x(1+\\cos x)$ is maximum, when:", options: ["$x=\\frac{\\pi}{3}$", "$x=\\frac{\\pi}{4}$", "$x=\\frac{\\pi}{6}$", "$x=\\frac{\\pi}{2}$", "$x=\\frac{2\\pi}{3}$"], correct: 0 },
+            { text: "What is the curvature at the point $(a,0)$ on the curve $xy^{2} = a^{3}-x^{3}$?", options: ["$-\\frac{3a}{2}$", "$\\frac{3a}{2}$", "$\\frac{2}{3a}$", "0", "$-\\frac{2}{3a}$"], correct: 4 },
+            { text: "What are the asymptotes of the curve $x^{3}-x^{2}y-xy^{2}+x+y+1=0$?", options: ["$x=0, x=1, y=0, y=1$", "$x=0, x=-1, y=0, y=1$", "$x=0, x=1, y=0, y=-1$", "$x=0, x=-1, y=0, y=-1$", "$x=0, x=2, y=0, y=1$"], correct: 0 },
+            { text: "The origin is a node, cusp or conjugate point on the curve $y^{2} = ax^{2}+ax^{3}$ accordingly as:", options: ["$a>0, a<0, a=0$", "$a>0, a=0, a<0$", "$a<0, a=0, a>0$", "$a>0, a<0, a<0$", "$a>0, a>0, a<0$"], correct: 1 },
+            { text: "Which of the following is the envelope of a system of concentric and coaxial ellipses of constant area?", options: ["$xy=c^{2}$", "$3xy=c^{2}$", "$xy=\\frac{c^{2}}{2}$", "$2xy=c^{2}$", "$5xy=c^{2}$"], correct: 3 },
+            { text: "If $u = F(x-y, y-z, z-x)$, then what is the value of $\\frac{\\partial u}{\\partial x} + \\frac{\\partial u}{\\partial y} + \\frac{\\partial u}{\\partial z}$?", options: ["1", "-1", "$x$", "0", "$z$"], correct: 3 },
+            { text: "What is the value of $\\int \\frac{x-1}{1+x^{2}}dx$?", options: ["$\\frac{1}{2\\sqrt{2}}\\log\\frac{x^{2}+\\sqrt{2x}+1}{x^{2}-\\sqrt{2x}+1}$", "$\\log\\frac{2x-1}{2\\sqrt{2}x^{2}+\\sqrt{2x}-1}$", "$\\log\\frac{x^{2}-\\sqrt{2x}-1}{2\\sqrt{2}x^{2}+\\sqrt{2x}+1}$", "$\\log\\frac{x^{2}-\\sqrt{2x}+1}{2\\sqrt{2}x^{2}+\\sqrt{2x}+1}$", "$\\log\\frac{x^{2}-\\sqrt{2x}+1}{2\\sqrt{2}x^{2}}$"], correct: 4 },
+            { text: "What is the value of $\\int \\frac{1+\\sin x}{1+\\cos x}e^{x}dx$?", options: ["$e^{x}\\tan\\frac{x}{2}$", "$e^{x}\\sec\\frac{x}{2}$", "$e^{x}\\sin\\frac{x}{2}$", "$e^{x}\\cos\\frac{x}{2}$", "$e^{x}\\cot\\frac{x}{2}$"], correct: 0 },
+            { text: "What is the value of $\\int_{0}^{1} x\\sin x dx$?", options: ["0", "1", "-1", "$\\pi$", "$\\frac{\\pi}{2}$"], correct: 1 },
+            { text: "What is the value of $\\int_{0}^{1} \\frac{x}{(1+x^{2})^{3}}dx$?", options: ["$-\\frac{1}{35}$", "$\\frac{1}{35}$", "$\\frac{1}{35}$", "$\\frac{3}{35}$", "0"], correct: 3 },
+            { text: "What is the value of $\\int_{0}^{\\pi/2} \\sin^{2m-1}\\theta \\cos^{2n-1}\\theta d\\theta$?", options: ["$-2^{2m-1}\\beta(m,m)$", "$2^{-2m-1}\\beta(m,m)$", "$2^{2m-1}\\beta(m,m)$", "$2^{-2m+1}\\beta(m,m)$", "$2^{2m+1}\\beta(m,m)$"], correct: 2 },
+            { text: "What is the value of $\\int_{0}^{\\pi/2} \\sqrt{\\tan\\theta}d\\theta$?", options: ["$\\frac{\\pi}{\\sqrt{2}}$", "$\\frac{\\pi}{2\\sqrt{2}}$", "$\\frac{\\pi}{2}$", "$\\pi\\sqrt{2}$", "0"], correct: 0 },
+            { text: "What is the value of $\\iint_{A} xy dxdy$ where $A$ is the domain bounded by the $x$-axis ordinate $x = 2a$ and the curve $x^{2} = 4ay$?", options: ["$\\frac{a^{4}}{2}$", "$\\frac{a^{4}}{3}$", "$\\frac{a^{4}}{4}$", "$\\frac{a^{4}}{6}$", "0"], correct: 2 },
+            { text: "What is the value of $\\int_{-1}^{1} \\int_{0}^{z} \\int_{x-z}^{x+z} (x+y+z)dxdydz$?", options: ["0", "1", "-1", "$\\frac{1}{2}$", "$\\frac{1}{3}$"], correct: 0 },
+            { text: "What is the solution of the given differential equation? $\\frac{dy}{dx}-x\\tan(y-x)=1$", options: ["$\\log\\cos(y-x)=\\frac{x^{2}}{2}+c$", "$\\log\\cos(y-x)+\\frac{x^{2}}{2}=c$", "$\\log\\sin(y-x)+\\frac{x^{2}}{2}=c$", "$\\log\\sin(y+x)=\\frac{x^{2}}{2}+c$", "$\\log\\sin(y-x)=\\frac{x^{2}}{2}+c$"], correct: 4 },
+            { text: "What is the integrating factor of the given differential equation? $\\frac{dy}{dx}+2xy=2e^{-x^{2}}$", options: ["$e^{x^{2}}$", "$e^{-x^{2}}$", "$e^{x}$", "$e^{-x}$", "$x^{2}$"], correct: 0 },
+            { text: "What is the solution of the given differential equation? $(1+e^{x/y})dx + e^{x/y}(1-\\frac{x}{y})dy=0$", options: ["$xy-e^{x/y}=c$", "$x+ye^{x/y}=c$", "$y-e^{y/x}=c$", "$x-e^{y/x}=c$", "$x-ye^{-x/y}=c$"], correct: 1 },
+            { text: "What is the solution of the given differential equation? $(x\\sin x)\\frac{dy}{dx}+(x\\cos x+\\sin x)y=\\sin x$", options: ["$x\\cos x-y\\sin x=c$", "$xy\\sin x-\\cos x=c$", "$xy\\sin x+\\cos x=c$", "$xy\\cos x+\\sin x=c$", "$xy\\cos x-\\sin x=c$"], correct: 2 },
+            { text: "What is the $p$-discriminant of the equation $y = px+\\frac{1}{p}$?", options: ["$y=4x$", "$y^{2}=4x$", "$y=x$", "$y=-x$", "$y=-4x$"], correct: 1 },
+            { text: "What is the solution of the given differential equation? $x\\frac{dy}{dx}=y+\\sqrt{x^{2}+y^{2}}$", options: ["$x+\\sqrt{x^{2}+y^{2}}+c^{2}=0$", "$x+\\sqrt{x^{2}+y^{2}}=cx^{2}$", "$x-\\sqrt{x^{2}+y^{2}}=cx^{2}$", "$y+\\sqrt{x^{2}+y^{2}}=cx^{2}$", "$y-\\sqrt{x^{2}+y^{2}}=cx^{2}$"], correct: 3 },
+            { text: "What is the solution of the given differential equation? $\\frac{d^{2}y}{dx^{2}}-5\\frac{dy}{dx}+6y=e^{2x}\\sin 3x$", options: ["$y=c_{1}e^{2x}+c_{2}e^{3x}+\\frac{1}{30}e^{2x}(\\cos 3x-3\\sin 3x)$", "$y=c_{1}e^{2x}+c_{2}e^{3x}+\\frac{1}{30}e^{2x}(\\cos 3x+3\\sin 3x)$", "$y=c_{1}e^{2x}+c_{2}e^{3x}+\\frac{1}{30}e^{-2x}(\\cos 3x+3\\sin 3x)$", "$y=c_{1}e^{2x}+c_{2}e^{3x}+e^{3x}\\cos(\\cos 3x+3\\sin 3x)$", "$y=c_{1}e^{2x}+c_{2}e^{3x}+\\frac{1}{30}e^{-3x}(\\cos 3x+3\\sin 3x)$"], correct: 0 },
+            { text: "What is the solution of the given differential equation? $x^{2}\\frac{d^{2}y}{dx^{2}}-x\\frac{dy}{dx}+y=\\log x$", options: ["$y=(c_{1}x+c_{2}\\log x)x-\\log x-2$", "$y=(c_{1}+c_{2}\\log x)x+\\log x+2$", "$y=(c_{1}x+c_{2}\\log x)x-\\log x+2$", "$y=(c_{1}+c_{2}\\log x)x-\\log x-2$", "$y=(c_{1}+c_{2}\\log x)x-\\log x-2$"], correct: 1 },
+            { text: "Let a relation $R$ in the set $\\mathbb{R}$ of real numbers be defined as $(a,b) \\in R$ if $1+ab>0$ for all $a,b \\in \\mathbb{R}$. The relation $R$ is:", options: ["reflexive and symmetric", "symmetric and transitive", "only transitive", "equivalence relation", "reflexive and transitive"], correct: 0 },
+            { text: "What is the domain of the given function? $f(x) = \\log_{4}(\\log_{5}(\\log_{3}(18x-x^{2}-77)))$", options: ["$(1, 10)$", "$(8, 10)$", "$(5, 10)$", "$(4, 10)$", "$(9, 10)$"], correct: 1 },
+            { text: "Let $S = \\left\\{\\begin{bmatrix} a & a \\\\ a & a \\end{bmatrix}; a \\in \\mathbb{R}-\\{0\\}\\right\\}$ is a group with respect to matrix multiplication. What is the inverse of $A = \\begin{bmatrix} 3 & 3 \\\\ 3 & 3 \\end{bmatrix}$?", options: ["$\\begin{bmatrix} \\frac{1}{4} & \\frac{1}{4} \\\\ \\frac{1}{4} & \\frac{1}{4} \\end{bmatrix}$", "$\\begin{bmatrix} \\frac{1}{6} & \\frac{1}{6} \\\\ \\frac{1}{6} & \\frac{1}{6} \\end{bmatrix}$", "$\\begin{bmatrix} \\frac{1}{3} & \\frac{1}{3} \\\\ \\frac{1}{3} & \\frac{1}{3} \\end{bmatrix}$", "$\\begin{bmatrix} \\frac{1}{12} & \\frac{1}{12} \\\\ \\frac{1}{12} & \\frac{1}{12} \\end{bmatrix}$", "$\\begin{bmatrix} \\frac{1}{2} & \\frac{1}{2} \\\\ \\frac{1}{2} & \\frac{1}{2} \\end{bmatrix}$"], correct: 3 },
+            { text: "What is the number of elements of order $5$ in the group $\\mathbb{Z}_{25} \\oplus \\mathbb{Z}_{5}$?", options: ["5", "10", "24", "25", "15"], correct: 2 },
+            { text: "Consider a group $G$. Let $Z(G)$ be its centre i.e., $Z(G)=\\{g\\in G: gh=hg, \\forall h\\in G\\}$. For $n\\in \\mathbb{N}$, the set of positive integers, define $I_{n} = \\{(g_{1},g_{2},\\dots g_{n})\\in Z(G)\\times Z(G)\\times\\dots\\times Z(G): g_{1}\\dots g_{n}=e\\}$ as a subset of the direct product group $G\\times G\\times\\dots\\times G$ ($n$ times direct product of group $G$). Then $I_{n}$ is:", options: ["a normal subgroup", "not necessarily a subgroup", "a subgroup but not necessarily a normal subgroup", "isomorphic to the direct product $G\\times G\\times\\dots G$ ($n-1$ times)", "isomorphic to the direct product $G\\times G\\times\\dots G$ ($n$ times)"], correct: 0 },
+            { text: "Set $R = \\left\\{\\begin{bmatrix} a & a \\\\ a & a \\end{bmatrix}: a \\in \\mathbb{Z}\\right\\}$ is a ring with respect to $+$ and $\\cdot$ defined by $\\begin{bmatrix} a & a \\\\ a & a \\end{bmatrix} + \\begin{bmatrix} b & b \\\\ b & b \\end{bmatrix} = \\begin{bmatrix} a+b & a+b \\\\ a+b & a+b \\end{bmatrix}$ and $\\begin{bmatrix} a & a \\\\ a & a \\end{bmatrix} \\cdot \\begin{bmatrix} b & b \\\\ b & b \\end{bmatrix} = \\begin{bmatrix} 2ab & 2ab \\\\ 2ab & 2ab \\end{bmatrix}$. What is the number of units in $R$?", options: ["2", "4", "6", "8", "0"], correct: 3 },
+            { text: "The cardinality of a finite integral domain cannot be:", options: ["2", "3", "5", "7", "6"], correct: 4 },
+            { text: "What is the number of prime ideal of $\\mathbb{Z}_{10}$?", options: ["2", "5", "10", "100", "10000"], correct: 0 },
+            { text: "What is the number of elements in the field $\\frac{\\mathbb{Z}_{11}[x]}{(x^{2}+1)}$?", options: ["11", "22", "33", "121", "1"], correct: 3 },
+            { text: "Let $S$ be an ideal of a ring $R$. Then, what is the zero element of quotient ring $\\frac{R}{S}$?", options: ["0", "$R+1$", "$S+1$", "$R$", "$S$"], correct: 4 },
+            { text: "Let $\\{S_{n}\\}$ be a sequence of positive real numbers such that $S_{n} = \\frac{1}{2}(S_{n-1}+S_{n-2})\\ \\forall n > 2$. Then, what is $\\lim S_{n}$?", options: ["$\\frac{1}{3}(S_{1}+2S_{2})$", "$\\frac{1}{3}(S_{2}+2S_{1})$", "$\\frac{1}{3}(2S_{1}+S_{2})$", "$\\frac{1}{3}(2S_{2}+S_{1})$", "$\\frac{1}{2}(S_{1}+S_{2})$"], correct: 0 },
+            { text: "Let $X$ be a non-empty set. A metric on $X$ is a real valued function $d: X \\times X \\to \\mathbb{R}$. Which of the following statements holds good for a metric space?", options: ["$d(x,y)=0$ if $x\\neq y$", "$d(x,y)=d(y,x)$ for all $x,y \\in X$", "$d(x,y)$ is a negative function", "$d(x,y)$ does not satisfy the triangle inequality", "$d(x,y)=0$ for all $x$ and $y$."], correct: 1 },
+            { text: "Which of the statements is/are correct? (i) The union of an arbitrary family of an open sets is open (ii) The union of an arbitrary family of an open set is closed (iii) The intersection of any finite number of open sets is open (iv) The intersection of any finite number of open sets is closed.", options: ["Only (i), (ii) and (iii)", "Only (i)", "Only (i) and (iii)", "Only (ii) and (iv)", "All four are correct"], correct: 2 },
+            { text: "Let $f$ be a function defined on $\\mathbb{R}$ as: $f(x) = \\begin{cases} 1-2x, & x<0 \\\\ 0, & x=0 \\\\ 1+3x, & x>0 \\end{cases}$ Which of the following is true?", options: ["$f$ is continuous at $0$", "$f$ is discontinuous at $0$", "$f$ is nowhere continuous", "$f$ is everywhere continuous", "$f$ is not defined at $0$"], correct: 0 },
+            { text: "Let $f$ be defined on $\\mathbb{R}$ as: $f(x) = \\begin{cases} \\frac{x(e^{1/x}-e^{-1/x})}{e^{1/x}+e^{-1/x}}, & x\\neq 0 \\\\ 0, & x=0 \\end{cases}$ Which of the following is correct?", options: ["$f$ is not continuous at $0$.", "$f$ is not derivable at $0$.", "$Lf'(0)=-1$", "$Rf'(0)=1$", "$f'(0)=1$"], correct: 1 },
+            { text: "For given $u(x,y) = x^{3}-3xy^{2}+3x^{2}-3y^{2}+1$, what is the analytic function $f(z)$?", options: ["$z^{3}+3z^{2}+c$", "$z^{3}-3z^{2}+c$", "$z^{3}+3z^{2}-z+c$", "$z^{3}-3z+z+c$", "$-z^{3}+3z^{2}+c$"], correct: 0 },
+            { text: "What is the value of $\\int_{0}^{1} \\left(2x\\sin\\frac{1}{x}-\\cos\\frac{1}{x}\\right)dx$?", options: ["$\\sin 1$", "$\\cos 1$", "0", "1", "$\\sin 2$"], correct: 2 },
+            { text: "What is the value of $\\int \\bar{z} dz$ along the line $y=\\frac{x}{2}$?", options: ["$\\frac{1}{2}(2+i)$", "$\\frac{1}{2}(1-i)$", "$\\frac{1}{2}(1+i)$", "$\\frac{1}{2}(2-i)$", "0"], correct: 3 },
+            { text: "What is the value of $\\int_{C} \\frac{z^{2}-2z+1}{z-1} dz$, where $C$ is the circle $|z|=\\frac{1}{2}$?", options: ["2", "1", "-1", "$\\frac{1}{2}$", "0"], correct: 4 },
+            { text: "If $f(z) = u+iv$ is an analytic function of $z = x+iy$ and $u-v = e^{x}(\\cos y - \\sin y)$, then what is $f(z)$ in terms of $z$?", options: ["$e^{z}+c$", "$e^{-z}+c$", "$-e^{z}+c$", "$e^{2z}+c$", "$z e^{z}+c$"], correct: 0 },
+            { text: "If $f(z) = \\frac{z-\\sin z}{z^{3}}$, then what kind of singularity does $f(z)$ have at $z=0$?", options: ["Essential singularity", "Pole of order 3", "Pole of order 1", "Removable singularity", "Non-isolated singularity"], correct: 3 },
+            { text: "What is the residue of $f(z) = \\frac{e^{z}}{z^{2}(a^{2}+b^{2})}$ at $z=0$?", options: ["1", "0", "$\\frac{1}{a^{2}+b^{2}}$", "$-\\frac{1}{a^{2}+b^{2}}$", "$\\frac{1}{2(a^{2}+b^{2})}$"], correct: 2 },
+            { text: "The bilinear transformation $w = \\frac{az+b}{cz+d}$ is conformal everywhere except at the point:", options: ["$z = \\frac{d}{c}$", "$z = -\\frac{d}{c}$", "$z = \\frac{a}{c}$", "$z = -\\frac{a}{c}$", "$z = 0$"], correct: 1 },
+            { text: "Which of the following maps the unit disk $|z|<1$ conformally onto the unit disk $|w|<1$?", options: ["$w = e^{i\\alpha}\\frac{z-a}{\\bar{a}z-1}$", "$w = e^{i\\alpha}\\frac{z-a}{1-\\bar{a}z}$", "$w = \\frac{z-a}{1+\\bar{a}z}$", "$w = e^{i\\alpha}\\frac{z+a}{1-\\bar{a}z}$", "$w = \\frac{z+a}{\\bar{a}z-1}$"], correct: 1 },
+            { text: "What is the residue of $f(z) = \\frac{z^{2}}{(z-1)^{2}(z+2)}$ at the pole $z=1$?", options: ["$\\frac{5}{9}$", "$\\frac{4}{9}$", "$-\\frac{4}{9}$", "$\\frac{2}{9}$", "0"], correct: 0 },
+            { text: "The value of the integral $\\int_{0}^{2\\pi} \\frac{d\\theta}{2+\\cos\\theta}$ is:", options: ["$\\frac{2\\pi}{\\sqrt{3}}$", "$\\frac{\\pi}{\\sqrt{3}}$", "$\\pi\\sqrt{3}$", "$2\\pi\\sqrt{3}$", "0"], correct: 0 },
+            { text: "If $f(z)$ is analytic within and on a closed contour $C$ containing a point $a$, then $\\int_{C} \\frac{f(z)}{(z-a)^{n+1}} dz$ is equal to:", options: ["$\\frac{2\\pi i}{n!} f^{(n)}(a)$", "$\\frac{2\\pi}{n!} f^{(n)}(a)$", "$2\\pi i f^{(n)}(a)$", "$\\frac{\\pi i}{n!} f^{(n)}(a)$", "0"], correct: 0 },
+            { text: "The function $f(z) = |z|^{2}$ is:", options: ["Analytic everywhere", "Analytic nowhere except at the origin", "Differentiable everywhere", "Continuous nowhere", "Analytic at $z=1$"], correct: 1 },
+            { text: "The fixed points of the transformation $w = \\frac{3z-4}{z-1}$ are:", options: ["2, 2", "1, -1", "2, -2", "1, 4", "0, 2"], correct: 0 },
+            { text: "The series $\\sum_{n=1}^{\\infty} \\frac{z^{n}}{n^{2}}$ has the radius of convergence equal to:", options: ["0", "$\\infty$", "1", "2", "$\\frac{1}{2}$"], correct: 2 },
+            { text: "The real part of the analytic function $f(z) = u+iv$ where $u = x^{2}-y^{2}$ gives $f(z)$ as:", options: ["$z^{2}+c$", "$\\bar{z}^{2}+c$", "$z^{3}+c$", "$2z+c$", "$z+c$"], correct: 0 },
+            { text: "The Laurent series expansion of $f(z) = \\frac{1}{z(z-1)}$ valid for $0 < |z| < 1$ is:", options: ["$-\\frac{1}{z} - 1 - z - z^{2} - \\dots$", "$\\frac{1}{z} + 1 + z + z^{2} + \\dots$", "$\\frac{1}{z^{2}} + \\frac{1}{z} + 1 + z + \\dots$", "$-\\frac{1}{z^{2}} - \\frac{1}{z} - 1 - z - \\dots$", "$1 + z + z^{2} + \\dots$"], correct: 0 },
+            // 91-120 GK (Unit 1-6)
+            { text: "Q1. The 2026 Winter Olympics were hosted in:", options: ["Beijing", "Milano Cortina, Italy", "PyeongChang", "Sochi"], correct: 1 },
+            { text: "Q2. The 2026 FIFA World Cup was jointly hosted by:", options: ["USA, Canada and Mexico", "Qatar and UAE", "Spain, Portugal and Morocco", "Brazil and Argentina"], correct: 0 },
+            { text: "Q3. In October 2026, the Indian Coast Guard commissioned the indigenous Fast Patrol Vessel:", options: ["ICGS Vikram", "ICGS Ajit", "ICGS Samar", "ICGS Sajag"], correct: 1 },
+            { text: "Q4. The World Development Report 2026 focuses on which theme?", options: ["Climate migration", "Artificial Intelligence", "Urban housing", "Global trade wars"], correct: 1 },
+            { text: "Q5. The BRICS Traditional and Indigenous Sports Demonstration Games 2026 were held in:", options: ["Mumbai", "Ahmedabad", "New Delhi", "Rajgir"], correct: 1 },
+            { text: "Q6. A hypothesis in research is:", options: ["The final conclusion of a study", "A tentative assumption made to test its logical consequences", "A summary of published literature", "A tool for data collection"], correct: 1 },
+            { text: "Q7. Which of the following is an example of a summative evaluation?", options: ["Feedback during classroom discussion", "Weekly diagnostic quiz", "Final term-end examination", "Peer observation of teaching"], correct: 2 },
+            { text: "Q8. Which of the following factors affects teaching effectiveness the most?", options: ["Teacher's knowledge and communication of subject matter", "Size of the school building", "Number of textbooks prescribed", "Colour of classroom walls"], correct: 0 },
+            { text: "Q9. Action research in education is primarily aimed at:", options: ["Publishing papers in international journals", "Solving an immediate classroom problem", "Testing abstract theories", "Large-scale policy formulation"], correct: 1 },
+            { text: "Q10. Which of the following graphical representations is most suitable for showing the distribution of a continuous variable?", options: ["Pie chart", "Bar diagram", "Histogram", "Pictograph"], correct: 2 },
+            { text: "Q11. In ICT, \"ICT\" itself stands for:", options: ["International Computer Technology", "Information and Communication Technology", "Integrated Circuit Transmission", "Internet Control Transfer"], correct: 1 },
+            { text: "Q12. Which of the following is used to search information on the Internet?", options: ["Operating system", "Search engine", "Spreadsheet", "Compiler"], correct: 1 },
+            { text: "Q13. \"CPU\" stands for:", options: ["Central Processing Unit", "Computer Personal Unit", "Central Program Utility", "Control Processing Utility"], correct: 0 },
+            { text: "Q14. In e-mail practice, which field should be used when recipients should not see each other's addresses?", options: ["To", "CC", "BCC", "Subject"], correct: 2 },
+            { text: "Q15. Which of the following is an example of ICT-enabled learning platform in Indian higher education?", options: ["SWAYAM", "Khelo India", "Ayushman Bharat", "Mudra Yojana"], correct: 0 },
+            { text: "Q16. Which of the following is a renewable source of energy?", options: ["Coal", "Petroleum", "Solar energy", "Natural gas"], correct: 2 },
+            { text: "Q17. \"Silent Spring\", the landmark book on pesticides and environment, was written by:", options: ["Rachel Carson", "Vandana Shiva", "Medha Patkar", "Sunderlal Bahuguna"], correct: 0 },
+            { text: "Q18. Acid rain is mainly caused by emissions of:", options: ["Carbon dioxide and methane", "Sulphur dioxide and nitrogen oxides", "Chlorine and helium", "Ozone and argon"], correct: 1 },
+            { text: "Q19. The National Green Tribunal (NGT) was established in India in:", options: ["2006", "2010", "2014", "2018"], correct: 1 },
+            { text: "Q20. Which of the following practices best represents \"environmental control\" at the individual level?", options: ["Using single-use plastics", "Waste segregation and recycling", "Leaving lights on", "Burning dry leaves"], correct: 1 },
+            { text: "Q21. The slogan \"Jai Jawan Jai Kisan\" was given by:", options: ["Jawaharlal Nehru", "Lal Bahadur Shastri", "Indira Gandhi", "Sardar Patel"], correct: 1 },
+            { text: "Q22. The Indian National Movement's Non-Cooperation Movement was launched in:", options: ["1917", "1920", "1930", "1942"], correct: 1 },
+            { text: "Q23. Which Viceroy partitioned Bengal in 1905?", options: ["Lord Curzon", "Lord Minto", "Lord Hardinge", "Lord Irwin"], correct: 0 },
+            { text: "Q24. The Sundarbans delta is formed by which rivers?", options: ["Ganga and Yamuna", "Ganga and Brahmaputra", "Krishna and Godavari", "Narmada and Tapi"], correct: 1 },
+            { text: "Q25. The largest state of India by area is:", options: ["Uttar Pradesh", "Madhya Pradesh", "Rajasthan", "Maharashtra"], correct: 2 },
+            { text: "Q26. The Directive Principles of State Policy are contained in which Part of the Indian Constitution?", options: ["Part III", "Part IV", "Part V", "Part VII"], correct: 1 },
+            { text: "Q27. Who is the ex-officio Chairman of the Rajya Sabha?", options: ["The President", "The Vice-President", "The Prime Minister", "The Speaker of Lok Sabha"], correct: 1 },
+            { text: "Q28. The principal function of the Public Service Commission (UPSC/UPPSC) is:", options: ["Conducting recruitment examinations and advising on appointments", "Framing the annual budget", "Implementing welfare schemes", "Collecting income tax"], correct: 0 },
+            { text: "Q29. In India, income tax is levied by:", options: ["State governments", "The Union government", "Local bodies", "The Election Commission"], correct: 1 },
+            { text: "Q30. NITI Aayog replaced which of the following bodies?", options: ["Finance Commission", "Planning Commission", "National Development Council", "Central Statistical Office"], correct: 1 }
+        ];
+
+        // State management
+        const totalQuestions = questions.length; // 120
+        let currentIndex = 0;
+        let userAnswers = new Array(totalQuestions).fill(null);
+        let marked = new Array(totalQuestions).fill(false);
+        let visited = new Array(totalQuestions).fill(false);
+        visited[0] = true; // first question visited
+
+        let timerInterval;
+        let timeLeft = 120 * 60; // 120 minutes in seconds
+        let isSubmitted = false;
+
+        // DOM elements
+        const timerDisplay = document.getElementById('timerDisplay');
+        const questionArea = document.getElementById('questionArea');
+        const paletteGrid = document.getElementById('paletteGrid');
+        const paletteStats = document.getElementById('paletteStats');
+        const resultOverlay = document.getElementById('resultOverlay');
+        const resultCard = document.getElementById('resultCard');
+
+        // ---------- Timer ----------
+        function startTimer() {
+            timerInterval = setInterval(() => {
+                if (isSubmitted) return;
+                timeLeft--;
+                updateTimerDisplay();
+                if (timeLeft <= 0) {
+                    clearInterval(timerInterval);
+                    timeLeft = 0;
+                    updateTimerDisplay();
+                    autoSubmit();
+                }
+            }, 1000);
+        }
+
+        function updateTimerDisplay() {
+            const mins = Math.floor(timeLeft / 60);
+            const secs = timeLeft % 60;
+            timerDisplay.textContent = `${mins.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
+        }
+
+        function autoSubmit() {
+            if (!isSubmitted) {
+                isSubmitted = true;
+                clearInterval(timerInterval);
+                showResults();
+            }
+        }
+
+        // ---------- Rendering ----------
+        function renderQuestion() {
+            const q = questions[currentIndex];
+            const selectedOpt = userAnswers[currentIndex];
+
+            let html = `<div class="question-text">${q.text}</div><div class="options">`;
+            q.options.forEach((opt, idx) => {
+                const selectedClass = (selectedOpt === idx) ? 'selected' : '';
+                html += `<div class="option-item ${selectedClass}" data-opt-index="${idx}">
+                    <span class="option-prefix">${String.fromCharCode(65 + idx)}.</span>
+                    <span class="option-text">${opt}</span>
+                </div>`;
+            });
+            html += `</div>`;
+
+            // action buttons
+            html += `<div class="action-buttons">
+                <button class="btn" id="prevBtn" ${currentIndex === 0 ? 'disabled' : ''}>Previous</button>
+                <button class="btn" id="nextBtn" ${currentIndex === totalQuestions - 1 ? 'disabled' : ''}>Next</button>
+                <button class="btn" id="clearBtn">Clear Response</button>
+                <button class="btn ${marked[currentIndex] ? 'btn-warning' : ''}" id="markBtn">${marked[currentIndex] ? 'Unmark' : 'Mark for Review'}</button>
+                <button class="btn btn-danger" id="submitBtn">Submit</button>
+            </div>`;
+
+            questionArea.innerHTML = html;
+
+            // attach option listeners
+            document.querySelectorAll('.option-item').forEach(el => {
+                el.addEventListener('click', (e) => {
+                    const optIdx = parseInt(el.dataset.optIndex);
+                    toggleOption(optIdx);
+                });
+            });
+
+            document.getElementById('prevBtn').addEventListener('click', () => { if (currentIndex > 0) { currentIndex--; visited[currentIndex] = true; renderAll(); } });
+            document.getElementById('nextBtn').addEventListener('click', () => { if (currentIndex < totalQuestions - 1) { currentIndex++; visited[currentIndex] = true; renderAll(); } });
+            document.getElementById('clearBtn').addEventListener('click', () => {
+                userAnswers[currentIndex] = null;
+                renderAll();
+            });
+            document.getElementById('markBtn').addEventListener('click', () => {
+                marked[currentIndex] = !marked[currentIndex];
+                renderAll();
+            });
+            document.getElementById('submitBtn').addEventListener('click', () => {
+                if (!isSubmitted) {
+                    isSubmitted = true;
+                    clearInterval(timerInterval);
+                    showResults();
+                }
+            });
+
+            // re-render MathJax
+            if (window.MathJax && MathJax.typesetPromise) {
+                MathJax.typesetPromise([questionArea]);
+            }
+        }
+
+        function toggleOption(optIdx) {
+            if (userAnswers[currentIndex] === optIdx) {
+                userAnswers[currentIndex] = null; // deselect
+            } else {
+                userAnswers[currentIndex] = optIdx;
+            }
+            renderAll();
+        }
+
+        function renderPalette() {
+            paletteGrid.innerHTML = '';
+            for (let i = 0; i < totalQuestions; i++) {
+                const btn = document.createElement('button');
+                btn.classList.add('palette-btn');
+                if (!visited[i]) btn.classList.add('not-visited');
+                else if (marked[i]) btn.classList.add('marked');
+                else if (userAnswers[i] !== null) btn.classList.add('answered');
+                else btn.classList.add('not-visited'); // visited but unanswered stays not-visited? Actually we need "not answered" state.
+                // better: we use answered, marked, not-visited. For visited but not answered, use default background.
+                // So we define: if not visited => not-visited class; if marked => marked; if answered => answered; else default (not answered but visited)
+                // remove not-visited if visited
+                if (visited[i] && !marked[i] && userAnswers[i] === null) {
+                    btn.classList.remove('not-visited');
+                }
+                if (visited[i] && marked[i]) {
+                    btn.classList.add('marked');
+                    btn.classList.remove('answered', 'not-visited');
+                }
+                if (visited[i] && userAnswers[i] !== null && !marked[i]) {
+                    btn.classList.add('answered');
+                    btn.classList.remove('not-visited', 'marked');
+                }
+                if (!visited[i]) {
+                    btn.className = 'palette-btn not-visited';
+                }
+                if (i === currentIndex) btn.classList.add('current');
+                btn.textContent = i + 1;
+                btn.addEventListener('click', () => {
+                    currentIndex = i;
+                    visited[i] = true;
+                    renderAll();
+                });
+                paletteGrid.appendChild(btn);
+            }
+            // stats
+            const answeredCount = userAnswers.filter(a => a !== null).length;
+            paletteStats.textContent = `${answeredCount}/${totalQuestions}`;
+        }
+
+        function renderAll() {
+            renderQuestion();
+            renderPalette();
+        }
+
+        // ---------- Results ----------
+        function showResults() {
+            let correctCount = 0, wrongCount = 0, skippedCount = 0;
+            const details = [];
+
+            for (let i = 0; i < totalQuestions; i++) {
+                const userAns = userAnswers[i];
+                const correctAns = questions[i].correct;
+                if (userAns === null) {
+                    skippedCount++;
+                    details.push({ index: i, userAns: null, correctAns, status: 'skipped' });
+                } else if (userAns === correctAns) {
+                    correctCount++;
+                    details.push({ index: i, userAns, correctAns, status: 'correct' });
+                } else {
+                    wrongCount++;
+                    details.push({ index: i, userAns, correctAns, status: 'incorrect' });
+                }
+            }
+
+            const totalScore = correctCount * 3 - wrongCount * 1;
+            const attempted = correctCount + wrongCount;
+            const accuracy = attempted > 0 ? ((correctCount / attempted) * 100).toFixed(2) : '0.00';
+
+            // build result HTML
+            let html = `<div class="score-header">
+                <div class="score-badge">Score: ${totalScore} / ${totalQuestions * 3}</div>
+                <div style="font-weight:600;color:#1e293b;">✅ ${correctCount} &nbsp; ❌ ${wrongCount} &nbsp; ⏭️ ${skippedCount} &nbsp; | Accuracy: ${accuracy}%</div>
+            </div>
+            <div class="filter-bar">
+                <button class="filter-btn active" data-filter="all">All</button>
+                <button class="filter-btn" data-filter="correct">Correct</button>
+                <button class="filter-btn" data-filter="incorrect">Incorrect</button>
+                <button class="filter-btn" data-filter="skipped">Unattempted</button>
+            </div>
+            <div class="review-list" id="reviewList"></div>
+            <div class="download-btn">
+                <button class="btn btn-primary" id="downloadReportBtn">📥 Download Performance Report</button>
+            </div>`;
+
+            resultCard.innerHTML = html;
+            resultOverlay.classList.add('active');
+
+            const reviewList = document.getElementById('reviewList');
+
+            function renderReview(filter) {
+                let filtered = details;
+                if (filter === 'correct') filtered = details.filter(d => d.status === 'correct');
+                if (filter === 'incorrect') filtered = details.filter(d => d.status === 'incorrect');
+                if (filter === 'skipped') filtered = details.filter(d => d.status === 'skipped');
+
+                reviewList.innerHTML = '';
+                filtered.forEach(d => {
+                    const q = questions[d.index];
+                    const item = document.createElement('div');
+                    item.className = `review-item ${d.status}`;
+                    let userChoiceText = d.userAns !== null ? q.options[d.userAns] : 'Not attempted';
+                    let correctChoiceText = q.options[d.correctAns];
+                    item.innerHTML = `
+                        <div class="review-question">Q${d.index+1}: ${q.text}</div>
+                        <div class="review-detail">
+                            <div class="review-option ${d.status === 'correct' ? 'correct-ans' : (d.userAns !== null && d.userAns !== d.correctAns ? 'user-wrong' : '')}">
+                                Your answer: ${userChoiceText}
+                            </div>
+                            <div class="review-option correct-ans">Correct answer: ${correctChoiceText}</div>
+                        </div>
+                    `;
+                    reviewList.appendChild(item);
+                });
+                if (window.MathJax && MathJax.typesetPromise) {
+                    MathJax.typesetPromise([reviewList]);
+                }
+            }
+
+            renderReview('all');
+
+            // filter listeners
+            document.querySelectorAll('.filter-btn').forEach(btn => {
+                btn.addEventListener('click', (e) => {
+                    document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+                    e.target.classList.add('active');
+                    renderReview(e.target.dataset.filter);
+                });
+            });
+
+            document.getElementById('downloadReportBtn').addEventListener('click', () => {
+                let report = `MCQ Test Performance Report\nScore: ${totalScore}\nCorrect: ${correctCount}\nIncorrect: ${wrongCount}\nUnattempted: ${skippedCount}\nAccuracy: ${accuracy}%\n\n--- Detailed Solutions ---\n`;
+                details.forEach(d => {
+                    const q = questions[d.index];
+                    report += `Q${d.index+1}: ${q.text}\nYour answer: ${d.userAns !== null ? q.options[d.userAns] : 'Not attempted'}\nCorrect answer: ${q.options[d.correctAns]}\n\n`;
+                });
+                const blob = new Blob([report], { type: 'text/plain' });
+                const a = document.createElement('a');
+                a.href = URL.createObjectURL(blob);
+                a.download = 'mcq_performance_report.txt';
+                a.click();
+                URL.revokeObjectURL(a.href);
+            });
+        }
+
+        // ---------- Initialization ----------
+        function init() {
+            startTimer();
+            renderAll();
+            // MathJax initial typeset
+            if (window.MathJax && MathJax.typesetPromise) {
+                MathJax.typesetPromise([questionArea, paletteGrid]);
+            }
+        }
+
+        window.onload = init;
+    </script>
+</body>
+</html>
