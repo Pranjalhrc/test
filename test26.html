@@ -1,0 +1,469 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MCQ Test · 120 Questions</title>
+    <script>
+        window.MathJax = {
+            tex: { inlineMath: [['$', '$'], ['\\(', '\\)']] },
+            svg: { fontCache: 'global' }
+        };
+    </script>
+    <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-svg.js" async></script>
+    <style>
+        * { box-sizing: border-box; margin: 0; font-family: 'Segoe UI', Roboto, system-ui, sans-serif; }
+        body { background: #f0f4f8; display: flex; justify-content: center; padding: 20px; }
+        .app { max-width: 1400px; width: 100%; display: flex; gap: 24px; position: relative; }
+        .main-panel { flex: 1; background: white; border-radius: 28px; box-shadow: 0 12px 30px rgba(0,0,0,0.08); display: flex; flex-direction: column; padding: 28px 32px; min-height: 85vh; }
+        .header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; border-bottom: 2px solid #e9edf4; padding-bottom: 16px; }
+        .timer { font-size: 1.8rem; font-weight: 700; color: #1e3c72; background: #eef3fe; padding: 8px 22px; border-radius: 60px; letter-spacing: 1px; }
+        .q-counter { font-size: 1.1rem; color: #3a4b6e; background: #e9effb; padding: 6px 20px; border-radius: 40px; font-weight: 600; }
+        .question-area { flex: 1; display: flex; flex-direction: column; margin: 12px 0 20px; overflow-y: auto; max-height: 58vh; padding-right: 6px; }
+        .question-text { font-size: 1.25rem; line-height: 1.6; margin-bottom: 28px; font-weight: 500; color: #0b1e3a; }
+        .options { display: flex; flex-direction: column; gap: 14px; margin-bottom: 12px; }
+        .option { display: flex; align-items: flex-start; gap: 14px; background: #f9fcff; border: 2px solid #dbe2ec; border-radius: 18px; padding: 14px 20px; cursor: pointer; transition: 0.15s; font-size: 1.1rem; line-height: 1.5; }
+        .option:hover { background: #eef4fe; border-color: #b0c7e9; }
+        .option.selected { background: #d9e8ff; border-color: #1e5fbf; box-shadow: 0 0 0 2px rgba(30,95,191,0.15); }
+        .option-letter { font-weight: 700; color: #1e3c72; min-width: 28px; }
+        .nav-buttons { display: flex; flex-wrap: wrap; gap: 12px; margin-top: auto; padding-top: 18px; border-top: 2px solid #e9edf4; }
+        .btn { padding: 12px 24px; border-radius: 60px; border: none; font-weight: 600; font-size: 0.95rem; cursor: pointer; background: white; border: 2px solid #cbd6e6; color: #1e2f4a; transition: 0.1s; display: inline-flex; align-items: center; justify-content: center; gap: 6px; }
+        .btn:hover { background: #f0f6ff; border-color: #8ba9d4; }
+        .btn-primary { background: #1e5fbf; border-color: #1e5fbf; color: white; }
+        .btn-primary:hover { background: #164a9c; border-color: #164a9c; }
+        .btn-warning { background: #f7b731; border-color: #f7b731; color: #1e1e1e; }
+        .btn-warning:hover { background: #e5a61f; border-color: #e5a61f; }
+        .btn-danger { background: #d64545; border-color: #d64545; color: white; }
+        .btn-danger:hover { background: #b83232; border-color: #b83232; }
+        .palette { width: 300px; background: white; border-radius: 28px; box-shadow: 0 12px 30px rgba(0,0,0,0.08); padding: 24px 16px; display: flex; flex-direction: column; height: 85vh; position: sticky; top: 20px; }
+        .palette h3 { text-align: center; margin-bottom: 16px; color: #1e3c72; font-weight: 600; font-size: 1.2rem; }
+        .legend { display: flex; flex-wrap: wrap; gap: 10px 16px; justify-content: center; margin-bottom: 16px; font-size: 0.75rem; color: #2e405b; }
+        .legend span::before { content: "●"; margin-right: 4px; font-size: 1rem; vertical-align: middle; }
+        .legend .answered::before { color: #2ecc71; }
+        .legend .not-answered::before { color: #e74c3c; }
+        .legend .marked::before { color: #f39c12; }
+        .legend .not-visited::before { color: #b0bedb; }
+        .palette-grid { flex: 1; overflow-y: auto; display: grid; grid-template-columns: repeat(5, 1fr); gap: 8px; padding: 6px 4px; align-content: start; }
+        .palette-item { aspect-ratio: 1 / 1; display: flex; align-items: center; justify-content: center; border-radius: 12px; font-weight: 600; font-size: 0.9rem; background: #eef2f8; color: #30445c; border: 2px solid transparent; cursor: pointer; transition: 0.08s; }
+        .palette-item.answered { background: #2ecc71; color: white; border-color: #27ae60; }
+        .palette-item.not-answered { background: #e74c3c; color: white; border-color: #c0392b; }
+        .palette-item.marked { background: #f39c12; color: white; border-color: #d68910; }
+        .palette-item.not-visited { background: #d5deec; color: #3a4b6e; }
+        .palette-item.current { outline: 3px solid #1e5fbf; outline-offset: 2px; }
+        .overlay { position: fixed; inset: 0; background: rgba(10, 20, 40, 0.7); backdrop-filter: blur(6px); display: none; align-items: center; justify-content: center; padding: 30px; z-index: 1000; }
+        .overlay.active { display: flex; }
+        .result-card { background: white; max-width: 1200px; width: 100%; max-height: 90vh; border-radius: 32px; padding: 32px 36px; display: flex; flex-direction: column; overflow: hidden; box-shadow: 0 30px 50px rgba(0,0,0,0.4); }
+        .result-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; flex-wrap: wrap; gap: 16px; }
+        .score-badge { font-size: 2rem; font-weight: 800; background: #1e3c72; color: white; padding: 10px 32px; border-radius: 60px; }
+        .filter-buttons { display: flex; gap: 10px; flex-wrap: wrap; }
+        .filter-btn { padding: 8px 18px; border-radius: 40px; border: 2px solid #cbd6e6; background: white; font-weight: 600; cursor: pointer; transition: 0.1s; }
+        .filter-btn.active { background: #1e5fbf; border-color: #1e5fbf; color: white; }
+        .review-list { overflow-y: auto; flex: 1; padding-right: 8px; display: flex; flex-direction: column; gap: 14px; margin-bottom: 16px; }
+        .review-item { border-left: 8px solid #b0bedb; background: #f9fcff; border-radius: 16px; padding: 16px 20px; font-size: 0.98rem; line-height: 1.5; }
+        .review-item.correct { border-left-color: #2ecc71; background: #f0fff6; }
+        .review-item.incorrect { border-left-color: #e74c3c; background: #fff5f5; }
+        .review-item.skipped { border-left-color: #b0bedb; background: #f5f7fb; }
+        .review-q { font-weight: 600; color: #0b1e3a; }
+        .review-ans { margin-top: 6px; display: flex; gap: 24px; flex-wrap: wrap; font-size: 0.92rem; }
+        .review-ans span { font-weight: 500; }
+        .correct-text { color: #1e7e34; font-weight: 700; }
+        .wrong-text { color: #b71c1c; font-weight: 700; }
+        .download-btn { background: #1e5fbf; border: none; color: white; padding: 10px 28px; border-radius: 40px; font-weight: 600; cursor: pointer; display: inline-flex; align-items: center; gap: 8px; }
+        .download-btn:hover { background: #164a9c; }
+    </style>
+</head>
+<body>
+<div class="app" id="app">
+    <div class="main-panel">
+        <div class="header">
+            <div class="q-counter" id="qCounter">Question 1 / 120</div>
+            <div class="timer" id="timerDisplay">120:00</div>
+        </div>
+        <div class="question-area" id="questionArea">
+            <div class="question-text" id="questionText"></div>
+            <div class="options" id="optionsContainer"></div>
+        </div>
+        <div class="nav-buttons">
+            <button class="btn" id="prevBtn" onclick="prevQuestion()">← Previous</button>
+            <button class="btn btn-warning" id="markBtn" onclick="toggleMark()">⭐ Mark for Review</button>
+            <button class="btn" id="clearBtn" onclick="clearResponse()">✖ Clear Response</button>
+            <button class="btn btn-primary" id="nextBtn" onclick="nextQuestion()">Next →</button>
+            <button class="btn btn-danger" id="submitBtn" onclick="submitTest()" style="margin-left:auto;">✅ Submit</button>
+        </div>
+    </div>
+    <div class="palette">
+        <h3>Question Palette</h3>
+        <div class="legend">
+            <span class="answered">Answered</span>
+            <span class="not-answered">Not Answered</span>
+            <span class="marked">Marked</span>
+            <span class="not-visited">Not Visited</span>
+        </div>
+        <div class="palette-grid" id="paletteGrid"></div>
+    </div>
+</div>
+<div class="overlay" id="resultOverlay">
+    <div class="result-card">
+        <div class="result-header">
+            <div>
+                <span class="score-badge" id="scoreDisplay">0</span>
+                <span style="margin-left:18px;font-weight:600;color:#1e3c72;" id="accuracyDisplay">Accuracy: 0%</span>
+            </div>
+            <div class="filter-buttons" id="filterButtons">
+                <button class="filter-btn active" data-filter="all" onclick="setFilter('all')">All</button>
+                <button class="filter-btn" data-filter="correct" onclick="setFilter('correct')">✅ Correct</button>
+                <button class="filter-btn" data-filter="incorrect" onclick="setFilter('incorrect')">❌ Incorrect</button>
+                <button class="filter-btn" data-filter="unattempted" onclick="setFilter('unattempted')">⏭️ Unattempted</button>
+            </div>
+            <button class="download-btn" onclick="downloadReview()">⬇ Download Review</button>
+        </div>
+        <div class="review-list" id="reviewList"></div>
+    </div>
+</div>
+
+<script>
+    // =======================  QUESTION DATA (1-90 Maths, 91-120 GK) =======================
+    const questions = [
+        // ---------- MATHEMATICS (1-90) ----------
+        { text: "The equation f(x) is given as $x^{3}+4x+1=0.$ Consider the initial approximation at $x=1$, then the value of $x_{1}$ is given as by Newton-Raphson method.", options: ["1.67", "1.87", "1.86", "1.85"], correct: 0 },
+        { text: "What is the order of convergence of Regular-Falsi method?", options: ["2.312", "1.862", "1.321", "1.618"], correct: 3 },
+        { text: "The Newton-Raphson method formula for finding the square root of a real number R from the equation $x^{2}-R=0$ is:", options: ["$x_{i+1}=\\frac{x_{i}}{2}$", "$x_{i+1}=\\frac{3x_{i}}{2}$", "$x_{i+1}=\\frac{1}{2}(x_{i}+\\frac{R}{x_{i}})$", "$x_{i+1}=\\frac{1}{2}(3x_{i}-\\frac{R}{x_{i}})$"], correct: 2 },
+        { text: "Let the function $f(x)=(x+1)(x-1)(x-3).$ If the bisection algorithm is applied with initial interval [-4, 4], how many roots of f(x) will you be able to compute?", options: ["1", "2", "3", "None of these"], correct: 2 },
+        { text: "Consider the initial value problem $\\frac{dy}{dx}=\\frac{y-2}{x+2}, y(2)=-1$. Using a single step of Euler's method, what is the approximate solution at $x=2.5?$", options: ["-1", "-1.375", "-0.625", "0.25"], correct: 1 },
+        { text: "To ensure that the system of equations: $2x_{1}+7x_{2}-11x_{3}=6, x_{1}+2x_{2}+x_{3}=-5, 7x_{1}+5x_{2}+2x_{3}=17$ converges using Gauss-Seidel method, one can rewrite the above equations as follows:", options: ["$\\begin{pmatrix} 2 & 7 & -11 \\\\ 1 & 2 & 1 \\\\ 7 & 5 & 2 \\end{pmatrix}\\begin{pmatrix} x_{1} \\\\ x_{2} \\\\ x_{3} \\end{pmatrix}=\\begin{pmatrix} 6 \\\\ -5 \\\\ 17 \\end{pmatrix}$", "$\\begin{pmatrix} 7 & 5 & 2 \\\\ 1 & 2 & 1 \\\\ 2 & 7 & -11 \\end{pmatrix}\\begin{pmatrix} x_{1} \\\\ x_{2} \\\\ x_{3} \\end{pmatrix}=\\begin{pmatrix} 17 \\\\ -5 \\\\ 6 \\end{pmatrix}$", "$\\begin{pmatrix} 7 & 5 & 2 \\\\ 1 & 2 & 1 \\\\ 2 & 7 & -11 \\end{pmatrix}\\begin{pmatrix} x_{1} \\\\ x_{2} \\\\ x_{3} \\end{pmatrix}=\\begin{pmatrix} 6 \\\\ -5 \\\\ 17 \\end{pmatrix}$", "The equations cannot be rewritten in a form of ensure convergence"], correct: 1 },
+        { text: "While solving by Gauss-Seidel method, which of the following is the first iterative solution of the system: $x-2y=1, x+4y=4?$ (with initial guess (0, 0)).", options: ["(1, 0.75)", "(0.25, 1)", "(0, 0)", "(1, 0.65)"], correct: 0 },
+        { text: "The advantage of the Newton-Raphson method is:", options: ["Less number of iterations", "Less computation time", "Applicable for large power system network", "All of these"], correct: 0 },
+        { text: "What is the polynomial of the following data? x: 4, 6, 8, 10 and f(x): 1, 3, 8, 16", options: ["$f(x)=\\frac{3x^{2}+22x+36}{8}$", "$f(x)=\\frac{3x^{2}-19x+36}{8}$", "$f(x)=\\frac{3x^{2}-22x+48}{8}$", "$f(x)=3x^{2}-12x+36$"], correct: 2 },
+        { text: "Find f(5) using Newton-Gregory forward interpolation formula from the following table: x: 0, 2, 4, 6, 8 and f(x): 4, 26, 58, 112, 466", options: ["71.109375", "61.103975", "70.103975", "71.103957"], correct: 0 },
+        { text: "Using the forward divided difference approximation with a step size of 0.2, the derivative of the function at $x=2$ is given as x: 1.8, 2.0, 2.2, 2.4, 2.6 and f(x): 6.0496, 7.3890, 9.0250, 11.023, 13.464", options: ["6.697", "7.389", "7.438", "8.180"], correct: 3 },
+        { text: "Use Euler's method to calculate the approximation of $y(0.2)$ with $h=0.1,$ where y(x) is the solution of the initial value problem that is as follows: $y''+xy'+y=0, y(0)=2, y'(0)=3.$", options: ["2.54", "2.52", "2.45", "2.58"], correct: 3 },
+        { text: "Use two steps of Euler's method with $h=0.1$ on $y'=x\\sqrt{y}, y(1)=4,$ to three decimal places", options: ["4.413", "4.428", "4.425", "4.420"], correct: 2 },
+        { text: "The two segment trapezoidal rule of integration is exact for integrating at most order polynomials.", options: ["First", "Second", "Third", "Fourth"], correct: 0 },
+        { text: "The velocity of a body is given by $v(t)=\\begin{cases} 2t, & 1\\le t\\le5 \\\\ 5t^{2}+3, & 5\\le t\\le14 \\end{cases}$ where t is given in seconds and v is given in $m/s.$ Use the two segment trapezoidal rule to find the distance covered by the body from $t=2$ to $t=9$ seconds.", options: ["548.9 m", "1260.9 m", "1039.7 m", "935.5 m"], correct: 1 },
+        { text: "The highest order of polynomial integrand for which Simpson's $1/3$ rule of integration is exact is:", options: ["First", "Second", "Third", "Fourth"], correct: 1 },
+        { text: "Using Simpson's 1/3 rule of integration to integrate the function $f(x)=\\frac{3}{5}x^{2}+\\frac{9}{5}$ between $x=0,$ and $x=1,$ using the least number of equal sub-intervals. Then the value of the integral is:", options: ["1", "2", "3", "0"], correct: 1 },
+        { text: "The error term for the trapezoidal rule used to calculate the approximate value of the integral $\\int_{a}^{b}f(x)dx$ is given by", options: ["$E_{r}=\\frac{(b-a)^{3}}{12}f''(c), a\\le c\\le b$", "$E_{r}=\\frac{(b-a)^{5}}{90}f^{(4)}(c), a\\le c\\le b$", "$E_{r}=\\frac{3(b-a)^{5}}{80}f^{(4)}(c), a\\le c\\le b$", "$E_{r}=\\frac{8(b-a)^{7}}{945}f^{(6)}(c), a\\le c\\le b$"], correct: 0 },
+        { text: "The error term for the Simpson's $3/8$ rule used to calculate the approximate value of the integral $\\int_{a}^{b}f(x)dz$ is given by", options: ["$E_{r}=-\\frac{(b-a)^{3}}{12}f''(c)$", "$E_{r}=-\\frac{(b-a)^{5}}{90}f^{(4)}(c), a\\le c\\le b$", "$E_{r}=-\\frac{(b-a)^{5}}{6480}f^{(4)}(c), a\\le c\\le b$", "$E_{r}=\\frac{8(b-a)^{7}}{945}f^{(6)}(c), a\\le c\\le b$"], correct: 2 },
+        { text: "The second order Runge-Kutta method uses \\dots\\dots as a predictor.", options: ["Backward order method", "Forward Euler method", "Midpoint method", "Multipoint method"], correct: 1 },
+        { text: "In which of the following method, we approximate the curve of solution by the tangent in each interval.", options: ["Picard's method", "Euler's method", "Newton's method", "Runge Kutta method"], correct: 1 },
+        { text: "Bessel's formula is most approximate when p lies between", options: ["-0.25 and 0.25", "0.25 and 0.75", "0.75 and 1", "None of these"], correct: 0 },
+        { text: "Gauss forward interpolation formula is used to interpolate the values of y for", options: ["$0<p<1$", "$-1<p<0$", "$p>1$", "All of these"], correct: 0 },
+        { text: "To evaluate the integral by Simpson's $3/8$ rule, the number of intervals should be", options: ["Even", "Odd", "Multiple of 3", "No restriction on the intervals"], correct: 2 },
+        { text: "For a system with one degree of freedom, Hamiltonian is $H=\\sqrt{p^{2}+1}-x.$ The shape of x-t graph for the particle is", options: ["Hyperbola", "Parabola", "Ellipse", "Straight line"], correct: 0 },
+        { text: "The Lagrangian of a system is $L=\\frac{13}{2}m\\dot{x}^{2}+4m\\dot{x}\\dot{y}+3m\\dot{y}^{2}-mg(x+2y).$ Which one of the following is conserved?", options: ["$3x-11y$", "$x+11y$", "$11x-y$", "$11x+y$"], correct: 3 },
+        { text: "A system with one degree of freedom has Lagrangian, $L=\\frac{1}{2}m\\dot{x}^{2}+mAtx.$ The equation of x(t) under the initial conditions $t=0, x=0, p=mv_{0}$ is:", options: ["$x(t)=v_{0}t-\\frac{A}{2}t^{3}$", "$x(t)=v_{0}t+\\frac{A}{2}t^{3}$", "$x(t)=v_{0}t-\\frac{A}{6}t^{3}$", "$x(t)=v_{0}t+\\frac{A}{6}t^{3}$"], correct: 3 },
+        { text: "Hamiltonian of a one dimensional dynamical system is given by $H=\\frac{1}{2}(\\alpha p^{2}+\\beta q^{2}+2\\gamma pq),$ where $\\alpha, \\beta, \\gamma$ are constants. Then the Poisson bracket $\\{p, H\\}$ is equal to", options: ["$\\alpha q-\\gamma p$", "$-\\beta q-\\gamma p$", "$\\beta q+\\gamma p$", "$-\\alpha q+\\gamma p$"], correct: 1 },
+        { text: "Generalized coordinates", options: ["Depends on each other", "Independent on each other", "Necessarily spherical coordinates", "Necessarily Cartesian coordinates"], correct: 0 },
+        { text: "If the Lagrangian does not depend on time explicitly", options: ["The kinetic energy is constant", "The Hamiltonian cannot be constant", "The Hamiltonian is constant", "The potential energy is constant"], correct: 2 },
+        { text: "Hamiltonian canonical equation of motion for a conservative system are", options: ["$\\frac{dq_{i}}{dt}=\\frac{\\partial H}{\\partial p_{i}}$ and $\\frac{dp_{i}}{dt}=-\\frac{\\partial H}{\\partial q_{i}}$", "$\\frac{dq_{i}}{dt}=\\frac{\\partial H}{\\partial p_{i}}$ and $\\frac{dp_{i}}{dt}=\\frac{\\partial H}{\\partial q_{i}}$", "$\\frac{dq_{i}}{dt}=-\\frac{\\partial H}{\\partial p_{i}}$ and $\\frac{dp_{i}}{dt}=\\frac{\\partial H}{\\partial q_{i}}$", "$\\frac{dq_{i}}{dt}=-\\frac{\\partial H}{\\partial p_{i}}$ and $\\frac{dp_{i}}{dt}=-\\frac{\\partial H}{\\partial q_{i}}$"], correct: 0 },
+        { text: "A rigid body rotates with an angular momentum L, if its kinetic energy is halved, the angular momentum becomes", options: ["L", "$L/2$", "2L", "$L/\\sqrt{2}$"], correct: 3 },
+        { text: "A particle performs uniform circular motion with an angular momentum L. If the frequency of particle's motion is doubled and its kinetic energy is halved, the angular momentum becomes", options: ["2L", "4L", "$L/4$", "$L/2$"], correct: 2 },
+        { text: "The moment of inertia of a door of mass m, length $2l$ and width l about its longer side is:", options: ["$\\frac{11ml^{2}}{24}$", "$\\frac{5ml^{2}}{24}$", "$\\frac{ml^{2}}{3}$", "None of these"], correct: 2 },
+        { text: "If $n \\in N,$ then $3n^{5}+7n$ is divisible by", options: ["3", "4", "5", "7"], correct: 2 },
+        { text: "The value of $\\frac{d}{dx}(\\int_{\\sin^{2}x}^{2\\sin x}e^{t^{2}}dt)$ at $x=\\pi$ is:", options: ["2", "-2", "1", "-1"], correct: 1 },
+        { text: "The sequence $\\{\\frac{2n^{2}+1}{2n^{2}-1}\\}$ converges to:", options: ["0", "1", "2", "4"], correct: 1 },
+        { text: "A function f(x) is defined on [0, 1] by the function $f(x)=\\begin{cases} 1, & \\text{if } x \\text{ is rational} \\\\ -1, & \\text{if } x \\text{ is irrational} \\end{cases}$ then f(x) is:", options: ["Riemann integrable", "Not Riemann integrable", "Continuous everywhere", "Continuous at irrationals"], correct: 1 },
+        { text: "A function f is continuous in a closed interval [a, b] attains its:", options: ["Supremum only", "Infimum only", "Supremum and infimum", "None of these"], correct: 2 },
+        { text: "The series whose nth term $a_{n}=\\frac{n^{2}-1}{n^{3}+1}x^{n}$ is:", options: ["Converges for $x<1$ and diverges for $x\\ge1$", "Converges for $x>1$ and diverges for $x\\le1$", "Converges for $x\\ge1$ and diverges for $x<1$", "All of the above"], correct: 0 },
+        { text: "The function $f(x)=\\begin{cases} \\frac{\\sin 2x}{x}, & \\text{for } x \\ne 0 \\\\ 1, & \\text{for } x = 0 \\end{cases}$ is:", options: ["Removable discontinuity at origin", "Continuity at origin", "Discontinuity except origin", "None of these"], correct: 0 },
+        { text: "The statement that $\\int_{a}^{b}f dx$ exists over [a, b] then function $f(x)$ is:", options: ["Bounded and integrable", "Not bounded and integrable", "Not bounded and not integrable", "Bounded but not integrable"], correct: 0 },
+        { text: "Let $f\\in R[a,b]$, then the function F defined on [a, b] by $F(x)=\\int_{a}^{x}f(t)dt$ is:", options: ["Continuous as [a, x]", "Continuous on [a, b]", "Discontinuous as [a, b]", "Discontinuous as (a, x)"], correct: 1 },
+        { text: "The radius of convergence of the power series $\\sum_{n=0}^{\\infty}\\frac{n!}{n^{n}}x^{n}$ is:", options: ["$1/4$", "4", "$1/e$", "e"], correct: 3 },
+        { text: "Which is measurable?", options: ["Open set", "Closed set", "Both (a) and (b)", "None of these"], correct: 2 },
+        { text: "If A and B are two sets and $m^{*}(A)=0$ then $m^{*}(B)$ is equal to", options: ["$m^{*}(A\\cup B)$", "$m^{*}(A\\cap B)$", "$m^{*}(A\\wedge B)$", "$m^{*}(A-B)$"], correct: 0 },
+        { text: "If f and g are measurable function then", options: ["$f^{2}$ is measurable", "$f+g$ is measurable", "$f-g$ is measurable", "All of these"], correct: 3 },
+        { text: "Let (X, d) be a metric space. Which of the following is not a metric on X?", options: ["$d_{1}(x,y)=kd(x,y)$, where k is a positive number", "$d_{2}(x,y)=\\frac{d(x,y)}{1+d(x,y)}$", "$d_{3}(x,y)=\\frac{kd(x,y)}{1+kd(x,y)}$", "$d_{4}(x,y)=\\frac{1-d(x,y)}{1+d(x,y)}$"], correct: 3 },
+        { text: "The arbitrary intersection of open sets in a metric space:", options: ["Open", "Not necessarily open", "Closed", "Not necessarily closed"], correct: 1 },
+        { text: "A closed ball in a metric space is", options: ["A closed set", "Not necessarily closed set", "An open set", "Not an open set"], correct: 0 },
+        { text: "In a normed linear space every convergent sequence is", options: ["Only sequence", "Convergent", "Cauchy sequence", "None of these"], correct: 2 },
+        { text: "Let X and Y be normed linear space and let T be a continuous linear transform i.e. $T^{*}$ on $X^{*}$ into $Y^{*}$ then", options: ["$T^{*}x=Tx$", "$\\|T^{*}\\|=\\|T\\|$", "Both (a) and (b)", "None of these"], correct: 2 },
+        { text: "A subset M of X is said to be compact if every sequence in M has a", options: ["Convergent sub-sequence", "Convergent sequence", "Both (a) and (b)", "None of these"], correct: 0 },
+        { text: "If $z=\\sin^{-1}(\\frac{\\sqrt{x^{2}+y^{2}}}{x+y}),$ then $x\\frac{\\partial z}{\\partial x}+y\\frac{\\partial z}{\\partial y}$ is", options: ["0", "$\\lambda=0$", "1", "2"], correct: 0 },
+        { text: "Every cyclic group of prime order is:", options: ["Abelian group", "Normal group", "Cyclic group", "Sub group"], correct: 2 },
+        { text: "A one-one mapping of a finite group onto itself is:", options: ["Homomorphism", "Automorphism", "Isomorphism", "Holomorphism"], correct: 1 },
+        { text: "If I is the set of integers and define $a\\oplus b=a+b+1$ and $a\\otimes b=a+b+ab$ then the ring $(I,\\oplus,\\otimes)$ is:", options: ["Field", "Commutative ring", "Integral domain", "None of these"], correct: 2 },
+        { text: "The ring of complex numbers $C=\\{x+iy: x,y \\text{ are real number}, i=\\sqrt{-1}\\}$ is:", options: ["Not an integral domain", "Ordered set", "An integral domain", "None of these"], correct: 2 },
+        { text: "Let $a\\in G$ and $k\\in I$ then which of the following is true if $O(a)=n?$", options: ["$O(a^{k})<n$", "$O(a^{k})=n$", "$O(a^{k})\\le n$", "$O(a^{k})\\ge n$"], correct: 2 },
+        { text: "Cyclic group G whose order is 12 has generators:", options: ["$a, a^{2}, a^{3}$", "$a, a^{5}, a^{7}, a^{11}$", "$a, a^{3}, a^{5}, a^{7}$", "$a^{3}, a^{5}, a^{7}, a^{11}$"], correct: 1 },
+        { text: "The inverse of $\\begin{pmatrix} 1 & 2 & 3 & 4 & 5 \\\\ 4 & 5 & 3 & 1 & 2 \\end{pmatrix}$ is:", options: ["$\\begin{pmatrix} 4 & 5 & 3 & 1 & 2 \\\\ 1 & 2 & 3 & 4 & 5 \\end{pmatrix}$", "$\\begin{pmatrix} 1 & 2 & 3 & 4 & 5 \\\\ 3 & 1 & 2 & 5 & 4 \\end{pmatrix}$", "$\\begin{pmatrix} 1 & 2 & 3 & 4 & 5 \\\\ 5 & 3 & 4 & 1 & 2 \\end{pmatrix}$", "$\\begin{pmatrix} 1 & 2 & 3 & 4 & 5 \\\\ 2 & 1 & 3 & 5 & 4 \\end{pmatrix}$"], correct: 0 },
+        { text: "If $R=\\{\\begin{pmatrix} a & -b \\\\ b & a \\end{pmatrix}\\mid a,b \\text{ are real numbers}\\}$ under matrix addition and matrix multiplication, R is", options: ["A field", "Not a ring", "A non-commutative ring", "A commutative ring but not a field"], correct: 0 },
+        { text: "The number of elements of order 5 in the symmetric group $S_{5}$ is:", options: ["5", "12", "20", "24"], correct: 3 },
+        { text: "Let G be a group of order 15, then number of Sylow subgroup of G of order 3 is:", options: ["0", "1", "3", "5"], correct: 1 },
+        { text: "Let p is a prime number and G is a non-abelian group of order $p^{3}$ then the center of G has:", options: ["Exactly $p^{3}$ elements", "Exactly p elements", "Exactly $p-1$ elements", "None of these"], correct: 1 },
+        { text: "Let C [0, 1] be the set of all continuous functions defined in the interval [0, 1] on this set define + and point then C [0, 1] is", options: ["A field", "An integral domain but not a field", "A group but not a ring", "A ring but not an integral domain"], correct: 1 },
+        { text: "How many people must be in a room to guarantee that 3 of them were born in the same month?", options: ["36", "25", "33", "93"], correct: 1 },
+        { text: "In a get together party, every person present shakes the hand of every other person. If there were 91 handshakes in all, how many persons were present at the party?", options: ["15", "14", "16", "17"], correct: 1 },
+        { text: "In how many ways 4 boys and 3 girls can be seated in a row so that they are alternate.", options: ["144", "288", "12", "256"], correct: 0 },
+        { text: "A question paper has two parts A and B, each containing 10 questions. If a student has to choose 8 from part A and 5 from part B, in how many ways can the student choose the questions?", options: ["40", "320", "12750", "11340"], correct: 3 },
+        { text: "How many ways can 4 prizes be given to 3 boys, if each boy is eligible for all the prizes?", options: ["256", "24", "12", "None of these"], correct: 1 },
+        { text: "In class, students want to join sports. 15 people will join football, 24 people will join basketball and 9 people will join both. How many people are there in a class?", options: ["39", "18", "48", "30"], correct: 3 },
+        { text: "If A and B be two sets containing 19 and 27 elements respectively, then the minimum number of elements in $A \\cup B$ is", options: ["19", "27", "12", "46"], correct: 1 },
+        { text: "In a group of 30 peoples, there are 20 people who speak English, 12 people who speak Hindi and 24 people who speak Marathi, 15 persons speak both English and Hindi, 12 persons speak both Hindi and Marathi whereas 10 persons speak both Marathi and English. How many people speak all the three languages?", options: ["10", "11", "12", "13"], correct: 1 },
+        { text: "Which of the following is not a topological property?", options: ["Openness", "Closeness", "Compactness", "Boundedness"], correct: 3 },
+        { text: "Let X be any set and $\\tau=\\{\\phi,X\\}.$ Then $\\tau$ is called", options: ["Indiscrete topology", "Discrete topology", "Closed", "None of these"], correct: 0 },
+        { text: "If $(X, \\tau)$ is a topological space where $X=\\{a,b,c\\}$. Then which of the following is not a topology on X.", options: ["$\\tau_{1}=\\{\\phi,X\\}$", "$\\tau_{2}=\\{\\phi,\\{a\\},X\\}$", "$\\tau_{3}=\\{\\phi,\\{a\\},\\{b,c\\},X\\}$", "$\\tau_{4}=\\{\\phi,\\{a,b\\},\\{b,c\\},X\\}$"], correct: 3 },
+        { text: "Let X be an uncountable set and $\\tau$ be the family of subsets of X consisting of $\\phi$ and all complements countable subsets of X. Then $\\tau$ is called", options: ["Discrete topology", "Usual topology", "Co-complements topology", "Indiscrete topology"], correct: 2 },
+        { text: "Let $(X, \\tau)$ be a discrete topological space. Then which of the following is base for topology $\\tau$.", options: ["$B=\\{\\{x\\} \\mid x\\in X\\}$", "$B=\\{X\\}$", "$B=\\{\\phi,X\\}$", "None of these"], correct: 0 },
+        { text: "In a topological space $(X, \\tau)$, if every open cover has a countable subcover, then $(X, \\tau)$ is called", options: ["Separable space", "Countable space", "Lindelof space", "Category"], correct: 2 },
+        { text: "A set X is closed and bounded if X is", options: ["Compact subset of $R^{n}$", "[0, 1]", "Compact subset of R", "All of these"], correct: 3 },
+        { text: "Which of the following space is connected?", options: ["Indiscrete space", "Cofinite space on a finite set", "R with usual topology", "All of these"], correct: 0 },
+        { text: "What is true for following topologies on $X=\\{a,b\\};$ $\\tau_{1}=\\{\\phi,X,\\{c\\}\\}$ $\\tau_{2}=\\{\\phi,X,\\{a\\},\\{b\\},\\{a,b\\}\\}$ $\\tau_{3}=\\{\\phi,X,\\{a\\},\\{b\\},\\{a,b\\},\\{a,c\\}\\}$", options: ["$\\tau_{2}$ is finer than $\\tau_{1}$", "$\\tau_{3}$ is finer than $\\tau_{1}$", "$\\tau_{3}$ is finer than $\\tau_{2}$", "None of these"], correct: 3 },
+        { text: "Let $A^{\\circ}$ is the interior of A, then", options: ["$A^{\\circ}$ is smallest open set contained in A", "$A^{\\circ}=\\phi$", "$A^{\\circ}$ is largest open set contained in A", "None of these"], correct: 2 },
+        { text: "A necessary condition for functional $I[y(x)]=\\int_{a}^{b}f(x,y,y')dx$ to be extremum is:", options: ["$\\frac{\\partial f}{\\partial y}-\\frac{d}{dx}(\\frac{\\partial f}{\\partial y'})=0$", "$\\frac{\\partial f}{\\partial y}+\\frac{d}{dx}(\\frac{\\partial f}{\\partial y'})=0$", "$\\frac{\\partial f}{\\partial x}-\\frac{d}{dy}(\\frac{\\partial f}{\\partial x'})=0$", "$\\frac{\\partial f}{\\partial x}+\\frac{d}{dy}(\\frac{\\partial f}{\\partial x'})=0$"], correct: 0 },
+        { text: "Which one of the following is a linear functional:", options: ["$J[y(x)]=\\int_{a}^{b}(y'+2x)dx$", "$J[y(x)]=\\int_{a}^{b}(y'+2y^{2})dx$", "$J[y(x)]=\\int_{a}^{b}(y'^{2}+2y^{2})dx$", "$J[y(x)]=\\int_{a}^{b}(y'+2y)dx$"], correct: 0 },
+        // ---------- GK (91-120) ----------
+        { text: "Nobel Peace Prize 2026 laureate Navi Pillay is a renowned expert in:", options: ["International law", "Astrophysics", "Microeconomics", "Marine biology"], correct: 0 },
+        { text: "The 2026 Winter Olympics and the 2026 Winter Paralympics were both hosted at:", options: ["Beijing", "Milano Cortina", "Sochi", "PyeongChang"], correct: 1 },
+        { text: "The \"Kar Saathi\" chatbot, launched with PRARAMBH 2026, answers queries related to:", options: ["Sports", "Taxation", "Railways", "Agriculture"], correct: 1 },
+        { text: "The Satpura Tiger Reserve, in news for Barasingha conservation (October 2026), is in which state?", options: ["Uttar Pradesh", "Madhya Pradesh", "Rajasthan", "Maharashtra"], correct: 1 },
+        { text: "The Union Minister for Youth Affairs and Sports associated with the BRICS Indigenous Sports Games (October 2026) announcement was:", options: ["Dr. Mansukh Mandaviya", "Amit Shah", "Nitin Gadkari", "Piyush Goyal"], correct: 0 },
+        { text: "Which of the following is the most learner-centred assessment approach?", options: ["Annual written examination", "Continuous and comprehensive assessment with feedback", "Single viva at year end", "Ranking by memory"], correct: 1 },
+        { text: "A variable that the researcher measures as an outcome (e.g., achievement score) is the:", options: ["Independent variable", "Dependent variable", "Control variable", "Extraneous variable"], correct: 1 },
+        { text: "\"Standard deviation\" is a measure of:", options: ["Central tendency", "Dispersion/scatter of scores", "Skewness", "Correlation"], correct: 1 },
+        { text: "The \"Montessori method\" of teaching emphasizes:", options: ["Rote memorization", "Child-centred learning through self-directed activity", "Strict discipline", "Lecture method"], correct: 1 },
+        { text: "Triangulation in research means:", options: ["Using three researchers", "Corroborating findings using multiple methods or data sources", "Drawing triangular graphs", "Studying only three variables"], correct: 1 },
+        { text: "Which of the following is an operating system for mobile phones?", options: ["Android", "MS Word", "Excel", "Photoshop"], correct: 0 },
+        { text: "\"Optical fibre\" in ICT is used for:", options: ["High-speed data transmission using light", "Cooling processors", "Printing photos", "Sound recording"], correct: 0 },
+        { text: "Which of the following is an ICT tool for online meetings?", options: ["Zoom/Google Meet", "Tally", "Paint", "Calculator"], correct: 0 },
+        { text: "\"E-waste\" management in India is regulated under the E-Waste (Management) Rules, which fall under:", options: ["Environment (Protection) Act framework", "Companies Act", "Indian Penal Code", "Copyright Act"], correct: 0 },
+        { text: "A \"blog\" is:", options: ["An online journal regularly updated with posts", "A hardware device", "A network cable", "A tax form"], correct: 0 },
+        { text: "The \"Biosphere reserve\" concept aims at:", options: ["Conserving biodiversity while allowing sustainable local use", "Complete exclusion of humans", "Promoting mining", "Building industrial zones"], correct: 0 },
+        { text: "Which of the following gases has the highest global warming potential per molecule?", options: ["Carbon dioxide", "Methane", "Water vapour", "Nitrogen"], correct: 1 },
+        { text: "The \"Great Smog\" of London (1952) led to the world's first:", options: ["Clean Air legislation", "Water Act", "Wildlife Act", "Nuclear treaty"], correct: 0 },
+        { text: "The headquarters of the Ramsar Convention secretariat is in:", options: ["Gland, Switzerland", "New York", "Nairobi", "Paris"], correct: 0 },
+        { text: "\"Rainwater harvesting\" primarily helps in:", options: ["Increasing floods", "Recharging groundwater and reducing runoff", "Raising temperature", "Reducing soil fertility"], correct: 1 },
+        { text: "The Third Battle of Panipat (1761) was fought between the Marathas and:", options: ["British", "Ahmad Shah Abdali", "Mughals", "Rajputs"], correct: 1 },
+        { text: "The \"Swadeshi Movement\" was launched as a reaction to:", options: ["Partition of Bengal, 1905", "Simon Commission", "Rowlatt Act", "Salt Tax"], correct: 0 },
+        { text: "Who founded the Ramakrishna Mission?", options: ["Ramakrishna Paramhansa", "Swami Vivekananda", "Dayanand Saraswati", "Aurobindo Ghosh"], correct: 1 },
+        { text: "The Guru Shikhar peak is the highest point of which range?", options: ["Aravalli", "Vindhya", "Satpura", "Sahyadri"], correct: 0 },
+        { text: "Which of the following is a cold ocean current?", options: ["Gulf Stream", "Labrador Current", "Kuroshio Current", "Agulhas Current"], correct: 1 },
+        { text: "The \"Fraternity\" mentioned in the Preamble means:", options: ["Brotherhood among Indians", "War preparedness", "Religious freedom", "Economic equality"], correct: 0 },
+        { text: "The Finance Commission's recommendations cover the distribution of:", options: ["Defence budget", "Tax revenues between the Union and States", "International aid", "Election expenses"], correct: 1 },
+        { text: "A \"caretaker government\" functions mainly to:", options: ["Frame new laws", "Conduct routine administration until a new government is formed after elections", "Amend the Constitution", "Appoint judges"], correct: 1 },
+        { text: "\"Human Development Index (HDI)\" is published by:", options: ["World Bank", "UNDP", "IMF", "WTO"], correct: 1 },
+        { text: "The unemployment rate is calculated as:", options: ["Unemployed persons ÷ total population × 100", "Unemployed persons ÷ labour force × 100", "Employed ÷ unemployed × 100", "GDP growth ÷ population × 100"], correct: 1 }
+    ];
+
+    // =======================  STATE  =======================
+    let currentIndex = 0;
+    let userAnswers = new Array(120).fill(null);
+    let marked = new Array(120).fill(false);
+    let visited = new Array(120).fill(false);
+    let timeLeft = 120 * 60;
+    let timerInterval = null;
+    let testSubmitted = false;
+
+    // =======================  ELEMENTS  =======================
+    const questionText = document.getElementById('questionText');
+    const optionsContainer = document.getElementById('optionsContainer');
+    const qCounter = document.getElementById('qCounter');
+    const timerDisplay = document.getElementById('timerDisplay');
+    const paletteGrid = document.getElementById('paletteGrid');
+    const markBtn = document.getElementById('markBtn');
+    const resultOverlay = document.getElementById('resultOverlay');
+    const scoreDisplay = document.getElementById('scoreDisplay');
+    const accuracyDisplay = document.getElementById('accuracyDisplay');
+    const reviewList = document.getElementById('reviewList');
+
+    // =======================  RENDER  =======================
+    function renderQuestion() {
+        if (testSubmitted) return;
+        const q = questions[currentIndex];
+        questionText.innerHTML = `Q${currentIndex + 1}. ${q.text}`;
+        let html = '';
+        q.options.forEach((opt, idx) => {
+            const selected = userAnswers[currentIndex] === idx;
+            html += `<div class="option ${selected ? 'selected' : ''}" onclick="selectOption(${idx})">
+                <span class="option-letter">${String.fromCharCode(65 + idx)}.</span>
+                <span>${opt}</span>
+            </div>`;
+        });
+        optionsContainer.innerHTML = html;
+        qCounter.textContent = `Question ${currentIndex + 1} / 120`;
+        if (marked[currentIndex]) {
+            markBtn.style.background = '#f39c12';
+            markBtn.style.borderColor = '#d68910';
+            markBtn.style.color = 'white';
+        } else {
+            markBtn.style.background = 'white';
+            markBtn.style.borderColor = '#cbd6e6';
+            markBtn.style.color = '#1e2f4a';
+        }
+        visited[currentIndex] = true;
+        updatePalette();
+        if (window.MathJax && MathJax.typesetPromise) {
+            MathJax.typesetPromise([questionText, optionsContainer]);
+        }
+    }
+
+    function updatePalette() {
+        paletteGrid.innerHTML = '';
+        for (let i = 0; i < 120; i++) {
+            const div = document.createElement('div');
+            div.className = 'palette-item';
+            if (userAnswers[i] !== null) div.classList.add('answered');
+            else if (visited[i]) div.classList.add('not-answered');
+            else div.classList.add('not-visited');
+            if (marked[i]) div.classList.add('marked');
+            if (i === currentIndex) div.classList.add('current');
+            div.textContent = i + 1;
+            div.onclick = () => { if (!testSubmitted) { currentIndex = i; renderQuestion(); } };
+            paletteGrid.appendChild(div);
+        }
+    }
+
+    // =======================  ACTIONS  =======================
+    function selectOption(idx) {
+        if (testSubmitted) return;
+        if (userAnswers[currentIndex] === idx) userAnswers[currentIndex] = null;
+        else userAnswers[currentIndex] = idx;
+        renderQuestion();
+    }
+
+    function prevQuestion() {
+        if (testSubmitted) return;
+        if (currentIndex > 0) { currentIndex--; renderQuestion(); }
+    }
+
+    function nextQuestion() {
+        if (testSubmitted) return;
+        if (currentIndex < 119) { currentIndex++; renderQuestion(); }
+    }
+
+    function toggleMark() {
+        if (testSubmitted) return;
+        marked[currentIndex] = !marked[currentIndex];
+        renderQuestion();
+    }
+
+    function clearResponse() {
+        if (testSubmitted) return;
+        userAnswers[currentIndex] = null;
+        renderQuestion();
+    }
+
+    // =======================  TIMER  =======================
+    function startTimer() {
+        timerInterval = setInterval(() => {
+            if (testSubmitted) return;
+            timeLeft--;
+            const mins = Math.floor(timeLeft / 60);
+            const secs = timeLeft % 60;
+            timerDisplay.textContent = `${String(mins).padStart(2, '0')}:${String(secs).padStart(2, '0')}`;
+            if (timeLeft <= 0) {
+                clearInterval(timerInterval);
+                submitTest();
+            }
+        }, 1000);
+    }
+
+    // =======================  SUBMIT  =======================
+    function submitTest() {
+        if (testSubmitted) return;
+        if (timeLeft > 0 && !confirm('Are you sure you want to submit the test?')) return;
+        testSubmitted = true;
+        clearInterval(timerInterval);
+        let correctCount = 0, wrongCount = 0, skipped = 0;
+        for (let i = 0; i < 120; i++) {
+            if (userAnswers[i] === null) skipped++;
+            else if (userAnswers[i] === questions[i].correct) correctCount++;
+            else wrongCount++;
+        }
+        const score = correctCount * 3 - wrongCount;
+        const attempted = correctCount + wrongCount;
+        const accuracy = attempted > 0 ? (correctCount / attempted * 100) : 0;
+        scoreDisplay.textContent = `Score: ${score}`;
+        accuracyDisplay.textContent = `Accuracy: ${accuracy.toFixed(2)}%  (${correctCount} correct, ${wrongCount} wrong, ${skipped} skipped)`;
+        renderReview('all');
+        resultOverlay.classList.add('active');
+        updatePalette();
+    }
+
+    function renderReview(filter) {
+        document.querySelectorAll('.filter-btn').forEach(btn => {
+            btn.classList.toggle('active', btn.dataset.filter === filter);
+        });
+        let html = '';
+        let count = 0;
+        for (let i = 0; i < 120; i++) {
+            const q = questions[i];
+            const userAns = userAnswers[i];
+            const isCorrect = userAns === q.correct;
+            const isSkipped = userAns === null;
+            if (filter === 'correct' && !isCorrect) continue;
+            if (filter === 'incorrect' && (isCorrect || isSkipped)) continue;
+            if (filter === 'unattempted' && !isSkipped) continue;
+            count++;
+            let itemClass = 'review-item ';
+            if (isSkipped) itemClass += 'skipped';
+            else if (isCorrect) itemClass += 'correct';
+            else itemClass += 'incorrect';
+
+            const userLetter = userAns !== null ? String.fromCharCode(65 + userAns) : '—';
+            const correctLetter = String.fromCharCode(65 + q.correct);
+            html += `<div class="${itemClass}">
+                <div class="review-q">Q${i + 1}. ${q.text}</div>
+                <div class="review-ans">
+                    <span>Your answer: <span class="${isCorrect ? 'correct-text' : (isSkipped ? '' : 'wrong-text')}">${userLetter} ${userAns !== null ? q.options[userAns] : '(not attempted)'}</span></span>
+                    <span>Correct answer: <span class="correct-text">${correctLetter} ${q.options[q.correct]}</span></span>
+                </div>
+            </div>`;
+        }
+        if (count === 0) html = '<p style="text-align:center;padding:30px;color:#4a5e7a;">No questions match this filter.</p>';
+        reviewList.innerHTML = html;
+        if (window.MathJax && MathJax.typesetPromise) {
+            MathJax.typesetPromise([reviewList]);
+        }
+    }
+
+    function setFilter(filter) {
+        renderReview(filter);
+    }
+
+    // =======================  DOWNLOAD  =======================
+    function downloadReview() {
+        let content = `MCQ Test Performance & Solutions\nScore: ${scoreDisplay.textContent}\n${accuracyDisplay.textContent}\n\n`;
+        for (let i = 0; i < 120; i++) {
+            const q = questions[i];
+            const userAns = userAnswers[i];
+            const isSkipped = userAns === null;
+            const userLetter = userAns !== null ? String.fromCharCode(65 + userAns) : '—';
+            const correctLetter = String.fromCharCode(65 + q.correct);
+            content += `Q${i + 1}. ${q.text.replace(/\$/g, '')}\n`;
+            content += `Your answer: ${userLetter} ${userAns !== null ? q.options[userAns].replace(/\$/g, '') : '(not attempted)'}\n`;
+            content += `Correct answer: ${correctLetter} ${q.options[q.correct].replace(/\$/g, '')}\n\n`;
+        }
+        const blob = new Blob([content], { type: 'text/plain;charset=utf-8' });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = 'performance_review.txt';
+        a.click();
+        URL.revokeObjectURL(url);
+    }
+
+    // =======================  INIT  =======================
+    function init() {
+        renderQuestion();
+        startTimer();
+        updatePalette();
+        document.addEventListener('keydown', (e) => {
+            if (testSubmitted) return;
+            if (e.key === 'ArrowLeft') prevQuestion();
+            if (e.key === 'ArrowRight') nextQuestion();
+        });
+    }
+
+    init();
+
+    window.selectOption = selectOption;
+    window.prevQuestion = prevQuestion;
+    window.nextQuestion = nextQuestion;
+    window.toggleMark = toggleMark;
+    window.clearResponse = clearResponse;
+    window.submitTest = submitTest;
+    window.setFilter = setFilter;
+    window.downloadReview = downloadReview;
+</script>
+</body>
+</html>

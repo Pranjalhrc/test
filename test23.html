@@ -1,0 +1,473 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MCQ Test · 120 Questions</title>
+    <script>
+        window.MathJax = {
+            tex: { inlineMath: [['$', '$'], ['\\(', '\\)']] },
+            svg: { fontCache: 'global' }
+        };
+    </script>
+    <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-svg.js" async></script>
+    <style>
+        * { box-sizing: border-box; margin: 0; font-family: 'Segoe UI', Roboto, system-ui, sans-serif; }
+        body { background: #f0f4f8; display: flex; justify-content: center; padding: 20px; }
+        .app { max-width: 1400px; width: 100%; display: flex; gap: 24px; position: relative; }
+        .main-panel { flex: 1; background: white; border-radius: 28px; box-shadow: 0 12px 30px rgba(0,0,0,0.08); display: flex; flex-direction: column; padding: 28px 32px; min-height: 85vh; }
+        .header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; border-bottom: 2px solid #e9edf4; padding-bottom: 16px; }
+        .timer { font-size: 1.8rem; font-weight: 700; color: #1e3c72; background: #eef3fe; padding: 8px 22px; border-radius: 60px; letter-spacing: 1px; }
+        .q-counter { font-size: 1.1rem; color: #3a4b6e; background: #e9effb; padding: 6px 20px; border-radius: 40px; font-weight: 600; }
+        .question-area { flex: 1; display: flex; flex-direction: column; margin: 12px 0 20px; overflow-y: auto; max-height: 58vh; padding-right: 6px; }
+        .question-text { font-size: 1.25rem; line-height: 1.6; margin-bottom: 28px; font-weight: 500; color: #0b1e3a; }
+        .options { display: flex; flex-direction: column; gap: 14px; margin-bottom: 12px; }
+        .option { display: flex; align-items: flex-start; gap: 14px; background: #f9fcff; border: 2px solid #dbe2ec; border-radius: 18px; padding: 14px 20px; cursor: pointer; transition: 0.15s; font-size: 1.1rem; line-height: 1.5; }
+        .option:hover { background: #eef4fe; border-color: #b0c7e9; }
+        .option.selected { background: #d9e8ff; border-color: #1e5fbf; box-shadow: 0 0 0 2px rgba(30,95,191,0.15); }
+        .option-letter { font-weight: 700; color: #1e3c72; min-width: 28px; }
+        .nav-buttons { display: flex; flex-wrap: wrap; gap: 12px; margin-top: auto; padding-top: 18px; border-top: 2px solid #e9edf4; }
+        .btn { padding: 12px 24px; border-radius: 60px; border: none; font-weight: 600; font-size: 0.95rem; cursor: pointer; background: white; border: 2px solid #cbd6e6; color: #1e2f4a; transition: 0.1s; display: inline-flex; align-items: center; justify-content: center; gap: 6px; }
+        .btn:hover { background: #f0f6ff; border-color: #8ba9d4; }
+        .btn-primary { background: #1e5fbf; border-color: #1e5fbf; color: white; }
+        .btn-primary:hover { background: #164a9c; border-color: #164a9c; }
+        .btn-warning { background: #f7b731; border-color: #f7b731; color: #1e1e1e; }
+        .btn-warning:hover { background: #e5a61f; border-color: #e5a61f; }
+        .btn-danger { background: #d64545; border-color: #d64545; color: white; }
+        .btn-danger:hover { background: #b83232; border-color: #b83232; }
+        .palette { width: 300px; background: white; border-radius: 28px; box-shadow: 0 12px 30px rgba(0,0,0,0.08); padding: 24px 16px; display: flex; flex-direction: column; height: 85vh; position: sticky; top: 20px; }
+        .palette h3 { text-align: center; margin-bottom: 16px; color: #1e3c72; font-weight: 600; font-size: 1.2rem; }
+        .legend { display: flex; flex-wrap: wrap; gap: 10px 16px; justify-content: center; margin-bottom: 16px; font-size: 0.75rem; color: #2e405b; }
+        .legend span::before { content: "●"; margin-right: 4px; font-size: 1rem; vertical-align: middle; }
+        .legend .answered::before { color: #2ecc71; }
+        .legend .not-answered::before { color: #e74c3c; }
+        .legend .marked::before { color: #f39c12; }
+        .legend .not-visited::before { color: #b0bedb; }
+        .palette-grid { flex: 1; overflow-y: auto; display: grid; grid-template-columns: repeat(5, 1fr); gap: 8px; padding: 6px 4px; align-content: start; }
+        .palette-item { aspect-ratio: 1 / 1; display: flex; align-items: center; justify-content: center; border-radius: 12px; font-weight: 600; font-size: 0.9rem; background: #eef2f8; color: #30445c; border: 2px solid transparent; cursor: pointer; transition: 0.08s; }
+        .palette-item.answered { background: #2ecc71; color: white; border-color: #27ae60; }
+        .palette-item.not-answered { background: #e74c3c; color: white; border-color: #c0392b; }
+        .palette-item.marked { background: #f39c12; color: white; border-color: #d68910; }
+        .palette-item.not-visited { background: #d5deec; color: #3a4b6e; }
+        .palette-item.current { outline: 3px solid #1e5fbf; outline-offset: 2px; }
+        .overlay { position: fixed; inset: 0; background: rgba(10, 20, 40, 0.7); backdrop-filter: blur(6px); display: none; align-items: center; justify-content: center; padding: 30px; z-index: 1000; }
+        .overlay.active { display: flex; }
+        .result-card { background: white; max-width: 1200px; width: 100%; max-height: 90vh; border-radius: 32px; padding: 32px 36px; display: flex; flex-direction: column; overflow: hidden; box-shadow: 0 30px 50px rgba(0,0,0,0.4); }
+        .result-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; flex-wrap: wrap; gap: 16px; }
+        .score-badge { font-size: 2rem; font-weight: 800; background: #1e3c72; color: white; padding: 10px 32px; border-radius: 60px; }
+        .filter-buttons { display: flex; gap: 10px; flex-wrap: wrap; }
+        .filter-btn { padding: 8px 18px; border-radius: 40px; border: 2px solid #cbd6e6; background: white; font-weight: 600; cursor: pointer; transition: 0.1s; }
+        .filter-btn.active { background: #1e5fbf; border-color: #1e5fbf; color: white; }
+        .review-list { overflow-y: auto; flex: 1; padding-right: 8px; display: flex; flex-direction: column; gap: 14px; margin-bottom: 16px; }
+        .review-item { border-left: 8px solid #b0bedb; background: #f9fcff; border-radius: 16px; padding: 16px 20px; font-size: 0.98rem; line-height: 1.5; }
+        .review-item.correct { border-left-color: #2ecc71; background: #f0fff6; }
+        .review-item.incorrect { border-left-color: #e74c3c; background: #fff5f5; }
+        .review-item.skipped { border-left-color: #b0bedb; background: #f5f7fb; }
+        .review-q { font-weight: 600; color: #0b1e3a; }
+        .review-ans { margin-top: 6px; display: flex; gap: 24px; flex-wrap: wrap; font-size: 0.92rem; }
+        .review-ans span { font-weight: 500; }
+        .correct-text { color: #1e7e34; font-weight: 700; }
+        .wrong-text { color: #b71c1c; font-weight: 700; }
+        .download-btn { background: #1e5fbf; border: none; color: white; padding: 10px 28px; border-radius: 40px; font-weight: 600; cursor: pointer; display: inline-flex; align-items: center; gap: 8px; }
+        .download-btn:hover { background: #164a9c; }
+    </style>
+</head>
+<body>
+<div class="app" id="app">
+    <div class="main-panel">
+        <div class="header">
+            <div class="q-counter" id="qCounter">Question 1 / 120</div>
+            <div class="timer" id="timerDisplay">120:00</div>
+        </div>
+        <div class="question-area" id="questionArea">
+            <div class="question-text" id="questionText"></div>
+            <div class="options" id="optionsContainer"></div>
+        </div>
+        <div class="nav-buttons">
+            <button class="btn" id="prevBtn" onclick="prevQuestion()">← Previous</button>
+            <button class="btn btn-warning" id="markBtn" onclick="toggleMark()">⭐ Mark for Review</button>
+            <button class="btn" id="clearBtn" onclick="clearResponse()">✖ Clear Response</button>
+            <button class="btn btn-primary" id="nextBtn" onclick="nextQuestion()">Next →</button>
+            <button class="btn btn-danger" id="submitBtn" onclick="submitTest()" style="margin-left:auto;">✅ Submit</button>
+        </div>
+    </div>
+    <div class="palette">
+        <h3>Question Palette</h3>
+        <div class="legend">
+            <span class="answered">Answered</span>
+            <span class="not-answered">Not Answered</span>
+            <span class="marked">Marked</span>
+            <span class="not-visited">Not Visited</span>
+        </div>
+        <div class="palette-grid" id="paletteGrid"></div>
+    </div>
+</div>
+<div class="overlay" id="resultOverlay">
+    <div class="result-card">
+        <div class="result-header">
+            <div>
+                <span class="score-badge" id="scoreDisplay">0</span>
+                <span style="margin-left:18px;font-weight:600;color:#1e3c72;" id="accuracyDisplay">Accuracy: 0%</span>
+            </div>
+            <div class="filter-buttons" id="filterButtons">
+                <button class="filter-btn active" data-filter="all" onclick="setFilter('all')">All</button>
+                <button class="filter-btn" data-filter="correct" onclick="setFilter('correct')">✅ Correct</button>
+                <button class="filter-btn" data-filter="incorrect" onclick="setFilter('incorrect')">❌ Incorrect</button>
+                <button class="filter-btn" data-filter="unattempted" onclick="setFilter('unattempted')">⏭️ Unattempted</button>
+            </div>
+            <button class="download-btn" onclick="downloadReview()">⬇ Download Review</button>
+        </div>
+        <div class="review-list" id="reviewList"></div>
+    </div>
+</div>
+
+<script>
+    // =======================  QUESTION DATA (1-90 Maths, 91-120 GK) =======================
+    const questions = [
+        // ---------- MATHEMATICS (1-90) ----------
+        { text: "Let $f:\\mathbb{R}\\rightarrow\\mathbb{R}$ be such that $f, f'$ and $f''$ are all continuous functions with $f>0,$ $f'>0$, $f''>0$ then $\\lim_{x\\rightarrow-\\infty}\\frac{f(x)+f'(x)}{2}$", options: ["$\\frac{1}{2}$", "$0$", "$1$", "$2$"], correct: 1 },
+        { text: "Let $f:[0,1]\\rightarrow \\mathbb{R}$ be continuous functions such that $f(\\frac{1}{2})=-\\frac{1}{2}$ and $|f(x)-f(y)-(x-y)|\\le \\sin|x-y|^{2}\\forall x, y\\in[0,1]$. Then $\\int_{0}^{1}f(x)dx$ is", options: ["$\\frac{1}{2}$", "$-\\frac{1}{2}$", "$\\frac{1}{4}$", "$-\\frac{1}{4}$"], correct: 1 },
+        { text: "Let $a\\in\\mathbb{R}$ and the coefficient of $x^{125}$ in Maclaurin series of $(x+a)^{3}e^{x}$ is $\\frac{28}{124!}$ then value of $a$ is", options: ["$10$", "$15$", "$24$", "$14$"], correct: 1 },
+        { text: "Let $(a_n)$ be a sequence of real numbers such that $a_{1}=3$ and $a_{n+1}=\\frac{a_{n}^{2}-2a_{n}+4}{2}$ $n\\ge1$ then which of the following statements is true?", options: ["$(a_n)$ is a monotonic sequence", "$\\{a_n\\}$ is a bounded sequence", "$(a_n)$ does not have infinite limit as $n\\rightarrow\\infty$", "$\\lim_{n\\rightarrow\\infty}a_{n}=2$"], correct: 0 },
+        { text: "The set $\\{\\frac{x}{x+1}:-1<x<1\\}$ as a subset of $\\mathbb{R}$ is", options: ["Connected and compact", "Connected but not compact", "Not connected but compact", "Neither compact nor open"], correct: 1 },
+        { text: "Let $f:\\mathbb{R}-\\{0\\}\\rightarrow\\mathbb{R}$ defined by $f(x)=x+\\frac{1}{x^{3}}.$ On which of the following interval is one-one?", options: ["$(-1,1)$", "$(0,1)$", "$(0,2)$", "$(0,\\infty)$"], correct: 1 },
+        { text: "The set $X=\\mathbb{R}$ with metric $d(x,y)=\\frac{|x-y|}{1+|x-y|}$ is", options: ["bounded but not compact", "bounded but not complete", "complete but not bounded", "compact but not complete"], correct: 0 },
+        { text: "The value of $\\lim_{n\\rightarrow\\infty}\\sum_{k=0}^{n}\\frac{1}{\\sqrt{n^{2}+k^{2}}}$ equals", options: ["$\\log(1+\\frac{1}{\\sqrt{2}})$", "$\\log(1+\\sqrt{2})$", "$\\log(1-\\sqrt{2})$", "$\\log(1-\\frac{1}{\\sqrt{2}})$"], correct: 1 },
+        { text: "Let $\\{a_n\\}_{n=1}^{\\infty}, \\{b_n\\}_{n=1}^{\\infty}$ two sequences of real numbers such that the series $\\sum_{n=1}^{\\infty}a_n^2$ and $\\sum_{n=1}^{\\infty}b_n^2$ converges. Then the series $\\sum_{n=1}^{\\infty}a_n b_n$", options: ["is absolutely convergent", "may not converge", "is always convergent but not converge absolutely", "converges to 0"], correct: 0 },
+        { text: "Let $a_n=\\sum_{k=1}^{n}\\frac{n}{n^{2}+k}$ for $n\\in\\mathbb{N}$, then the sequence $(a_n)$ is", options: ["convergent", "bounded but not convergent", "diverges to $\\infty$", "Neither bounded nor diverges to $\\infty$"], correct: 0 },
+        { text: "Choose the correct statement:", options: ["Every subset of $\\mathbb{R}$ is Lebesgue measurable", "Every Lebesgue measurable set is also a Borel set.", "a Borel set which is not Lebesgue measurable", "a Lebesgue measurable set which is not a borel set."], correct: 3 },
+        { text: "Let $E$ be a compact subset of $\\mathbb{R}^n$. Then", options: ["$E$ is also a $G_\\delta$ set", "$E$ cannot be a $F_\\sigma$ set", "Interior of $E$ is always non-empty", "There exist real continuous function on $E$ that are unbounded"], correct: 0 },
+        { text: "For $r\\in\\mathbb{R}^+$, denote by $S_{r}=\\{(x,y,z)\\in\\mathbb{R}^{3}:x^{2}+y^{2}+z^{2}=r^{2}\\}$ and let $E=\\bigcup_{r\\in\\mathbb{R}^+\\setminus\\mathbb{Q}}S_{r}$", options: ["$E$ is path-connected", "The Lebesgue measure of $E$ is infinite", "$E$ contains a non-empty open set", "Every open set containing $E$ has infinite Lebesgue measure"], correct: 0 },
+        { text: "If $f^{+}(x)=\\max\\{f(x),0\\}$ and $f^{-}(x)=\\max\\{-f(x),0\\}$, then", options: ["$f=f^{+}-f^{-}$", "$f=f^{+}+f^{-}$", "$f=f^{*}-f$", "$f=f^{*}-f^{-}$"], correct: 0 },
+        { text: "Fatou's Lemma states that If $\\{f_n\\}$ is a sequence of non-negative measurable functions and $f_n(x)\\rightarrow f(x)$ a.e. on a set $E$, then", options: ["$\\int_{E}f\\le \\lim\\inf\\int_{E}f_{n}$", "$\\int_{E}f\\le\\int_{E}f_{n}$", "$\\int_{E}f\\ge \\lim\\sup\\int_{E}f_{n}$", "None of these"], correct: 0 },
+        { text: "Which of the following statements is true?", options: ["If $p<1$, then $S=\\{x:||x||_{p}\\le1\\}$ is convex.", "If $p<1$, then $S=\\{x:||x||_{p}\\le1\\}$ is not convex.", "If $p<1$, then $||x||_{p}=(|x_{1}|^{p}+|x_{2}|^{p})^{1/p}$ on $\\mathbb{R}^{2}$ yields a norm.", "If $p=1$ as in (c), then norm defined on $\\mathbb{R}^{2}$ is $||x||_{1}=|x_{1}|^{2}+|x_{2}|^{2}$"], correct: 1 },
+        { text: "The space $B(N, N')$ is a Banach space if", options: ["$N$ is a Banach space", "$N'$ is a Banach space", "Either $N$ or $N'$ is a Banach space", "The scalar field is $\\mathbb{R}$"], correct: 1 },
+        { text: "Choose the incorrect statement of the following:", options: ["$l_{1}$ is separable", "$l_{1}^{*}$ is separable", "The normed linear space $N$ is separable if $N^{*}$ is separable", "$N^{*}$ need not be separable whenever the normed linear space $N$ is separable"], correct: 1 },
+        { text: "The conjugate space of $C_0$ is", options: ["$l_\\infty$", "$l_1$", "$l_2$", "$l_p$"], correct: 1 },
+        { text: "Which of the following is true?", options: ["If a normed linear space $N$ is reflexive then it is separable", "If a normed linear space $N$ is reflexive then is not necessarily complete.", "If a normed linear space $N$ is complete then it is reflexive.", "If a normed linear space $N$ is not complete, then it is reflexive."], correct: 1 },
+        { text: "Let $T$ be an operator on a normed linear space $N$, then $T^{**}=T$ if", options: ["$N$ is a Banach space", "$N$ is reflexive", "$N^{*}$ is reflexive", "$N^{*}$ is a Banach space"], correct: 1 },
+        { text: "Choose the incorrect statement from the following:", options: ["Addition is jointly continuous in a normed linear space", "Scalar multiplication is jointly continuous in a normed linear space", "The inner product is jointly continuous in a normed linear space.", "Parallelogram law is true in $l_2^n (n>1)$"], correct: 3 },
+        { text: "The Hilbert cube is a subset of $l_2$ consisting of all sequences $x=x_1, x_2, \\dots, x_n, \\dots$ satisfying the condition that", options: ["$|x_n|\\ge n$ for all $n$", "$|x_1|\\ge n$ for all $n$", "$|x_n|\\le\\frac{1}{n}$ for all $n$", "$|x_n|\\ge\\frac{1}{n}$ for all $n$"], correct: 2 },
+        { text: "Choose the correct option.", options: ["The set $\\{0, 1, 2, 3, 4, 5, 6, 7, 8, 9\\}$ forms a vector space over the field $\\{0, 2, 4, 6, 8\\}$ under addition and multiplication (mod 10).", "The set $\\{0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13\\}$ does not forms a vector space over the field $\\{0, 2, 4, 6, 8, 10, 12\\}$ under addition and multiplication (mod 14).", "The set of all $2\\times2$ matrices with real entries forms a vector space over the field of matrices $F$ with $F=\\{[\\begin{matrix}r&r\\\\ r&r\\end{matrix}],r\\in\\mathbb{R}\\}$ under usual addition and multiplication of matrices.", "The set of all $2\\times2$ matrices with real entries does not form a vector space over the field of matrices $F$ with $F=\\{[\\begin{matrix}r&0\\\\ 0&r\\end{matrix}],r\\in\\mathbb{R}\\}$ under usual addition and multiplication of matrices."], correct: 1 },
+        { text: "Let $V$ be vector space of all polynomials with real coefficients over $\\mathbb{R}$. Let for $f(x)\\in V$, $D^{n}(f)=\\frac{d^{n}f}{dx^{n}}.$ Then", options: ["$D^n$ is a linear transformation with nullity $n-1$", "$D^n$ is a linear transformation with nullity $n$", "$D^n$ is not a linear transformation", "$D^n$ is a linear transformation with nullity $n+1$"], correct: 1 },
+        { text: "Which of the following matrices is similar to $\\begin{bmatrix}1&2\\\\ 0&3\\end{bmatrix}$", options: ["$\\begin{bmatrix}0&-3\\\\ 1&4\\end{bmatrix}$", "$\\begin{bmatrix}-3&0\\\\ 1&2\\end{bmatrix}$", "$\\begin{bmatrix}1&2\\\\ -1&1\\end{bmatrix}$", "$\\begin{bmatrix}0&4\\\\ 1&3\\end{bmatrix}$"], correct: 0 },
+        { text: "Let $V=\\mathbb{R}^{3}$ be a vector space over $\\mathbb{R}$ (set of all real number) and $T$ be a linear operator of $V$. We call a polynomial $p$ to be minimal polynomial of $T$ if $p(T)=0$ and there exist no polynomial $q$ of lesser degree than $p$ with $q(T)=0$. Then the minimal polynomial of $T:(x_{1},x_{2},x_{3})\\rightarrow(x_{1}+x_{2},x_{2}+x_{3},x_{3}+x_{1})$", options: ["is of degree one", "is of degree two", "is of degree three", "does not exist"], correct: 2 },
+        { text: "Let $\\mathbb{C}$ (set of all complex numbers) be a vector space over $\\mathbb{R}$ (set of all real number). Let $\\alpha=x_{1}+ix_{2}, \\beta=y_{1}+iy_{2}$ and inner product $\\langle\\alpha,\\beta\\rangle=x_{1}y_{1}-x_{2}y_{1}-x_{1}y_{2}+4x_{2}y_{2}$. Then $x+iy$ and $-y+i(-x)$ are orthogonal", options: ["only if $y=\\frac{1}{2}(-3\\pm\\sqrt{13})x.$", "if and only if $y=\\frac{1}{2}(-3\\pm\\sqrt{13})x$", "only if $y=\\frac{1}{2}(3\\pm\\sqrt{13})x$", "if and only if $y=\\frac{1}{2}(3\\pm\\sqrt{13})x$."], correct: 1 },
+        { text: "Let $V$ be the vector space of all functions from $\\mathbb{R}$ into $\\mathbb{C}$ over the field $\\mathbb{C}$. Which of the following sets is linearly dependent in $V$?", options: ["$\\{1,e^{ix},\\sum_{n=0}^{\\infty}\\frac{(-1)^{n}}{n!}k^{n}\\}$", "$\\{1,\\cos x,\\sum_{n=1}^{\\infty}\\frac{(-1)^{n-1}}{(2n-1)!}x^{2n-1}\\}$", "$\\{1,\\sin^{2}x,1-\\sum_{n=1}^{\\infty}\\frac{(-1)^{n}\\cdot2^{2n-1}\\cdot x^{2n}}{(2n)!}\\}$", "None of these"], correct: 0 },
+        { text: "Let $V=\\mathbb{R}^3$ be the inner product space over $\\mathbb{R}$ with respect to standard inner product $\\langle(x_1,x_2,x_3),(y_1,y_2,y_3)\\rangle=x_1y_1+x_2y_2+x_3y_3$. For what values of $\\alpha$, the transformation with respect to standard bases given by $A=\\begin{pmatrix}\\alpha&1&0\\\\ 1&1&0\\\\ 0&0&1\\end{pmatrix}$ is positive?", options: ["for all $\\alpha<0$", "for all $\\alpha\\ge1$", "for all $\\alpha\\in\\mathbb{R}$", "None of these"], correct: 3 },
+        { text: "Let $F$ be a finite field with three elements. Then number of \"unordered\" bases of $F^{3}$ is", options: ["$2^{4}\\times3^{2}\\times13$", "$2^{5}\\times3^{4}\\times13$", "$2^{9}\\times3^{2}\\times13$", "$2^{4}\\times3^{4}\\times13$"], correct: 0 },
+        { text: "Which of the following matrices is diagonalizable over $\\mathbb{R}$?", options: ["$\\begin{bmatrix}1&1\\\\ -3&2\\end{bmatrix}$", "$\\begin{bmatrix}1&1\\\\ 1&2\\end{bmatrix}$", "$\\begin{bmatrix}1&2\\\\ -1&1\\end{bmatrix}$", "$\\begin{bmatrix}2&3\\\\ -1&0\\end{bmatrix}$"], correct: 1 },
+        { text: "Let $f(x,y)=\\frac{x^{2}y}{x^{2}+y^{2}}$ for $(x,y)\\neq(0,0)$, then", options: ["$\\frac{\\partial f}{\\partial x}$ and $f$ are both bounded", "$\\frac{\\partial f}{\\partial x}$ is bounded and $f$ is unbounded", "$\\frac{\\partial f}{\\partial x}$ is unbounded and $f$ is bounded", "$\\frac{\\partial f}{\\partial x}$ and $f$ are both unbounded"], correct: 1 },
+        { text: "For $f(x,y)=\\begin{cases}\\frac{x^{3}+y^{3}}{x^{2}-y^{2}}&,x^{2}-y^{2}\\ne0\\\\ 0&,x^{2}-y^{2}=0\\end{cases}$ the directional derivative of $f$ at $(0,0)$ in the direction $\\frac{4}{5}\\hat{i}+\\frac{3}{5}\\hat{j}$ is", options: ["$\\frac{91}{7}$", "$\\frac{91}{5}$", "$\\frac{91}{35}$", "$\\frac{91}{10}$"], correct: 2 },
+        { text: "For $f(x,y)=x^{2}+xy+y^{2}-x-100$ the critical point of $f(x,y)$ is", options: ["$(\\frac{2}{3},-\\frac{1}{3})$", "$(-\\frac{1}{3},\\frac{2}{3})$", "$(\\frac{2}{3},\\frac{1}{3})$", "$(-\\frac{2}{3},-\\frac{1}{3})$"], correct: 0 },
+        { text: "The value of $\\lim_{(x,y)\\rightarrow(2,-2)}\\frac{\\sqrt{x-y}-2}{(x-y)-4}$ is", options: ["$\\frac{1}{2}$", "$\\frac{1}{4}$", "$-\\frac{1}{2}$", "$-\\frac{1}{4}$"], correct: 1 },
+        { text: "Let $f:\\mathbb{R}\\rightarrow\\mathbb{R}$ be a twice differentiable function. If $g(x,y)=f(x^{2}-y^{2})$ then $g_{xx}+g_{yy}$ is", options: ["$4(x^{2}-y^{2})f''(x^{2}-y^{2})$", "$4(x^{2}+y^{2})f''(x^{2}-y^{2})$", "$2f'(x^{2}-y^{2})+4(x^{2}-y^{2})f''(x^{2}-y^{2})$", "$2(x^{2}-y^{2})f'(x^{2}-y^{2})$"], correct: 1 },
+        { text: "Let $R$ be a planar region bounded by the lines $x=0$, $y=0$ and the curve $x^{2}+y^{2}=4$ in first quadrant. Let $C$ be the boundary of $R$ in anticlockwise direction. Then the value of $\\int_{C}x(1-y)dx+(x^{2}-y^{2})dy$ is", options: ["2", "4", "6", "8"], correct: 3 },
+        { text: "The last two digits in the decimal representation of $3^{123}$ are", options: ["9 and 1", "6 and 1", "5 and 1", "4 and 1"], correct: 1 },
+        { text: "The solution of the system of congruences $2x\\equiv1\\pmod5$ and $3x\\equiv4\\pmod7$ is", options: ["$x\\equiv8\\pmod{35}$", "$x\\equiv6\\pmod{35}$", "$x\\equiv13\\pmod{35}$", "$x\\equiv20\\pmod{35}$"], correct: 2 },
+        { text: "If 'a' is primitive root of an odd prime p, then the odd power of 'a' is", options: ["quadratic residue mod p if $p\\equiv1\\pmod4$", "quadratic residue mod p if $p\\equiv3\\pmod4$", "quadratic residue mod p for all p", "quadratic non residue mod p for all p"], correct: 3 },
+        { text: "The number of elements of order 15 in the additive group $\\mathbb{Z}_{30}$ is", options: ["1", "15", "8", "10"], correct: 2 },
+        { text: "For the groups $G, H$ and $K$ with $H$ being a proper subgroup of $G$ and $K$ being a proper subgroup of $H$, where $O(G)=380,$ $O(K)=38,$ the possible orders of $H$ are", options: ["76 and 190", "76 and 95", "95 and 190", "None of these"], correct: 0 },
+        { text: "The number of structurally different Abelian groups of order 1800 is", options: ["12", "18", "20", "24"], correct: 0 },
+        { text: "If $G$ is a simple group of order 80 then $G$ has", options: ["No Sylow 2-subgroups", "Exactly five Sylow 2-subgroups", "Exactly two Sylow 2-subgroups", "Exactly sixteen Sylow 2-subgroups"], correct: 1 },
+        { text: "$\\mathbb{Z}_{5}[x]/\\langle x^{3}+3x+2\\rangle$ is", options: ["a field and it has 243 elements", "not a field it has 243 elements", "a field and it has 125 elements", "not a field but it has 125 elements"], correct: 2 },
+        { text: "In a ring $R=\\{a+b\\sqrt{-5}\\mid a,b\\in\\mathbb{Z}\\}$, the element $1+2\\sqrt{-5}$ is", options: ["an irreducible element", "a prime element", "both irreducible and prime element", "unit element"], correct: 0 },
+        { text: "If $F$ is a field then $F[x]$ is", options: ["an Euclidean Domain", "a Principal Ideal Domain", "a Unique Factorization Domain", "All of these"], correct: 3 },
+        { text: "The value of $\\sum_{j=0}^{4}\\cos(\\frac{(2j+1)\\pi}{11})$", options: ["0", "$\\frac{-3+\\sqrt{11}}{2}$", "$\\frac{3+\\sqrt{11}}{2}$", "$\\frac{1}{2}$"], correct: 3 },
+        { text: "The value of $\\int_{|z|=1}z^{4}e^{1/z}dz$ is", options: ["0", "$\\frac{i\\pi}{51}$", "$\\frac{i\\pi}{12}$", "$\\frac{i\\pi}{60}$"], correct: 3 },
+        { text: "Let $f(z)$ be holomorphic in $\\mathbb{C}$ and in $|z|<1/3,$ where $f(z)=\\sum_{n=1}^{\\infty}n3^{n}z^{n-1}$. Find $\\lim_{n\\rightarrow\\infty}\\sup|a_{n}|^{1/n}$ where $f(z)=\\sum_{n=0}^{\\infty}a_{n}(z+1)^{n}.$", options: ["$\\frac{4}{3}$", "$\\frac{3}{4}$", "$\\frac{1}{3}$", "1"], correct: 2 },
+        { text: "$z=x+iy,$ choose the correct option", options: ["There exists a non-constant analytic function $f(z)$ in open unit disc such that $|f(z)|=e^{x^{2}+y^{2}}$", "There exists a non-constant analytic function $f(z)$ in open unit disc such that $|f(z)|=\\sin^{2}x+\\sinh^{2}y+1.$", "There exists a non-constant analytic function $f(z)$ in open unit disc such that $|f(z)|=x^{2}+y^{2}+1$", "There exists a non-constant analytic function $f(z)$ in open unit disc such that $|f(z)|=\\sin2x+\\cosh^{2}y+\\sinh^{2}y$."], correct: 0 },
+        { text: "Let $P(z)$ be a polynomial of degree $n$ with $n$ distinct roots $z_1, z_2, \\dots, z_n$. Let $A_k$ be the partial fraction expansion of $\\frac{1}{P(z)}$. Using the fact that $\\sum_{k=1}^{n}A_{k}=0$, compute $\\int_{|z|=2}\\frac{1}{(z^{18}+1)(z-3)}dz$", options: ["0", "$2\\pi i$", "$\\frac{-2\\pi i}{3^{18}+1}$", "$\\frac{-2\\pi i}{i-3}$"], correct: 0 },
+        { text: "How many roots has the equation $z^{4}-3z+1=0$ in open unit disc?", options: ["0", "1", "2", "3"], correct: 1 },
+        { text: "Let $\\gamma(t)=t+i|t|$ for $-1\\le t\\le 1$. Then $\\gamma$ is", options: ["an open and smooth path", "a simple and piecewise smooth path", "not simple but piecewise smooth path", "None of these"], correct: 1 },
+        { text: "Let $D$ be simply connected domain and a function $f$ is analytic in $D$. Let $z_1, z_2 \\in D$, then $\\int_{\\gamma} f(z)dz$ (where $\\gamma$ is path connecting $z_1$ and $z_2$) is", options: ["0", "independent of path $\\gamma$", "$2\\pi i$", "dependent on path $\\gamma$"], correct: 2 },
+        { text: "It is plainly true of any complex number $z$ such that either $\\sqrt{z^{2}}=z$ or $\\sqrt{z^2}=-z$. Identify the set of $z$ for which the minus(-) sign represents the proper choice.", options: ["$\\{z\\mid \\text{Im}(z)\\ge0\\}$", "$\\{z\\mid \\text{Re}(z)<0\\}$", "$\\{z\\mid \\text{Re}(z)<0 \\text{ and } \\text{Im}(z)<0\\}$", "$\\{z\\mid \\text{Re}(z)>0 \\text{ and } \\text{Im}(z)<0\\}$"], correct: 1 },
+        { text: "Choose the wrong option.", options: ["An open unit disc is a simply connected domain.", "The whole complex plane is itself a simply connected domain.", "Frontier of a closed unit disc is a simply connected domain.", "The set $S=\\{x\\mid |x|<1\\}\\cup\\{x\\mid |x-2|<\\frac{3}{2}\\}$ is a simply connected domain."], correct: 2 },
+        { text: "The lower limit topology on $\\mathbb{R}$ is generated by", options: ["$\\{[a,b]:a<b\\}$", "$\\{[a,b):a<b\\}$", "\\{(a,b]: a<b\\}", "\\{(a,b): a<b\\}"], correct: 1 },
+        { text: "If $\\pi_{1}$ is the projection of $X\\times Y$ onto $X$ and if $U$ is an open set of $X$, then $\\pi_{1}^{-1}(U)$ is", options: ["$U$", "$X\\times U$", "$U\\times Y$", "$X$"], correct: 2 },
+        { text: "The closure of $(0,\\frac{1}{2})$ in $(0,1]$ is", options: ["$[0,\\frac{1}{2}]$", "$(0,\\frac{1}{2}]$", "$(0,\\frac{1}{2})$", "$[0,\\frac{1}{2})$"], correct: 1 },
+        { text: "With respect to the standard metric of $\\mathbb{R}$, the open ball $B(2.8, 0.3)$ is", options: ["$[2.5, 3.1]$", "$(2.5, 3.1)$", "$(2.8, 3.1)$", "$[2.8, 3.1]$"], correct: 1 },
+        { text: "If $Y$ is compact, then the projection map $\\pi_1: X\\times Y\\rightarrow X$ is", options: ["a closed map", "an open map", "a continuous map", "uniform continuous map"], correct: 0 },
+        { text: "Which of the following is an equivalent condition for $X$ to be connected?", options: ["$X$ has a non empty set which is both closed and open", "$X=A\\cup B$ where $A$ and $B$ are two non empty disjoint sets.", "$X=A\\cup B$ where $A$ is a non empty closed set and $B$ is a non empty open set and $A\\cap B=\\emptyset$", "The only subsets of $X$ that are both open and closed in $X$ are empty set and $X$ itself."], correct: 3 },
+        { text: "Consider $|\\frac{dy}{dx}|+|y|+a=0, a\\in\\mathbb{R},$ then the real valued solution passing through point $(b,c)\\in\\mathbb{R}^{2}$ where $a>0$ has", options: ["unique real solution $\\forall(b,0)\\in\\mathbb{R}^{2}$", "no real solution $(b,0)\\in\\mathbb{R}^{2}, c\\ne0$", "no real solution $(b,c)\\in\\mathbb{R}^{2}$", "unique real solution $y(x)=-a, \\forall(b,-a)\\in\\mathbb{R}^{2}$"], correct: 0 },
+        { text: "If $y(x)=x|x|$ is solution of $n^{\\text{th}}$ order differential equation defined $\\forall x\\in\\mathbb{R}$ then possible value(s) of $n$ is/are", options: ["$n\\ge2$", "$n=1$", "$n=3$", "$n=\\frac{3}{2}$"], correct: 3 },
+        { text: "The difference of any two solutions of $y''+p(x)y'+q(x)y=f(x)$ is a solution of its reduced equation. This statement is", options: ["Always true", "Never true", "Sometimes true", "Partially false"], correct: 0 },
+        { text: "The Wronskian of the functions $y_1=x^2$ and $y_2=x|x|$ at $x$ is", options: ["$W(y_1,y_2)(x)=1$", "$W(y_1,y_2)(x)=0$", "$W(y_1,y_2)(x)=-1$", "$W(y_1,y_2)(x)=-x^2|x|$"], correct: 1 },
+        { text: "The eigen values of any regular Sturm Liouville boundary value problem are", options: ["always real", "always complex", "either real or complex", "All of these"], correct: 0 },
+        { text: "Eigen values and eigen functions of a boundary value problem $x''+\\lambda x=0, x(0)=0, x'(\\pi/2)=0$", options: ["$\\lambda=-(\\frac{2n+1}{2})^{2}$ and $x_n(t)=\\cos(\\frac{2n+1}{2}t)$", "$\\lambda=-(\\frac{2n+1}{2})^{2}$ and $x_n(t)=\\sin(\\frac{2n+1}{2}t)$", "$\\lambda=(\\frac{2n+1}{2})^{2}$ and $x_n(t)=\\cos(\\frac{2n+1}{2}t)$", "$\\lambda=(\\frac{2n+1}{2})^{2}$ and $x_n(t)=\\sin(\\frac{2n+1}{2}t)$"], correct: 3 },
+        { text: "Green's functions of $x''+x=f(t)$ satisfying boundary condition $x(0)=0, x(\\frac{\\pi}{2})=0$ is", options: ["$G(t,s)=\\begin{cases}\\cos t\\sin s&\\text{if }t<s\\\\ -\\sin t\\cos s&\\text{if }t>s\\end{cases}$", "$G(t,s)=\\begin{cases}\\sin s\\cos t&\\text{if }t<s\\\\ \\cos s\\sin t&\\text{if }t>s\\end{cases}$", "$G(t,s)=\\begin{cases}\\sin t\\cos s&\\text{if }t<s\\\\ \\sin s\\cos t&\\text{if }t>s\\end{cases}$", "None of these"], correct: 2 },
+        { text: "The solution of the differential equation $(x\\sin(y/x))dy-(y\\sin(y/x)-x)dx=0$ is", options: ["$\\cos(y/x)-\\frac{1}{x}=0$", "$\\sin(y/x)+\\frac{1}{x}=0$", "$\\cos(y/x)-\\log x=\\text{constant}$", "$\\sin(y/x)-\\log x=\\text{constant}$"], correct: 2 },
+        { text: "The $n^{\\text{th}}$ order homogeneous linear differential equation $y^{(n)}+p_0 y^{(n-1)}+\\dots+p_n y=0$ has general solution if the coefficient $p_0(x), p_1(x), \\dots, p_n(x)$ on some interval $I$ are", options: ["continuous", "discontinuous", "need not to be continuous", "None of these"], correct: 0 },
+        { text: "The solution of the nonhomogeneous equation $y''+a^{2}y=\\sec ax$ is", options: ["$y=\\frac{1}{a^{2}}(\\cos ax\\log(\\cos ax)+C_4\\cos ax+C_3\\sin ax+\\frac{x}{a}\\sin ax)$", "$y=\\frac{1}{a^{2}}(\\sin ax\\log(\\cos ax)+C_4\\sin ax+C_3\\cos ax+\\frac{x}{a}\\sin ax)$", "$y=\\frac{1}{a^{2}}(\\sin ax\\log(\\cos ax)+C_4\\sin ax+C_3\\cos ax+\\frac{x}{a}\\sin ax)$", "$y=\\cos ax\\log(\\cos ax)+C_4\\sin ax+C_3\\sin ax+\\frac{x}{a}\\cos ax$"], correct: 0 },
+        { text: "Which of the following statements are true? (i) singular solution contains no arbitrary constant. (ii) singular solution can be obtained from complete primitive.", options: ["both (i) & (ii) are true", "both (i) & (ii) are false", "(i) is true but (ii) is false", "(i) is false, but (ii) is true"], correct: 2 },
+        { text: "The general integral of a partial differential equation $\\frac{\\partial z}{\\partial x}+3\\frac{\\partial z}{\\partial y}=5z+\\tan(y-3x)$ is", options: ["$y-3x=f(e^{-5x}(5z+\\tan(y-3x)))$", "$y-3x=f(e^{-5x}(5z-\\tan x))$", "$y-3x=f(e^{-5x}(5z-\\tan 3x))$", "None of these"], correct: 0 },
+        { text: "The complete integral of the equation $2xz-(\\frac{\\partial z}{\\partial x})x^{2}-2(\\frac{\\partial z}{\\partial y})xy+(\\frac{\\partial z}{\\partial x})(\\frac{\\partial z}{\\partial y})=0$ is", options: ["$z=ay+b(x^{2}+a)$", "$z=ay+b(x^{2}-a)$", "$z=ax+b(x^{2}-a^{2})$", "$z=ax+b(x^{2}+a^{2})$"], correct: 1 },
+        { text: "Which of the following function satisfies the equation $\\frac{\\partial^{2}z}{\\partial x^{2}}+2\\frac{\\partial^{2}z}{\\partial x\\partial y}+\\frac{\\partial^{2}z}{\\partial y^{2}}+2(\\frac{\\partial z}{\\partial x}+\\frac{\\partial z}{\\partial y})+z=0$", options: ["$z=e^{-x}f_{1}(y-x)+ex^{-1}f_{2}(y-x)$", "$z=2e^{-x}f_{1}(y+x)$", "$z=f_{1}(y-x)+xf_{2}(y-x)$", "None of these"], correct: 2 },
+        { text: "For a given wave equation $\\frac{\\partial^{2}u}{\\partial t^{2}}=c^{2}\\frac{\\partial^{2}u}{\\partial x^{2}}$ which of the following are true?", options: ["The general solution is $u(x,t)=\\phi(x+ct)+\\phi(x-ct)$", "No general solution exist.", "D' Alembert's solution of the given equation is $u(x,t)=f(x+ct)+f(x-ct)$", "No D' Alembert's solution exist."], correct: 1 },
+        { text: "The solution of the equation $\\frac{y^{2}z}{x}p+xzq=y^{2}$", options: ["$\\phi(x^{3}-y^{3},x^{2}-z^{2})=0$", "$\\phi(x^{2}-y^{2},x^{2}-z^{2})=0$", "$\\phi(x^{3}+y^{3},x^{2}+z^{2})=0$", "$\\phi(x^{2}+y^{2},x^{2}+z^{2})=0$"], correct: 0 },
+        { text: "A surface passing through the two lines $z=x=0,$ $z-1=x-y=0$ and satisfying $\\frac{\\partial^{2}z}{\\partial x^{2}}-4\\frac{\\partial^{2}z}{\\partial x\\partial y}+4\\frac{\\partial^{2}z}{\\partial y^{2}}=0$ is", options: ["$z=\\frac{3y}{y+2x}$", "$z=\\frac{3x}{y+2x}$", "$z=\\frac{2}{y+3x}$", "$z=\\frac{3}{x+3y}$"], correct: 1 },
+        { text: "For the equation $\\sin^{2}x u_{xx}+\\sin2x u_{xy}+\\cos^{2}x u_{yy}=x$ which of the following are true? (i) parabolic equation (ii) hyperbolic equation (iii) canonical form is $u_{\\eta\\eta}=\\psi(\\xi,\\eta,u,u_\\xi,u_\\eta)$ (iv) canonical form is $u_{\\xi\\eta}=\\psi(\\xi,\\eta,u,u_\\xi,u_\\eta)$", options: ["both (i) and (iii)", "both (ii) and (iii)", "both (i) and (iv)", "both (ii) and (iv)"], correct: 0 },
+        { text: "Given that $f(1)=1, f(2)=3, f(3)=8, f(4)=15$ and $f(5)=25$ then $\\Delta^{2}f(1)$ is", options: ["1", "2", "-1", "0"], correct: 1 },
+        { text: "If $\\Delta$ and $\\nabla$ denote the forward and backward difference operators, then $\\Delta+\\nabla$ is equal to", options: ["$(E-1)\\nabla$", "$(E-1)\\Delta$", "$\\frac{\\Delta}{\\nabla}-\\frac{\\nabla}{\\Delta}$", "$\\frac{\\Delta}{\\nabla}+\\frac{\\nabla}{\\Delta}$"], correct: 2 },
+        { text: "If the interval $(2, 6)$ is subdivided into four subintervals of equal length, the approximate value of $\\int_{2}^{6}\\frac{dx}{x^{2}-x}$ using Simpson's rule is", options: ["0.322", "0.233", "0.5222", "0.2555"], correct: 2 },
+        { text: "Newton-Raphson method is used to calculate $\\sqrt[3]{65}$ by solving $x^{3}=65.$ If $x_{0}=4$ is taken as the initial approximation, the first approximation $x_{1}$ is", options: ["$\\frac{65}{16}$", "$\\frac{131}{32}$", "$\\frac{191}{48}$", "$\\frac{193}{48}$"], correct: 3 },
+        { text: "The extremals of the functional $\\int_{x_0}^{x_1}\\frac{y'^2}{x^3}dx$ are", options: ["$y=ax^{4}+b, a, b$ constants", "$y=ax^{3}+b, a, b$ constants", "$y=ax^{2}+bx+c, a, b, c$ constants", "$y=ax+b, a, b$ constants"], correct: 0 },
+        { text: "The extremal of the functional $\\int_{0}^{1}(1+y''^2)dx$ subject to the conditions $y(0)=0, y'(0)=1, y(1)=1, y'(1)=1$ is", options: ["$y=x^3$", "$y=x$", "$y=x^2+x-2$", "$y=x^2-x+1$"], correct: 1 },
+        { text: "The extremal of the functional $\\int_{0}^{1}(y'^2-y^2)dx$ subject to $y(0)=0, y(1)=1$ is", options: ["$\\sin(\\frac{\\pi}{2}x)$", "$x$", "$\\frac{\\sin x}{\\sin 1}$", "$2x^{2}-x$"], correct: 2 },
+        { text: "Define $f(t)=\\begin{cases}A,&|t|<T\\\\ 0,&\\text{otherwise}\\end{cases}$ If $F(\\omega)$ denotes the Fourier transform of $f(t),$ then", options: ["$|F(\\omega)|^{2}=\\frac{A^{2}\\sin^{2}(\\omega T)}{\\omega^{2}}$", "$|F(\\omega)|=\\frac{A\\sin(\\omega T)}{\\omega^{2}}$", "$|F(\\omega)|^{2}=\\frac{4A^{2}\\sin^{2}(\\omega T)}{\\omega^{2}T^{2}}$", "$|F(\\omega)|^{2}=\\frac{4A^{2}\\sin^{2}(\\omega T)}{\\omega^{2}}$"], correct: 3 },
+        // ---------- GK (91-120) ----------
+        { text: "Which Indian state hosted the BRICS Traditional and Indigenous Sports Demonstration Games 2026 city of Ahmedabad?", options: ["Rajasthan", "Gujarat", "Maharashtra", "Madhya Pradesh"], correct: 1 },
+        { text: "India's indigenous CAR-T cell therapy (2026) is used for treating:", options: ["Tuberculosis", "Blood cancer", "Diabetes", "Malaria"], correct: 1 },
+        { text: "Narendra Bhooshan (October 2026) assumed charge as Secretary of which ministry?", options: ["Environment, Forest and Climate Change", "Defence", "Education", "Finance"], correct: 0 },
+        { text: "Which Indian state approved a scheme providing Rs 50,000 to unmarried women for higher education (October 2026)?", options: ["West Bengal", "Odisha", "Bihar", "Jharkhand"], correct: 1 },
+        { text: "The 2028 Summer Olympics will be hosted in:", options: ["Paris", "Los Angeles", "Tokyo", "Brisbane"], correct: 1 },
+        { text: "\"Curriculum evaluation\" is best described as:", options: ["Judging only the textbook content", "Systematic assessment of the curriculum's objectives, content, delivery and outcomes", "Testing students' memory only", "Ranking teachers"], correct: 1 },
+        { text: "Which of the following comes FIRST in a research report?", options: ["Conclusion", "Introduction", "References", "Appendices"], correct: 1 },
+        { text: "A \"Likert scale\" is used to measure:", options: ["Physical fitness", "Attitudes and opinions", "Blood pressure", "Reading speed"], correct: 1 },
+        { text: "In classroom communication, \"feedback\" refers to:", options: ["The teacher's lecture notes", "The receiver's response that indicates understanding", "The syllabus", "The examination result only"], correct: 1 },
+        { text: "Which of the following is a characteristic of a good lecture?", options: ["Monotonous delivery", "Clear structure with examples and periodic student engagement", "Reading from the book only", "Ignoring student questions"], correct: 1 },
+        { text: "Which of the following is a presentation software?", options: ["MS Word", "MS PowerPoint", "MS Excel", "Notepad"], correct: 1 },
+        { text: "In web addresses, \"https://\" the \"s\" stands for:", options: ["Speed", "Secure", "Server", "Standard"], correct: 1 },
+        { text: "Which device connects a local computer/network to the Internet?", options: ["Keyboard", "Router/Modem", "Scanner", "Projector"], correct: 1 },
+        { text: "\"Open-source software\" means software whose:", options: ["Source code is freely available for use and modification", "Price is fixed by the government", "Use requires a paid licence always", "Source code is secret"], correct: 0 },
+        { text: "The keyboard shortcut to copy selected text is:", options: ["Ctrl + Z", "Ctrl + C", "Ctrl + V", "Ctrl + X"], correct: 1 },
+        { text: "The \"Kyoto Protocol\" was adopted in the year:", options: ["1992", "1997", "2005", "2015"], correct: 1 },
+        { text: "Which of the following is a point source of water pollution?", options: ["Agricultural runoff", "An industrial discharge pipe", "Urban street dust", "Acid rain"], correct: 1 },
+        { text: "The \"Swachh Bharat Abhiyan\" primarily aims at:", options: ["Digital literacy", "Cleanliness and elimination of open defecation", "Financial inclusion", "Rural electrification"], correct: 1 },
+        { text: "Vultures' population decline in India was mainly caused by:", options: ["Habitat loss only", "Diclofenac poisoning from cattle carcasses", "Excess rainfall", "Air pollution"], correct: 1 },
+        { text: "Which of the following is an example of ex-situ conservation?", options: ["Biosphere reserve", "National park", "Zoo and cryopreservation of seeds", "Sacred groves"], correct: 2 },
+        { text: "The Bhakti saint who emphasized devotion to Lord Krishna and belonged to the Gaudiya tradition was:", options: ["Ramanuja", "Chaitanya Mahaprabhu", "Basavana", "Kabir"], correct: 1 },
+        { text: "The Indian Princely States' integration is credited to:", options: ["Jawaharlal Nehru", "Sardar Vallabhbhai Patel", "Lord Mountbatten", "C. Rajagopalachari"], correct: 1 },
+        { text: "The Khilafat Movement (1919–1924) was led by:", options: ["Muhammad Ali and Shaukat Ali", "Jinnah and Liaquat Ali", "Sir Syed Ahmed Khan", "Badruddin Tyabji"], correct: 0 },
+        { text: "The river Brahmaputra is known as \"Tsangpo\" in:", options: ["Nepal", "Tibet", "Bhutan", "Bangladesh"], correct: 1 },
+        { text: "Which Indian plateau is rich in black cotton soil?", options: ["Chota Nagpur", "Malwa", "Deccan", "Meghalaya"], correct: 2 },
+        { text: "The Constituent Assembly's Drafting Committee was chaired by:", options: ["Rajendra Prasad", "B.R. Ambedkar", "Jawaharlal Nehru", "Sardar Patel"], correct: 1 },
+        { text: "How many members did the Constituent Assembly originally have?", options: ["299", "389", "545", "250"], correct: 1 },
+        { text: "The \"Right to Constitutional Remedies\" is guaranteed by which Article?", options: ["Article 14", "Article 19", "Article 32", "Article 21"], correct: 2 },
+        { text: "Which of the following is a direct tax in India?", options: ["GST", "Customs duty", "Income tax", "Excise duty"], correct: 2 },
+        { text: "The term \"disinvestment\" in the Indian economy refers to:", options: ["Government's sale of its stake in public sector undertakings", "Foreign investment", "Printing of currency", "Increase in gold reserves"], correct: 0 }
+    ];
+
+    // =======================  STATE  =======================
+    let currentIndex = 0;
+    let userAnswers = new Array(120).fill(null);
+    let marked = new Array(120).fill(false);
+    let visited = new Array(120).fill(false);
+    let timeLeft = 120 * 60;
+    let timerInterval = null;
+    let testSubmitted = false;
+
+    // =======================  ELEMENTS  =======================
+    const questionText = document.getElementById('questionText');
+    const optionsContainer = document.getElementById('optionsContainer');
+    const qCounter = document.getElementById('qCounter');
+    const timerDisplay = document.getElementById('timerDisplay');
+    const paletteGrid = document.getElementById('paletteGrid');
+    const markBtn = document.getElementById('markBtn');
+    const resultOverlay = document.getElementById('resultOverlay');
+    const scoreDisplay = document.getElementById('scoreDisplay');
+    const accuracyDisplay = document.getElementById('accuracyDisplay');
+    const reviewList = document.getElementById('reviewList');
+
+    // =======================  RENDER  =======================
+    function renderQuestion() {
+        if (testSubmitted) return;
+        const q = questions[currentIndex];
+        questionText.innerHTML = `Q${currentIndex + 1}. ${q.text}`;
+        let html = '';
+        q.options.forEach((opt, idx) => {
+            const selected = userAnswers[currentIndex] === idx;
+            html += `<div class="option ${selected ? 'selected' : ''}" onclick="selectOption(${idx})">
+                <span class="option-letter">${String.fromCharCode(65 + idx)}.</span>
+                <span>${opt}</span>
+            </div>`;
+        });
+        optionsContainer.innerHTML = html;
+        qCounter.textContent = `Question ${currentIndex + 1} / 120`;
+        if (marked[currentIndex]) {
+            markBtn.style.background = '#f39c12';
+            markBtn.style.borderColor = '#d68910';
+            markBtn.style.color = 'white';
+        } else {
+            markBtn.style.background = 'white';
+            markBtn.style.borderColor = '#cbd6e6';
+            markBtn.style.color = '#1e2f4a';
+        }
+        visited[currentIndex] = true;
+        updatePalette();
+        if (window.MathJax && MathJax.typesetPromise) {
+            MathJax.typesetPromise([questionText, optionsContainer]);
+        }
+    }
+
+    function updatePalette() {
+        paletteGrid.innerHTML = '';
+        for (let i = 0; i < 120; i++) {
+            const div = document.createElement('div');
+            div.className = 'palette-item';
+            if (userAnswers[i] !== null) div.classList.add('answered');
+            else if (visited[i]) div.classList.add('not-answered');
+            else div.classList.add('not-visited');
+            if (marked[i]) div.classList.add('marked');
+            if (i === currentIndex) div.classList.add('current');
+            div.textContent = i + 1;
+            div.onclick = () => { if (!testSubmitted) { currentIndex = i; renderQuestion(); } };
+            paletteGrid.appendChild(div);
+        }
+    }
+
+    // =======================  ACTIONS  =======================
+    function selectOption(idx) {
+        if (testSubmitted) return;
+        if (userAnswers[currentIndex] === idx) userAnswers[currentIndex] = null;
+        else userAnswers[currentIndex] = idx;
+        renderQuestion();
+    }
+
+    function prevQuestion() {
+        if (testSubmitted) return;
+        if (currentIndex > 0) { currentIndex--; renderQuestion(); }
+    }
+
+    function nextQuestion() {
+        if (testSubmitted) return;
+        if (currentIndex < 119) { currentIndex++; renderQuestion(); }
+    }
+
+    function toggleMark() {
+        if (testSubmitted) return;
+        marked[currentIndex] = !marked[currentIndex];
+        renderQuestion();
+    }
+
+    function clearResponse() {
+        if (testSubmitted) return;
+        userAnswers[currentIndex] = null;
+        renderQuestion();
+    }
+
+    // =======================  TIMER  =======================
+    function startTimer() {
+        timerInterval = setInterval(() => {
+            if (testSubmitted) return;
+            timeLeft--;
+            const mins = Math.floor(timeLeft / 60);
+            const secs = timeLeft % 60;
+            timerDisplay.textContent = `${String(mins).padStart(2, '0')}:${String(secs).padStart(2, '0')}`;
+            if (timeLeft <= 0) {
+                clearInterval(timerInterval);
+                submitTest();
+            }
+        }, 1000);
+    }
+
+    // =======================  SUBMIT  =======================
+    function submitTest() {
+        if (testSubmitted) return;
+        if (timeLeft > 0 && !confirm('Are you sure you want to submit the test?')) return;
+        testSubmitted = true;
+        clearInterval(timerInterval);
+        let correctCount = 0, wrongCount = 0, skipped = 0;
+        for (let i = 0; i < 120; i++) {
+            if (userAnswers[i] === null) skipped++;
+            else if (userAnswers[i] === questions[i].correct) correctCount++;
+            else wrongCount++;
+        }
+        const score = correctCount * 3 - wrongCount;
+        const attempted = correctCount + wrongCount;
+        const accuracy = attempted > 0 ? (correctCount / attempted * 100) : 0;
+        scoreDisplay.textContent = `Score: ${score}`;
+        accuracyDisplay.textContent = `Accuracy: ${accuracy.toFixed(2)}%  (${correctCount} correct, ${wrongCount} wrong, ${skipped} skipped)`;
+        renderReview('all');
+        resultOverlay.classList.add('active');
+        updatePalette();
+    }
+
+    function renderReview(filter) {
+        document.querySelectorAll('.filter-btn').forEach(btn => {
+            btn.classList.toggle('active', btn.dataset.filter === filter);
+        });
+        let html = '';
+        let count = 0;
+        for (let i = 0; i < 120; i++) {
+            const q = questions[i];
+            const userAns = userAnswers[i];
+            const isCorrect = userAns === q.correct;
+            const isSkipped = userAns === null;
+            if (filter === 'correct' && !isCorrect) continue;
+            if (filter === 'incorrect' && (isCorrect || isSkipped)) continue;
+            if (filter === 'unattempted' && !isSkipped) continue;
+            count++;
+            let itemClass = 'review-item ';
+            if (isSkipped) itemClass += 'skipped';
+            else if (isCorrect) itemClass += 'correct';
+            else itemClass += 'incorrect';
+
+            const userLetter = userAns !== null ? String.fromCharCode(65 + userAns) : '—';
+            const correctLetter = String.fromCharCode(65 + q.correct);
+            html += `<div class="${itemClass}">
+                <div class="review-q">Q${i + 1}. ${q.text}</div>
+                <div class="review-ans">
+                    <span>Your answer: <span class="${isCorrect ? 'correct-text' : (isSkipped ? '' : 'wrong-text')}">${userLetter} ${userAns !== null ? q.options[userAns] : '(not attempted)'}</span></span>
+                    <span>Correct answer: <span class="correct-text">${correctLetter} ${q.options[q.correct]}</span></span>
+                </div>
+            </div>`;
+        }
+        if (count === 0) html = '<p style="text-align:center;padding:30px;color:#4a5e7a;">No questions match this filter.</p>';
+        reviewList.innerHTML = html;
+        if (window.MathJax && MathJax.typesetPromise) {
+            MathJax.typesetPromise([reviewList]);
+        }
+    }
+
+    function setFilter(filter) {
+        renderReview(filter);
+    }
+
+    // =======================  DOWNLOAD  =======================
+    function downloadReview() {
+        let content = `MCQ Test Performance & Solutions\nScore: ${scoreDisplay.textContent}\n${accuracyDisplay.textContent}\n\n`;
+        for (let i = 0; i < 120; i++) {
+            const q = questions[i];
+            const userAns = userAnswers[i];
+            const isSkipped = userAns === null;
+            const userLetter = userAns !== null ? String.fromCharCode(65 + userAns) : '—';
+            const correctLetter = String.fromCharCode(65 + q.correct);
+            content += `Q${i + 1}. ${q.text.replace(/\$/g, '')}\n`;
+            content += `Your answer: ${userLetter} ${userAns !== null ? q.options[userAns].replace(/\$/g, '') : '(not attempted)'}\n`;
+            content += `Correct answer: ${correctLetter} ${q.options[q.correct].replace(/\$/g, '')}\n\n`;
+        }
+        const blob = new Blob([content], { type: 'text/plain;charset=utf-8' });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = 'performance_review.txt';
+        a.click();
+        URL.revokeObjectURL(url);
+    }
+
+    // =======================  INIT  =======================
+    function init() {
+        renderQuestion();
+        startTimer();
+        updatePalette();
+        document.addEventListener('keydown', (e) => {
+            if (testSubmitted) return;
+            if (e.key === 'ArrowLeft') prevQuestion();
+            if (e.key === 'ArrowRight') nextQuestion();
+        });
+    }
+
+    init();
+
+    window.selectOption = selectOption;
+    window.prevQuestion = prevQuestion;
+    window.nextQuestion = nextQuestion;
+    window.toggleMark = toggleMark;
+    window.clearResponse = clearResponse;
+    window.submitTest = submitTest;
+    window.setFilter = setFilter;
+    window.downloadReview = downloadReview;
+</script>
+</body>
+</html>

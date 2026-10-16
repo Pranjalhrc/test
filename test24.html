@@ -1,0 +1,479 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MCQ Test · 120 Questions</title>
+    <script>
+        window.MathJax = {
+            tex: { inlineMath: [['$', '$'], ['\\(', '\\)']] },
+            svg: { fontCache: 'global' }
+        };
+    </script>
+    <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-svg.js" async></script>
+    <style>
+        * { box-sizing: border-box; margin: 0; font-family: 'Segoe UI', Roboto, system-ui, sans-serif; }
+        body { background: #f0f4f8; display: flex; justify-content: center; padding: 20px; }
+        .app { max-width: 1400px; width: 100%; display: flex; gap: 24px; position: relative; }
+        .main-panel { flex: 1; background: white; border-radius: 28px; box-shadow: 0 12px 30px rgba(0,0,0,0.08); display: flex; flex-direction: column; padding: 28px 32px; min-height: 85vh; }
+        .header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; border-bottom: 2px solid #e9edf4; padding-bottom: 16px; }
+        .timer { font-size: 1.8rem; font-weight: 700; color: #1e3c72; background: #eef3fe; padding: 8px 22px; border-radius: 60px; letter-spacing: 1px; }
+        .q-counter { font-size: 1.1rem; color: #3a4b6e; background: #e9effb; padding: 6px 20px; border-radius: 40px; font-weight: 600; }
+        .question-area { flex: 1; display: flex; flex-direction: column; margin: 12px 0 20px; overflow-y: auto; max-height: 58vh; padding-right: 6px; }
+        .question-text { font-size: 1.25rem; line-height: 1.6; margin-bottom: 28px; font-weight: 500; color: #0b1e3a; }
+        .options { display: flex; flex-direction: column; gap: 14px; margin-bottom: 12px; }
+        .option { display: flex; align-items: flex-start; gap: 14px; background: #f9fcff; border: 2px solid #dbe2ec; border-radius: 18px; padding: 14px 20px; cursor: pointer; transition: 0.15s; font-size: 1.1rem; line-height: 1.5; }
+        .option:hover { background: #eef4fe; border-color: #b0c7e9; }
+        .option.selected { background: #d9e8ff; border-color: #1e5fbf; box-shadow: 0 0 0 2px rgba(30,95,191,0.15); }
+        .option-letter { font-weight: 700; color: #1e3c72; min-width: 28px; }
+        .nav-buttons { display: flex; flex-wrap: wrap; gap: 12px; margin-top: auto; padding-top: 18px; border-top: 2px solid #e9edf4; }
+        .btn { padding: 12px 24px; border-radius: 60px; border: none; font-weight: 600; font-size: 0.95rem; cursor: pointer; background: white; border: 2px solid #cbd6e6; color: #1e2f4a; transition: 0.1s; display: inline-flex; align-items: center; justify-content: center; gap: 6px; }
+        .btn:hover { background: #f0f6ff; border-color: #8ba9d4; }
+        .btn-primary { background: #1e5fbf; border-color: #1e5fbf; color: white; }
+        .btn-primary:hover { background: #164a9c; border-color: #164a9c; }
+        .btn-warning { background: #f7b731; border-color: #f7b731; color: #1e1e1e; }
+        .btn-warning:hover { background: #e5a61f; border-color: #e5a61f; }
+        .btn-danger { background: #d64545; border-color: #d64545; color: white; }
+        .btn-danger:hover { background: #b83232; border-color: #b83232; }
+        .palette { width: 300px; background: white; border-radius: 28px; box-shadow: 0 12px 30px rgba(0,0,0,0.08); padding: 24px 16px; display: flex; flex-direction: column; height: 85vh; position: sticky; top: 20px; }
+        .palette h3 { text-align: center; margin-bottom: 16px; color: #1e3c72; font-weight: 600; font-size: 1.2rem; }
+        .legend { display: flex; flex-wrap: wrap; gap: 10px 16px; justify-content: center; margin-bottom: 16px; font-size: 0.75rem; color: #2e405b; }
+        .legend span::before { content: "●"; margin-right: 4px; font-size: 1rem; vertical-align: middle; }
+        .legend .answered::before { color: #2ecc71; }
+        .legend .not-answered::before { color: #e74c3c; }
+        .legend .marked::before { color: #f39c12; }
+        .legend .not-visited::before { color: #b0bedb; }
+        .palette-grid { flex: 1; overflow-y: auto; display: grid; grid-template-columns: repeat(5, 1fr); gap: 8px; padding: 6px 4px; align-content: start; }
+        .palette-item { aspect-ratio: 1 / 1; display: flex; align-items: center; justify-content: center; border-radius: 12px; font-weight: 600; font-size: 0.9rem; background: #eef2f8; color: #30445c; border: 2px solid transparent; cursor: pointer; transition: 0.08s; }
+        .palette-item.answered { background: #2ecc71; color: white; border-color: #27ae60; }
+        .palette-item.not-answered { background: #e74c3c; color: white; border-color: #c0392b; }
+        .palette-item.marked { background: #f39c12; color: white; border-color: #d68910; }
+        .palette-item.not-visited { background: #d5deec; color: #3a4b6e; }
+        .palette-item.current { outline: 3px solid #1e5fbf; outline-offset: 2px; }
+        .overlay { position: fixed; inset: 0; background: rgba(10, 20, 40, 0.7); backdrop-filter: blur(6px); display: none; align-items: center; justify-content: center; padding: 30px; z-index: 1000; }
+        .overlay.active { display: flex; }
+        .result-card { background: white; max-width: 1200px; width: 100%; max-height: 90vh; border-radius: 32px; padding: 32px 36px; display: flex; flex-direction: column; overflow: hidden; box-shadow: 0 30px 50px rgba(0,0,0,0.4); }
+        .result-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; flex-wrap: wrap; gap: 16px; }
+        .score-badge { font-size: 2rem; font-weight: 800; background: #1e3c72; color: white; padding: 10px 32px; border-radius: 60px; }
+        .filter-buttons { display: flex; gap: 10px; flex-wrap: wrap; }
+        .filter-btn { padding: 8px 18px; border-radius: 40px; border: 2px solid #cbd6e6; background: white; font-weight: 600; cursor: pointer; transition: 0.1s; }
+        .filter-btn.active { background: #1e5fbf; border-color: #1e5fbf; color: white; }
+        .review-list { overflow-y: auto; flex: 1; padding-right: 8px; display: flex; flex-direction: column; gap: 14px; margin-bottom: 16px; }
+        .review-item { border-left: 8px solid #b0bedb; background: #f9fcff; border-radius: 16px; padding: 16px 20px; font-size: 0.98rem; line-height: 1.5; }
+        .review-item.correct { border-left-color: #2ecc71; background: #f0fff6; }
+        .review-item.incorrect { border-left-color: #e74c3c; background: #fff5f5; }
+        .review-item.skipped { border-left-color: #b0bedb; background: #f5f7fb; }
+        .review-q { font-weight: 600; color: #0b1e3a; }
+        .review-ans { margin-top: 6px; display: flex; gap: 24px; flex-wrap: wrap; font-size: 0.92rem; }
+        .review-ans span { font-weight: 500; }
+        .correct-text { color: #1e7e34; font-weight: 700; }
+        .wrong-text { color: #b71c1c; font-weight: 700; }
+        .download-btn { background: #1e5fbf; border: none; color: white; padding: 10px 28px; border-radius: 40px; font-weight: 600; cursor: pointer; display: inline-flex; align-items: center; gap: 8px; }
+        .download-btn:hover { background: #164a9c; }
+    </style>
+</head>
+<body>
+<div class="app" id="app">
+    <div class="main-panel">
+        <div class="header">
+            <div class="q-counter" id="qCounter">Question 1 / 120</div>
+            <div class="timer" id="timerDisplay">120:00</div>
+        </div>
+        <div class="question-area" id="questionArea">
+            <div class="question-text" id="questionText"></div>
+            <div class="options" id="optionsContainer"></div>
+        </div>
+        <div class="nav-buttons">
+            <button class="btn" id="prevBtn" onclick="prevQuestion()">← Previous</button>
+            <button class="btn btn-warning" id="markBtn" onclick="toggleMark()">⭐ Mark for Review</button>
+            <button class="btn" id="clearBtn" onclick="clearResponse()">✖ Clear Response</button>
+            <button class="btn btn-primary" id="nextBtn" onclick="nextQuestion()">Next →</button>
+            <button class="btn btn-danger" id="submitBtn" onclick="submitTest()" style="margin-left:auto;">✅ Submit</button>
+        </div>
+    </div>
+    <div class="palette">
+        <h3>Question Palette</h3>
+        <div class="legend">
+            <span class="answered">Answered</span>
+            <span class="not-answered">Not Answered</span>
+            <span class="marked">Marked</span>
+            <span class="not-visited">Not Visited</span>
+        </div>
+        <div class="palette-grid" id="paletteGrid"></div>
+    </div>
+</div>
+<div class="overlay" id="resultOverlay">
+    <div class="result-card">
+        <div class="result-header">
+            <div>
+                <span class="score-badge" id="scoreDisplay">0</span>
+                <span style="margin-left:18px;font-weight:600;color:#1e3c72;" id="accuracyDisplay">Accuracy: 0%</span>
+            </div>
+            <div class="filter-buttons" id="filterButtons">
+                <button class="filter-btn active" data-filter="all" onclick="setFilter('all')">All</button>
+                <button class="filter-btn" data-filter="correct" onclick="setFilter('correct')">✅ Correct</button>
+                <button class="filter-btn" data-filter="incorrect" onclick="setFilter('incorrect')">❌ Incorrect</button>
+                <button class="filter-btn" data-filter="unattempted" onclick="setFilter('unattempted')">⏭️ Unattempted</button>
+            </div>
+            <button class="download-btn" onclick="downloadReview()">⬇ Download Review</button>
+        </div>
+        <div class="review-list" id="reviewList"></div>
+    </div>
+</div>
+
+<script>
+    // =======================  QUESTION DATA (1-90 Maths, 91-120 GK) =======================
+    const questions = [
+        // ---------- MATHEMATICS (1-90) ----------
+        { text: "Let A be the $n\\times n$ matrix with all the entries equal to 1. The Eigen values of A are", options: ["0 with multiplicity 1 and 1 with multiplicity 1", "0 with multiplicity 1 and n with multiplicity $(n-1)$", "n with multiplicity 1 and 1 with multiplicity 1", "0 with multiplicity $(n-1)$ and n with multiplicity 1"], correct: 3 },
+        { text: "An idempotent matrix A is non-singular if and only if", options: ["All eigen values are 1", "All eigen values are non-negative", "All eigen values are real", "All eigen values are either 1 or 0"], correct: 0 },
+        { text: "Let V be the space of all linear transformation from $R^{3}$ to $R^{2}$ under usual addition and scalar multiplication. Then", options: ["V is a vector space of dimension 9", "V is a vector space of dimension 8", "V is a vector space of dimension 6", "V is a vector space of dimension 5"], correct: 2 },
+        { text: "Let $A=(a_{ij})$ be an $n\\times n$ matrix such that $a_{ij}=3$ for all i and j. Then the nullity of A is", options: ["$n-1$", "$n-3$", "n", "0"], correct: 0 },
+        { text: "Let $A=(a_{ij})$ be an $n\\times n$ matrix with all real entries such that the sum of all the entries in each row is zero. Consider the following statements: 1. A is non-singular 2. A is singular 3. 0 is an eigen values of A Which of the following is correct?", options: ["Only 1 is true", "1 and 3 are true", "2 and 3 are true", "Only 3 is true"], correct: 2 },
+        { text: "Let the matrix $A=\\begin{pmatrix} \\cos\\theta & -\\sin\\theta \\\\ \\sin\\theta & \\cos\\theta \\end{pmatrix},$ A has real eigen values, then", options: ["$\\theta=n\\pi$ for some integer n", "$\\theta=2n\\pi+n\\pi/2$ for some integer n", "$\\theta=2n\\pi+n\\pi/4$ for some integer n", "There is no restriction on $\\theta$"], correct: 0 },
+        { text: "Let $A=\\begin{pmatrix} 2 & 4 \\\\ 1 & 2 \\end{pmatrix}$ and $A^{6}=kA$ then values of k is equal to", options: ["$2^{6}$", "$2^{11}$", "$2^{5}$", "$2^{10}$"], correct: 2 },
+        { text: "Consider the matrix $A=\\begin{pmatrix} 1^{2} & 2^{2} & \\dots & n^{2} \\\\ 2^{2} & 3^{2} & \\dots & (n+1)^{2} \\\\ \\vdots & \\vdots & \\ddots & \\vdots \\\\ n^{2} & (n+1)^{2} & \\dots & (2n-1)^{2} \\end{pmatrix}$ for $n \\ge 4,$ then the determinant of A is:", options: ["0", "n", "$n^{2}$", "$n^{n-1}$"], correct: 0 },
+        { text: "Let $T:R^{3}\\rightarrow R^{3}$ be a linear transformation such that the eigen values of T are $1,\\sqrt{2},\\sqrt{2},$ then the maximum number of linearly independent vectors of T are:", options: ["1", "2", "3", "4"], correct: 2 },
+        { text: "Let V be the set of $n\\times n$ upper triangular matrices over R. The dimension of V as a vector space over R-", options: ["n", "$n^{2}$", "$n(n-1)$", "$\\frac{n(n+1)}{2}$"], correct: 3 },
+        { text: "Given that $B=\\{(1,-1,0)^{T},(0,1,-1)^{T},(2,0,2)^{T}\\}$ is an ordered basis of $R^{3},$ and vector $v=(1,1,1)^{T}$ with respect to the standard basis, the representation of v with respect to B is", options: ["$(-1/2,1/2,3/4)^{T}$", "$(3/4,1/2,-1/2)^{T}$", "$(-1/2,1/2,3/4)^{T}$", "$(1/2,-1/2,1/2)^{T}$"], correct: 2 },
+        { text: "Consider the following sets of vectors: $S_{1}=\\{(1,0,1)^{T},(1,0,1)^{T},(1,0,1)^{T}\\}$, $S_{2}=\\{(1,0,1)^{T},(2,1,1)^{T},(1,1,0)^{T}\\}$, $S_{3}=\\{(1,-1,0)^{T},(0,1,-1)^{T},(2,0,2)^{T}\\}$. Of these sets, which is/are the basis of $R^{3};$", options: ["$S_{1}, S_{3}$", "$S_{2}$", "$S_{3}$", "None of these"], correct: 2 },
+        { text: "If A is a $5\\times5$ matrix, then what is the value of det(3A)?", options: ["$\\frac{1}{3^{5}}\\det(A)$", "$\\frac{1}{5^{3}}\\det(A)$", "$3^{5}\\det(A)$", "$5^{3}\\det(A)$"], correct: 2 },
+        { text: "Let $A=\\begin{pmatrix} 0 & 1 & 1 \\\\ 1 & 0 & 1 \\\\ 1 & 1 & 0 \\end{pmatrix},$ then the eigen values of A are", options: ["3, 0, 0", "2, -1, -1", "3, -3, 0", "2, 0, -2"], correct: 1 },
+        { text: "A homogeneous system of 5 linear equations in 6 variables admits", options: ["No solution in R", "A unique solution in R", "Infinitely many solutions in $R^{6}$", "Finite, but more than 2 solutions in $R^{6}$"], correct: 2 },
+        { text: "If A is a real $2\\times2$ matrix such that $A^{2}-A=0,$ then", options: ["Either $A=\\begin{pmatrix} 1 & 0 \\\\ 0 & 1 \\end{pmatrix}$ or $A=\\begin{pmatrix} -1 & 0 \\\\ 0 & -1 \\end{pmatrix}$", "There are infinitely many such matrices A", "There are only finitely many such matrices A", "A has to be a diagonal matrix"], correct: 2 },
+        { text: "Given that a $3\\times3$ matrix satisfies the equation, $A^{3}-A^{2}+A-I=0,$ the value of $A^{4}$", options: ["Not computable from the given data", "I", "0", "$-A^{3}+A^{2}-A+I$"], correct: 1 },
+        { text: "If $\\begin{pmatrix} -4.5 \\\\ -4 \\\\ 1 \\end{pmatrix}$ is an eigen vector of $\\begin{pmatrix} 8 & -4 & 2 \\\\ 4 & 0 & 2 \\\\ 0 & -2 & -4 \\end{pmatrix},$ the eigenvalue corresponding to the eigenvector is", options: ["1", "4", "4.5", "6"], correct: 1 },
+        { text: "What is the signature of the quadratic form $Q=7x_{1}^{2}+2x_{2}^{2}-3x_{3}^{2}+x_{31}+x_{23}?$", options: ["-1", "1", "-2", "2"], correct: 1 },
+        { text: "What is the index of the quadratic form $Q=3x_{1}^{2}+x_{3}^{2}+8x_{31}+2x_{23}+9x_{21}?$", options: ["4", "3", "2", "1"], correct: 2 },
+        { text: "Reduce the quadratic form to canonical form: $Q=3x_{1}^{2}+2x_{2}^{2}+8x_{31}+8x_{23}+8x_{21}.$", options: ["$\\begin{pmatrix} 3 & 4 & 4 \\\\ 4 & 0 & 4 \\\\ 4 & 4 & 2 \\end{pmatrix}$", "$\\begin{pmatrix} 3 & 4 & 0 \\\\ 4 & 2 & 4 \\\\ 4 & 4 & 0 \\end{pmatrix}$", "$\\begin{pmatrix} 3 & 4 & 4 \\\\ 4 & 2 & 0 \\\\ 4 & 4 & 0 \\end{pmatrix}$", "$\\begin{pmatrix} 3 & 4 & 4 \\\\ 4 & 2 & 4 \\\\ 4 & 4 & 0 \\end{pmatrix}$"], correct: 3 },
+        { text: "Determinant of the matrix $A=\\begin{pmatrix} 1 & 0 & 0 & 0 \\\\ 100 & 1 & 0 & 0 \\\\ 100 & 200 & 1 & 0 \\\\ 100 & 200 & 300 & 1 \\end{pmatrix}$ is:", options: ["1", "100", "200", "None of these"], correct: 0 },
+        { text: "The system of equations $4x+6y=5$, $8x+12y=10$ has", options: ["No solution", "A unique solution", "Infinitely many solutions", "None of these"], correct: 2 },
+        { text: "What is an orthogonal basis for the subspace of $R^{4}$ spanned by $x_{1}=(1,0,1,0)$, $x_{2}=(1,1,1,1),$ $x_{3}=(-1,2,0,1)?$", options: ["$\\{(1,0,1,0),(0,1,0,1),(-\\frac{1}{2},\\frac{1}{2},\\frac{1}{2},-\\frac{1}{2})\\}$", "$\\{(\\frac{1}{\\sqrt{2}},0,\\frac{1}{\\sqrt{2}},0),(0,\\frac{1}{\\sqrt{2}},0,\\frac{1}{\\sqrt{2}}),(-\\frac{1}{2},\\frac{1}{2},\\frac{1}{2},-\\frac{1}{2})\\}$", "\\{(1,0,1,0),(1,1,0,1),$(-\\frac{1}{2},\\frac{1}{2},\\frac{1}{2},-\\frac{1}{2})$\\}", "None of these"], correct: 0 },
+        { text: "What is the value of the expression $(-1/2+i\\sqrt{3}/2)^{37}+(-1/2-i\\sqrt{3}/2)^{37}$?", options: ["-1", "0", "1", "i"], correct: 0 },
+        { text: "Which of the following is true about $f(z)=z^{2}+2z$?", options: ["Continuous but not differentiable", "Neither continuous nor differentiable", "Differentiable but not continuous", "Continuous and differentiable"], correct: 3 },
+        { text: "If $z=\\cos\\theta+i\\sin\\theta,$ then $\\frac{z^{2n}-1}{z^{2n}+1}$ is equal to:", options: ["$i\\cot n\\theta$", "$-i\\tan n\\theta$", "$i\\cot n\\theta$", "$i\\tan n\\theta$"], correct: 3 },
+        { text: "Amplitude of $\\sin\\frac{\\pi}{5}+i(1-\\cos\\frac{\\pi}{5})$:", options: ["$\\frac{\\pi}{15}$", "$\\frac{\\pi}{5}$", "$\\frac{\\pi}{10}$", "$\\frac{2\\pi}{5}$"], correct: 2 },
+        { text: "What is the harmonic conjugate $v(x,y)$ of $u(x,y)=2x-x^{3}+3xy^{2}?$", options: ["$v(x,y)=2y-3x^{2}y+y^{3}$", "$v(x,y)=2-3x^{2}+y^{2}$", "$v(x,y)=2y-x^{2}y+y^{3}$", "$v(x,y)=2x-x^{3}+y^{3}$"], correct: 0 },
+        { text: "The value of $i^{i}$ is:", options: ["$e^{-\\pi/3}$", "$e^{-3\\pi/2}$", "$e^{-\\pi/2}$", "$e^{-\\pi/6}$"], correct: 2 },
+        { text: "What is the value of the integer n if $x^{n}-y^{n}$ is harmonic?", options: ["2", "3", "2 and 3", "None of these"], correct: 0 },
+        { text: "The integral of $f(z)=\\frac{e^{-z}}{z^{3}}$ in the region $|z|=4$ is:", options: ["$\\pi i$", "$3\\pi i$", "$-2\\pi i$", "$-\\pi i/2$"], correct: 0 },
+        { text: "Let C is the region of the complex plane enclosed by $x=\\pm2$ and $y=\\pm2$ then the value of $\\int_{C}\\frac{\\cos z}{z(z^{2}+8)}dz$ is:", options: ["$2\\pi i$", "$\\pi i$", "$\\pi i/4$", "$\\pi i/2$"], correct: 2 },
+        { text: "Let C is the unit circle, then the value of $\\int_{C}z^{2}\\sin(\\frac{1}{z})dz$ is:", options: ["0", "$-\\pi i/2$", "$-\\pi i/3$", "$-\\pi i$"], correct: 2 },
+        { text: "Let C is the upper half of the circle $|z|=1,$ then the value of $\\int_{C}(z-z^{2})dz$ is:", options: ["$-2/3$", "$2/3$", "3/2", "$-3/2$"], correct: 1 },
+        { text: "Let C is the circle $|z|=3,$ then the value of $\\int_{C}\\frac{\\sin\\pi z^{2}}{(z-1)(z-2)}dz$ is:", options: ["$2\\pi i$", "$4\\pi i$", "$6\\pi i$", "0"], correct: 3 },
+        { text: "If $f(z_{0})=\\int_{C}\\frac{3z^{2}+7z+1}{(z-z_{0})}dz,$ where C is the circle $x^{2}+y^{2}=4,$ then the value of f(3) is:", options: ["$7(\\pi+2i)$", "$6(\\pi+2i)$", "$2(5+13i)$", "0"], correct: 3 },
+        { text: "Expansion of the function $f(z)=\\frac{z-1}{z+1}$ about the point $z=0$ in Taylor series is:", options: ["$1+2(z+z^{2}+z^{3}+\\dots)$", "$-1-2(z-z^{2}-z^{3}-\\dots)$", "$-1+2(z-z^{2}+z^{3}-\\dots)$", "None of these"], correct: 2 },
+        { text: "In Laurent's series, the expansion of the $f(z)=\\frac{1}{(z-1)(z-2)}$ in the region $1<|z|<2$ is:", options: ["$\\frac{1}{z}+\\frac{2}{z^{2}}+\\frac{3}{z^{3}}+\\dots$", "$\\dots-z^{-3}-z^{-2}-z^{-1}-\\frac{1}{2}-\\frac{1}{4}z-\\frac{1}{8}z^{2}-\\frac{1}{16}z^{3}-\\dots$", "$\\frac{1}{z^{2}}+\\frac{3}{z^{3}}+\\frac{7}{z^{4}}+\\dots$", "None of these"], correct: 1 },
+        { text: "If $|z+1|<1,$ then $z^{-2}$ is equal to", options: ["$1+\\sum_{n=1}^{\\infty}(n+1)(z+1)^{n-1}$", "$1+\\sum_{n=1}^{\\infty}(n+1)(z+1)^{n+1}$", "$1+\\sum_{n=1}^{\\infty}n(z+1)^{n}$", "$1+\\sum_{n=1}^{\\infty}(n+1)(z+1)^{n}$"], correct: 3 },
+        { text: "If $f(z)=\\frac{z-\\sin z}{z^{3}},$ then $z=0$ is:", options: ["Pole", "Singularity", "Removable singularity", "Isolated singularity"], correct: 2 },
+        { text: "If $f(z)=\\frac{1}{z},$ then its Taylor's series about $z=1$ is:", options: ["$1-z+z^{2}-z^{3}+\\dots$", "$1+z+z^{2}+z^{3}+\\dots$", "$1-(z-1)+(z-1)^{2}-(z-1)^{3}+\\dots$", "$1+(z-1)+(z-1)^{2}+(z-1)^{3}+\\dots$"], correct: 2 },
+        { text: "The points coincide with their transformation are known as", options: ["Fixed points", "Critical points", "Singular points", "None of these"], correct: 0 },
+        { text: "The fixed points of the transformation $w=z^{2}$ are", options: ["0, 1", "0, -1", "-1, 1", "i, -i"], correct: 0 },
+        { text: "The bilinear transformation that maps the points 0, i, $\\infty$ of z-plane into the points 0, 1, $\\infty$ of w-plane respectively is:", options: ["$w=\\frac{1}{z}$", "$w=-z$", "$w=-iz$", "$w=iz$"], correct: 2 },
+        { text: "The radius of the power series $\\sum_{k=1}^{\\infty}\\frac{(-1)^{k+1}}{k!}(z-1-i)^{k}$ is:", options: ["0", "1", "-1", "$\\infty$"], correct: 3 },
+        { text: "What is the residue of $f(z)=\\frac{e^{1/z}}{1-z}$ at the essential singularity $z=0?$", options: ["e", "$e-1$", "0", "None of these"], correct: 1 },
+        { text: "What is the residue of $f(z)=\\frac{e^{z}-1}{\\sin^{2}z}$ at $z=0?$", options: ["0", "1/2", "1", "e"], correct: 1 },
+        { text: "The form of the exact solution $2\\frac{dy}{dx}+3y=e^{-x},y(0)=5$ is:", options: ["$y=4e^{-1.5x}+e^{-x}$", "$y=4e^{-1.5x}+xe^{-x}$", "$y=4e^{1.5x}+e^{-x}$", "$y=4e^{1.5x}+xe^{-x}$"], correct: 0 },
+        { text: "The solution of initial value problem $y''-4y'+8y=0$ for $y(0)=1$ and $y'(0)=2$ is:", options: ["$y=4e^{2t}-2e^{-2t}$", "$y=2e^{2t}\\cos 2t-2e^{-2t}\\sin 2t$", "$y=e^{2t}\\cos 2t-e^{-2t}\\sin 2t$", "$y=e^{2t}\\cos 2t$"], correct: 3 },
+        { text: "Using variation of parameters, what is the Wronskian of the equation $y''-2y'+y=(x+1)e^{x}?$", options: ["$W(e^{x},xe^{x})=xe^{2x}$", "$W(e^{x},xe^{x})=e^{2x}$", "$W(e^{x},xe^{x})=e^{x}$", "$W(e^{x},e^{x})=e^{2x}$"], correct: 1 },
+        { text: "Which of the following functions can be used as an integrating factor to turn the following non-exact equation into an exact equation: $(3y\\cos x-xy\\sin x)+2x\\cos x\\frac{dy}{dx}=0$?", options: ["$x^{2}y$", "$y^{2}x$", "x", "y"], correct: 0 },
+        { text: "For the simple RLC series electric circuit with $R=1/5$ ohm, $L=1$ henry, and C farads, the differential equation for the current I through the circuit is $C\\frac{d^{2}I}{dt^{2}}+\\frac{C}{5}\\frac{dI}{dt}+I=0.$ Pick the largest possible C from the following with which the current of the circuit will keep changing its direction at $t\\rightarrow\\infty.$", options: ["100", "80", "62", "15"], correct: 1 },
+        { text: "The following initial value problem of a first order linear system $x'=3x-2y,$ $y'=3x+4y$, $x(0)=1,$ $y(0)=-2$ can be converted into an initial value problem of a second order differential equation for x(t). It is:", options: ["$x''-7x'+6x=0, x(0)=1, x'(0)=0$", "$x''-7x'+6x=0, x(0)=1, x'(0)=-2$", "$x''-7x'+6x=0, x(0)=1, x'(0)=7$", "$x''-7x'+6x=0, x(0)=1, x'(0)=1$"], correct: 2 },
+        { text: "The differential equation formed by $y=a\\cos x+b\\sin x+4,$ where a and b are arbitrary constants is:", options: ["$y''+y=0$", "$y''-y=0$", "$y''+y=4$", "$y''-y=4$"], correct: 2 },
+        { text: "Let the population of rabbits surviving at a time t be governed by the differential equation $\\frac{dP}{dt}=\\frac{P}{2}-200.$ If $P(0)=100$, then $P(t)$ equals to:", options: ["$400-300e^{t/2}$", "$600-500e^{t/2}$", "$300-200e^{t/2}$", "$400-300e^{-t/2}$"], correct: 0 },
+        { text: "At present, a firm is manufacturing 2000 items. It has estimated that the rate of change of production P with respect to additional number of workers x is given by $P'=100-12\\sqrt{x}.$ If the firm employs 25 more workers, then the level of production of items is", options: ["3000", "4500", "3500", "2500"], correct: 2 },
+        { text: "Let $y(x)$ be a solution to the initial value problem $\\frac{dy}{dx}=\\frac{2x-y}{x-2y}$, $y(0)=1$. Compute $y(1)$", options: ["0", "1", "2", "-1/2"], correct: 1 },
+        { text: "Consider the differential equation: $y'=y^{3}-1.$ How many stable equilibrium solutions does this differential equation have?", options: ["0", "1", "2", "3"], correct: 0 },
+        { text: "Consider the initial value problem: $(\\tan t)y'+e^{t}y=\\frac{t+2}{t-2}, y(1)=\\pi.$ What is the maximal interval over which the initial value problem has a unique solution as guaranteed by the existence and uniqueness theorem for first order linear ordinary differential equations?", options: ["$-\\pi/2<t<\\pi/2$", "$0<t<2$", "$-2<t<2$", "$0<t<\\pi/2$"], correct: 3 },
+        { text: "Consider the differential equation: $(1+\\cos y)+x\\sin y\\frac{dy}{dx}=0.$ Which of the following equations gives the general solution $w(x,y)=c$ of this differential equation in implicit form?", options: ["$\\frac{1}{x}(1+\\cos y)=c$", "$x(1+\\cos y)=c$", "$y(1+\\sin x)=c$", "None of these"], correct: 0 },
+        { text: "Determine the order and linearity of the differential equation: $(y')^{2}+\\sin t y'-y=t^{3}.$", options: ["First order and linear", "First order and nonlinear", "Second order and linear", "Second order and nonlinear"], correct: 0 },
+        { text: "Which of the following will be an integrating factor for the differential equation: $t y'+(t+2)y=t^{3}?$", options: ["$e^{t^{2}/2}+e^{2t}$", "$e^{t^{2}/2+2t}$", "$t^{2}e^{t}$", "$t^{2}+et$"], correct: 2 },
+        { text: "Find the maximal interval where the existence and uniqueness of the solution to the initial value problem is guaranteed: $\\ln(t)y'+\\tan(t)y=\\sin^{2}(t), y(\\frac{\\pi}{3})=-1.$", options: ["$(-\\frac{\\pi}{2},\\frac{\\pi}{2})$", "$(-\\frac{\\pi}{2},0)$", "$(-\\frac{\\pi}{3},\\frac{\\pi}{3})$", "$(1,\\frac{\\pi}{2})$"], correct: 3 },
+        { text: "Let y(t) be the solution of the initial value problem: $y'-2ty=2t$, $y(0)=1$, then $y(1)$ is:", options: ["$e-1$", "$2e-1$", "$e^{2}-1$", "$e^{2}-2$"], correct: 1 },
+        { text: "What is the radius of convergence of a power series solution about $x_{0}=0$ is at least on solving the differential equation $(x+2)(x^{2}+9)y''+3(x+5)y'+(x^{2}+1)y=0.$", options: ["1", "2", "3", "5"], correct: 1 },
+        { text: "Singular solution of the Clairaut's equation $y=y'x+\\frac{a}{y'}$ is given by", options: ["$\\frac{x^{2}}{a^{2}}+\\frac{y^{2}}{a^{2}}=1$", "$y^{2}=-4ax$", "$y^{2}=4ax$", "$y^{2}=-2ax$"], correct: 2 },
+        { text: "Consider the following Sturm-Liouville problem: $y''+\\lambda y=0,$ $y'(0)=0,$ $y'(\\pi)=0.$ One eigen functions is $y=\\cos 4x.$ Find the corresponding eigenvalue.", options: ["0", "2", "4", "16"], correct: 3 },
+        { text: "Find the general solution of the ordinary differential equation $X'+(\\frac{n\\pi}{L})^{2}X=0.$", options: ["$X(x)=c_{1}e^{-(\\frac{n\\pi}{L})^{2}x}$", "$X(x)=c_{1}e^{(\\frac{n\\pi}{L})^{2}x}$", "$X(x)=c_{1}e^{-\\frac{n\\pi}{L}x}$", "$X(x)=c_{1}e^{\\frac{n\\pi}{L}x}$"], correct: 0 },
+        { text: "The Sturm-Liouville problem of the Eigen value problem $y''+3y'+(2+\\lambda)y=0, y(0)=0, y(1)=0$ is:", options: ["$y''+3y'+\\lambda e^{3x}y=0, y(0)=0, y(1)=0$", "$y''+2e^{3x}y+\\lambda e^{3x}y=0, y(0)=0, y(1)=0$", "$y''+2e^{3x}y+\\lambda e^{3x}y=0, y(0)=0, y(1)=0$", "$(e^{3x}y')'+2e^{3x}y+\\lambda e^{3x}y=0, y(0)=0, y(1)=0$"], correct: 3 },
+        { text: "If the general solutions of a differential equation is $(y+c)^{2}=cx,$ where c is an arbitrary constant, then the order and degree of the differential equation are:", options: ["1, 2", "2, 1", "1, 1", "None of these"], correct: 0 },
+        { text: "The degree of $\\frac{d^{2}y}{dx^{2}}+(1+(\\frac{dy}{dx})^{2})^{\\frac{3}{2}}=0;$ is:", options: ["0", "1", "2", "3"], correct: 2 },
+        { text: "The formation of partial differential equation from $z=(x+y)f(x^{2}-y^{2})$ is", options: ["$z=py+qx$", "$xq-yp=(x^{2}-y^{2})$", "$2z=xp+yq$", "None of these"], correct: 0 },
+        { text: "The formation of partial differential equation from $f(x^{2}+y^{2}, z-xy)=0$ is:", options: ["$z^{2}=2z^{2}$", "$xq-yp=(x^{2}-y^{2})$", "$2z=xp+yq$", "None of these"], correct: 1 },
+        { text: "The complete solution of $\\frac{\\partial^{2}z}{\\partial x^{2}}+z=0,$ given that when $x=0,$ $z=e^{y}$ and $\\frac{\\partial z}{\\partial x}=1.$ is:", options: ["$z=\\sin x+e^{y}\\cos x$", "$z=(1+\\cos x)\\cos y$", "$z=\\frac{1}{4}\\cos(2x-y)-xy$", "None of these"], correct: 0 },
+        { text: "The complete solution of $\\frac{y^{2}z}{x}p+xzq=y^{2}$ is:", options: ["$x^{3}-y^{3}=f(x^{2}-z^{2})$", "$f(x^{3}-y^{3}, x^{2}-z^{2})=0$", "Both (a) and (b)", "None of these"], correct: 2 },
+        { text: "The complete solution of $x^{2}(y-z)p+y^{2}(z-x)q=z^{2}(x-y)$ is:", options: ["$x^{2}+y^{2}+z^{2}=zf(\\frac{y}{z})$", "$xyz=f(\\frac{1}{x}+\\frac{1}{y}+\\frac{1}{z})$", "$x^{3}-y^{3}=f(x^{2}-z^{2})$", "$xyz=(x+y)f(x^{2}-y^{2})$"], correct: 1 },
+        { text: "The complete solution of $(p^{2}+q^{2})y=qz$ is:", options: ["$z^{2}=(a+cx)^{2}+c^{2}y^{2}$", "$z=ay+(x^{2}-a)$", "$z=(a+cx)^{2}+c^{2}y^{2}$", "$z=(a+cy)^{2}+c^{2}x^{2}$"], correct: 0 },
+        { text: "The complete solution of $2xz-px^{2}-2qxy+pq=0$ is:", options: ["$z^{2}=(a+cx)^{2}+c^{2}y^{2}$", "$z^{2}=(a+cy)^{2}+c^{2}x^{2}$", "$z=(a+cx)^{2}+c^{2}y^{2}$", "$z=ay+c(x^{2}-a)$"], correct: 3 },
+        { text: "The complete solution of $2\\frac{\\partial^{2}z}{\\partial x^{2}}+5\\frac{\\partial^{2}z}{\\partial x\\partial y}+2\\frac{\\partial^{2}z}{\\partial y^{2}}=0$ is:", options: ["$f(y+x)+g(y-5x)$", "$f(y+x)+g(y)$", "$f(y-2x)+g(2y-x)$", "$f(y-2x)+xg(y-2x)$"], correct: 2 },
+        { text: "The complete solution of $(D^{2}+4DD'-5D'^{2})z=\\sin(2x+3y)$ is:", options: ["$f(y+x)+g(y-5x)+\\frac{1}{17}\\sin(2x+3y)$", "$f(y+x)+g(y-5x)+\\frac{1}{17}\\cos(2x+3y)$", "$f(y+x)+g(y-5x)+\\frac{1}{12}\\sin(2x+3y)$", "$f(y+x)+g(y-5x)+\\frac{1}{17}\\sin(2x+3y)$"], correct: 0 },
+        { text: "The complete solution of $\\frac{\\partial u}{\\partial x}=2\\frac{\\partial u}{\\partial t}+u, u(x,0)=6e^{-3x}$ is:", options: ["$u=6e^{-3x-2t}$", "$u=6e^{-(3x+2t)}$", "$u=6e^{(3x-2t)}$", "$u=6e^{(3x+2t)}$"], correct: 1 },
+        { text: "The possible solution of the wave equation: $\\frac{\\partial^{2}y}{\\partial t^{2}}=c^{2}\\frac{\\partial^{2}y}{\\partial x^{2}}$ is:", options: ["$y=(A\\cos px+B\\sin px)(C\\cos pct+D\\sin pct)$", "$y=(A\\cos px+B\\sin px)(Ce^{-c^{2}p^{2}t})$", "$y=(A\\cos px+B\\sin px)(Ce^{pt}+De^{-pt})$", "None of these"], correct: 0 },
+        { text: "The solution of $\\frac{\\partial u}{\\partial t}=\\frac{\\partial^{2}u}{\\partial x^{2}}$ with the boundary conditions $u(x,0)=3\\sin n\\pi x$, $u(0,t)=0,$ $u(1,t)=0,$ where $0<x<1, t>0$ is:", options: ["$u(x,t)=3\\sum_{n=1}^{\\infty}e^{-n^{2}\\pi^{2}t}\\cos n\\pi x$", "$u(x,t)=-3\\sum_{n=1}^{\\infty}e^{-n^{2}\\pi^{2}t}\\cos n\\pi x$", "$u(x,t)=3\\sum_{n=1}^{\\infty}e^{-n^{2}\\pi^{2}t}\\sin n\\pi x$", "$u(x,t)=-3\\sum_{n=1}^{\\infty}e^{-n^{2}\\pi^{2}t}\\sin n\\pi x$"], correct: 2 },
+        { text: "The partial differential equation $5\\frac{\\partial^{2}z}{\\partial x^{2}}+6\\frac{\\partial^{2}z}{\\partial y^{2}}=xy$ is classified as", options: ["Elliptic", "Parabolic", "Hyperbolic", "None of these"], correct: 0 },
+        { text: "The differential equation $\\frac{\\partial z}{\\partial t}+\\frac{\\partial^{3}z}{\\partial x^{3}}\\cdot 6z\\frac{\\partial z}{\\partial x}=0$", options: ["Linear and 3rd order", "Nonlinear and 3rd order", "Linear and 1st order", "Nonlinear and 1st order"], correct: 1 },
+        { text: "The nature of the one-dimensional heat equation is:", options: ["Circular", "Elliptic", "Hyperbolic", "Parabolic"], correct: 3 },
+        { text: "When solving a one-dimensional heat equation using variable separable method, we get the solution if", options: ["k is positive", "k is negative", "k can be anything", "k is zero"], correct: 0 },
+        { text: "The complete solution of $\\frac{\\partial u}{\\partial x}=6\\frac{\\partial u}{\\partial t}+u,$ $u(x,0)=10e^{-x}$ is:", options: ["$u=10e^{-x}e^{-t/3}$", "$u=10e^{x}e^{-t/3}$", "$u=10e^{t/3}e^{-t}$", "$u=10e^{-2t/3}e^{-t}$"], correct: 0 },
+        { text: "When solving a one-dimensional wave equation using variable separable method, we get the solution if", options: ["k is positive", "k is negative", "k can be anything", "k is zero"], correct: 0 },
+        { text: "The complete solution of $5\\frac{\\partial u}{\\partial x}+3\\frac{\\partial u}{\\partial y}=2u,$ $u(0,y)=9e^{-5y};$ is:", options: ["$u=9e^{\\frac{17}{5}x}e^{-5y}$", "$u=9e^{\\frac{17}{5}x}e^{-y}$", "$u=9e^{\\frac{17}{5}x}e^{5y}$", "$u=9e^{\\frac{15}{5}x}e^{5y}$"], correct: 0 },
+        { text: "The region in which the following partial differential equation $x^{2}\\frac{\\partial^{2}u}{\\partial x^{2}}+27\\frac{\\partial^{2}u}{\\partial y^{2}}+3\\frac{\\partial^{2}u}{\\partial x\\partial y}+5u=0$ acts as parabolic equation is", options: ["$x>(\\frac{1}{12})^{1/3}$", "$x<(\\frac{1}{12})^{1/3}$", "$x=(\\frac{1}{12})^{1/3}$", "For all values of x"], correct: 2 },
+        { text: "The partial differential equation $\\frac{\\partial u}{\\partial t}+tx\\frac{\\partial u}{\\partial x}=\\frac{\\partial^{2}u}{\\partial x^{2}}+u$", options: ["Nonlinear equation of order 2", "Nonlinear equation of degree 2", "Linear equation of degree 2", "Linear equation of order 2"], correct: 3 },
+        { text: "The wave equation in two-dimension is:", options: ["$\\frac{\\partial u}{\\partial t}=c^{2}\\frac{\\partial^{2}u}{\\partial x^{2}}$", "$\\frac{\\partial^{2}u}{\\partial t^{2}}=c^{2}(\\frac{\\partial^{2}u}{\\partial x^{2}}+\\frac{\\partial^{2}u}{\\partial y^{2}})$", "$\\frac{\\partial^{2}u}{\\partial t^{2}}=c^{2}\\frac{\\partial^{2}u}{\\partial x^{2}}$", "None of these"], correct: 1 },
+        { text: "The set of multipliers to solve the equation $x(y-z)p+y(z-x)q=z(x-y)$ is:", options: ["$\\frac{1}{x},\\frac{1}{y},\\frac{1}{z}$", "$\\frac{1}{x^{2}},\\frac{1}{y^{2}},\\frac{1}{z^{2}}$", "-1, -1, -1", "None of these"], correct: 0 },
+        { text: "If the number of arbitrary constants to be eliminated is equal to the number of independent variables, then the partial differential equation is of", options: ["First order", "Order is equal to number of independent variables", "Second order", "None of these"], correct: 0 },
+        // ---------- GK (91-120) ----------
+        { text: "Navanethem \"Navi\" Pillay, Nobel Peace Prize 2026 laureate, earlier served as:", options: ["UN High Commissioner for Human Rights", "WHO Director-General", "NASA Administrator", "IMF Chief"], correct: 0 },
+        { text: "The 2026 Commonwealth Games were hosted by which city?", options: ["Birmingham", "Glasgow", "Victoria", "Delhi"], correct: 1 },
+        { text: "In the Aichi–Nagoya Asian Games 2026, the men's cricket gold-medal match was won by India against:", options: ["Afghanistan", "Pakistan", "Sri Lanka", "Bangladesh"], correct: 1 },
+        { text: "The Indian Coast Guard's indigenous Fast Patrol Vessel commissioned in October 2026 is named:", options: ["ICGS Vikrant", "ICGS Ajit", "ICGS Rajveer", "ICGS Atulya"], correct: 1 },
+        { text: "The Union Ministry scheme \"Khelo India\" primarily promotes:", options: ["Start-ups", "Sports and fitness", "Handicrafts exports", "Digital payments"], correct: 1 },
+        { text: "\"Andragogy\" refers to:", options: ["Teaching of children", "Teaching/learning of adults", "Teaching of animals", "Curriculum design"], correct: 1 },
+        { text: "Which of the following is a projective/non-directive data collection technique?", options: ["Rating scale", "Unstructured interview", "Objective test", "Checklist"], correct: 1 },
+        { text: "\"Internal validity\" of an experiment refers to:", options: ["Generalizability to other settings", "Extent to which observed effects can be attributed to the treatment itself", "Reliability of the measuring scale", "Size of the sample"], correct: 1 },
+        { text: "In teaching, the \"affective domain\" (Krathwohl) concerns:", options: ["Physical skills", "Attitudes, values and feelings", "Logical reasoning", "Language proficiency"], correct: 1 },
+        { text: "A research paper's \"abstract\" is:", options: ["The full literature review", "A concise summary of the study's purpose, method and findings", "List of references", "Raw data"], correct: 1 },
+        { text: "Which of the following is NOT a web browser?", options: ["Chrome", "Firefox", "Windows", "Safari"], correct: 2 },
+        { text: "\"Artificial Intelligence\" primarily refers to:", options: ["Human brain surgery", "Computer systems performing tasks that normally require human intelligence", "Internet banking", "Mobile tower technology"], correct: 1 },
+        { text: "In databases, \"DBMS\" stands for:", options: ["Data Base Management System", "Digital Byte Memory System", "Data Backup Master Server", "Distributed Binary Machine Standard"], correct: 0 },
+        { text: "Which of the following protects a computer network from unauthorized access?", options: ["Firewall", "Printer", "Speaker", "Scanner"], correct: 0 },
+        { text: "The keyboard shortcut to paste copied text is:", options: ["Ctrl + C", "Ctrl + V", "Ctrl + P", "Ctrl + S"], correct: 1 },
+        { text: "The \"Copenhagen Accord/COP15\" (2009) discussed primarily:", options: ["Ozone depletion", "Climate change and emission targets", "Wildlife trade", "Ocean mining"], correct: 1 },
+        { text: "Which Indian state has the largest forest cover in area?", options: ["Kerala", "Madhya Pradesh", "Haryana", "Punjab"], correct: 1 },
+        { text: "\"Bioremediation\" refers to:", options: ["Industrial scrubbing of gases", "Use of microorganisms to clean up contaminated sites", "Burning of waste", "Landfill capping"], correct: 1 },
+        { text: "The Ganga Action Plan was launched in India in:", options: ["1986", "1992", "2000", "2014"], correct: 0 },
+        { text: "Which of the following is a man-made (anthropogenic) cause of environmental degradation?", options: ["Volcanic eruption", "Overgrazing and deforestation", "Earthquake", "Cyclones"], correct: 1 },
+        { text: "The Sangeet Natak Akademi, an important institution of Indian culture, was established in:", options: ["1952", "1953", "1960", "1971"], correct: 1 },
+        { text: "The Non-Aligned Movement (NAM) was formally established at which conference?", options: ["Bandung Conference, 1955", "Belgrade Conference, 1961", "Geneva Conference, 1954", "San Francisco Conference, 1945"], correct: 1 },
+        { text: "The Ajanta and Ellora caves, symbols of Indian cultural heritage, are located in:", options: ["Madhya Pradesh", "Maharashtra", "Karnataka", "Odisha"], correct: 1 },
+        { text: "The Luni river is the only major river of:", options: ["Malwa Plateau", "Thar Desert region", "Konkan coast", "Kutch"], correct: 1 },
+        { text: "Which planet in the solar system is known as the \"Red Planet\"?", options: ["Venus", "Mars", "Jupiter", "Mercury"], correct: 1 },
+        { text: "The idea of the Concurrent List in the Indian Constitution is borrowed from:", options: ["USA", "Australia", "Ireland", "Canada"], correct: 1 },
+        { text: "The Election Commission of India was established in the year:", options: ["1947", "1950", "1952", "1956"], correct: 1 },
+        { text: "The term of Lok Sabha is normally:", options: ["4 years", "5 years", "6 years", "Permanent"], correct: 1 },
+        { text: "Which body prepares the Economic Survey of India?", options: ["NITI Aayog", "Ministry of Finance (Economic Division)", "RBI", "CSO"], correct: 1 },
+        { text: "\"Bank Rate\" is the rate at which:", options: ["Banks lend to each other", "RBI lends long-term to commercial banks without repurchase agreement", "Public buys gold", "Government taxes banks"], correct: 1 }
+    ];
+
+    // =======================  STATE  =======================
+    let currentIndex = 0;
+    let userAnswers = new Array(120).fill(null);
+    let marked = new Array(120).fill(false);
+    let visited = new Array(120).fill(false);
+    let timeLeft = 120 * 60;
+    let timerInterval = null;
+    let testSubmitted = false;
+
+    // =======================  ELEMENTS  =======================
+    const questionText = document.getElementById('questionText');
+    const optionsContainer = document.getElementById('optionsContainer');
+    const qCounter = document.getElementById('qCounter');
+    const timerDisplay = document.getElementById('timerDisplay');
+    const paletteGrid = document.getElementById('paletteGrid');
+    const markBtn = document.getElementById('markBtn');
+    const resultOverlay = document.getElementById('resultOverlay');
+    const scoreDisplay = document.getElementById('scoreDisplay');
+    const accuracyDisplay = document.getElementById('accuracyDisplay');
+    const reviewList = document.getElementById('reviewList');
+
+    // =======================  RENDER  =======================
+    function renderQuestion() {
+        if (testSubmitted) return;
+        const q = questions[currentIndex];
+        questionText.innerHTML = `Q${currentIndex + 1}. ${q.text}`;
+        let html = '';
+        q.options.forEach((opt, idx) => {
+            const selected = userAnswers[currentIndex] === idx;
+            html += `<div class="option ${selected ? 'selected' : ''}" onclick="selectOption(${idx})">
+                <span class="option-letter">${String.fromCharCode(65 + idx)}.</span>
+                <span>${opt}</span>
+            </div>`;
+        });
+        optionsContainer.innerHTML = html;
+        qCounter.textContent = `Question ${currentIndex + 1} / 120`;
+        if (marked[currentIndex]) {
+            markBtn.style.background = '#f39c12';
+            markBtn.style.borderColor = '#d68910';
+            markBtn.style.color = 'white';
+        } else {
+            markBtn.style.background = 'white';
+            markBtn.style.borderColor = '#cbd6e6';
+            markBtn.style.color = '#1e2f4a';
+        }
+        visited[currentIndex] = true;
+        updatePalette();
+        if (window.MathJax && MathJax.typesetPromise) {
+            MathJax.typesetPromise([questionText, optionsContainer]);
+        }
+    }
+
+    function updatePalette() {
+        paletteGrid.innerHTML = '';
+        for (let i = 0; i < 120; i++) {
+            const div = document.createElement('div');
+            div.className = 'palette-item';
+            if (userAnswers[i] !== null) div.classList.add('answered');
+            else if (visited[i]) div.classList.add('not-answered');
+            else div.classList.add('not-visited');
+            if (marked[i]) div.classList.add('marked');
+            if (i === currentIndex) div.classList.add('current');
+            div.textContent = i + 1;
+            div.onclick = () => { if (!testSubmitted) { currentIndex = i; renderQuestion(); } };
+            paletteGrid.appendChild(div);
+        }
+    }
+
+    // =======================  ACTIONS  =======================
+    function selectOption(idx) {
+        if (testSubmitted) return;
+        if (userAnswers[currentIndex] === idx) userAnswers[currentIndex] = null;
+        else userAnswers[currentIndex] = idx;
+        renderQuestion();
+    }
+
+    function prevQuestion() {
+        if (testSubmitted) return;
+        if (currentIndex > 0) { currentIndex--; renderQuestion(); }
+    }
+
+    function nextQuestion() {
+        if (testSubmitted) return;
+        if (currentIndex < 119) { currentIndex++; renderQuestion(); }
+    }
+
+    function toggleMark() {
+        if (testSubmitted) return;
+        marked[currentIndex] = !marked[currentIndex];
+        renderQuestion();
+    }
+
+    function clearResponse() {
+        if (testSubmitted) return;
+        userAnswers[currentIndex] = null;
+        renderQuestion();
+    }
+
+    // =======================  TIMER  =======================
+    function startTimer() {
+        timerInterval = setInterval(() => {
+            if (testSubmitted) return;
+            timeLeft--;
+            const mins = Math.floor(timeLeft / 60);
+            const secs = timeLeft % 60;
+            timerDisplay.textContent = `${String(mins).padStart(2, '0')}:${String(secs).padStart(2, '0')}`;
+            if (timeLeft <= 0) {
+                clearInterval(timerInterval);
+                submitTest();
+            }
+        }, 1000);
+    }
+
+    // =======================  SUBMIT  =======================
+    function submitTest() {
+        if (testSubmitted) return;
+        if (timeLeft > 0 && !confirm('Are you sure you want to submit the test?')) return;
+        testSubmitted = true;
+        clearInterval(timerInterval);
+        let correctCount = 0, wrongCount = 0, skipped = 0;
+        for (let i = 0; i < 120; i++) {
+            if (userAnswers[i] === null) skipped++;
+            else if (userAnswers[i] === questions[i].correct) correctCount++;
+            else wrongCount++;
+        }
+        const score = correctCount * 3 - wrongCount;
+        const attempted = correctCount + wrongCount;
+        const accuracy = attempted > 0 ? (correctCount / attempted * 100) : 0;
+        scoreDisplay.textContent = `Score: ${score}`;
+        accuracyDisplay.textContent = `Accuracy: ${accuracy.toFixed(2)}%  (${correctCount} correct, ${wrongCount} wrong, ${skipped} skipped)`;
+        renderReview('all');
+        resultOverlay.classList.add('active');
+        updatePalette();
+    }
+
+    function renderReview(filter) {
+        document.querySelectorAll('.filter-btn').forEach(btn => {
+            btn.classList.toggle('active', btn.dataset.filter === filter);
+        });
+        let html = '';
+        let count = 0;
+        for (let i = 0; i < 120; i++) {
+            const q = questions[i];
+            const userAns = userAnswers[i];
+            const isCorrect = userAns === q.correct;
+            const isSkipped = userAns === null;
+            if (filter === 'correct' && !isCorrect) continue;
+            if (filter === 'incorrect' && (isCorrect || isSkipped)) continue;
+            if (filter === 'unattempted' && !isSkipped) continue;
+            count++;
+            let itemClass = 'review-item ';
+            if (isSkipped) itemClass += 'skipped';
+            else if (isCorrect) itemClass += 'correct';
+            else itemClass += 'incorrect';
+
+            const userLetter = userAns !== null ? String.fromCharCode(65 + userAns) : '—';
+            const correctLetter = String.fromCharCode(65 + q.correct);
+            html += `<div class="${itemClass}">
+                <div class="review-q">Q${i + 1}. ${q.text}</div>
+                <div class="review-ans">
+                    <span>Your answer: <span class="${isCorrect ? 'correct-text' : (isSkipped ? '' : 'wrong-text')}">${userLetter} ${userAns !== null ? q.options[userAns] : '(not attempted)'}</span></span>
+                    <span>Correct answer: <span class="correct-text">${correctLetter} ${q.options[q.correct]}</span></span>
+                </div>
+            </div>`;
+        }
+        if (count === 0) html = '<p style="text-align:center;padding:30px;color:#4a5e7a;">No questions match this filter.</p>';
+        reviewList.innerHTML = html;
+        if (window.MathJax && MathJax.typesetPromise) {
+            MathJax.typesetPromise([reviewList]);
+        }
+    }
+
+    function setFilter(filter) {
+        renderReview(filter);
+    }
+
+    // =======================  DOWNLOAD  =======================
+    function downloadReview() {
+        let content = `MCQ Test Performance & Solutions\nScore: ${scoreDisplay.textContent}\n${accuracyDisplay.textContent}\n\n`;
+        for (let i = 0; i < 120; i++) {
+            const q = questions[i];
+            const userAns = userAnswers[i];
+            const isSkipped = userAns === null;
+            const userLetter = userAns !== null ? String.fromCharCode(65 + userAns) : '—';
+            const correctLetter = String.fromCharCode(65 + q.correct);
+            content += `Q${i + 1}. ${q.text.replace(/\$/g, '')}\n`;
+            content += `Your answer: ${userLetter} ${userAns !== null ? q.options[userAns].replace(/\$/g, '') : '(not attempted)'}\n`;
+            content += `Correct answer: ${correctLetter} ${q.options[q.correct].replace(/\$/g, '')}\n\n`;
+        }
+        const blob = new Blob([content], { type: 'text/plain;charset=utf-8' });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = 'performance_review.txt';
+        a.click();
+        URL.revokeObjectURL(url);
+    }
+
+    // =======================  INIT  =======================
+    function init() {
+        renderQuestion();
+        startTimer();
+        updatePalette();
+        document.addEventListener('keydown', (e) => {
+            if (testSubmitted) return;
+            if (e.key === 'ArrowLeft') prevQuestion();
+            if (e.key === 'ArrowRight') nextQuestion();
+        });
+    }
+
+    init();
+
+    window.selectOption = selectOption;
+    window.prevQuestion = prevQuestion;
+    window.nextQuestion = nextQuestion;
+    window.toggleMark = toggleMark;
+    window.clearResponse = clearResponse;
+    window.submitTest = submitTest;
+    window.setFilter = setFilter;
+    window.downloadReview = downloadReview;
+</script>
+</body>
+</html>

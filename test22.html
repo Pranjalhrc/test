@@ -1,0 +1,485 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MCQ Test · 120 Questions</title>
+    <script>
+        window.MathJax = {
+            tex: { inlineMath: [['$', '$'], ['\\(', '\\)']] },
+            svg: { fontCache: 'global' }
+        };
+    </script>
+    <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-svg.js" async></script>
+    <style>
+        * { box-sizing: border-box; margin: 0; font-family: 'Segoe UI', Roboto, system-ui, sans-serif; }
+        body { background: #f0f4f8; display: flex; justify-content: center; padding: 20px; }
+        .app { max-width: 1400px; width: 100%; display: flex; gap: 24px; position: relative; }
+        .main-panel { flex: 1; background: white; border-radius: 28px; box-shadow: 0 12px 30px rgba(0,0,0,0.08); display: flex; flex-direction: column; padding: 28px 32px; min-height: 85vh; }
+        .header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; border-bottom: 2px solid #e9edf4; padding-bottom: 16px; }
+        .timer { font-size: 1.8rem; font-weight: 700; color: #1e3c72; background: #eef3fe; padding: 8px 22px; border-radius: 60px; letter-spacing: 1px; }
+        .q-counter { font-size: 1.1rem; color: #3a4b6e; background: #e9effb; padding: 6px 20px; border-radius: 40px; font-weight: 600; }
+        .question-area { flex: 1; display: flex; flex-direction: column; margin: 12px 0 20px; overflow-y: auto; max-height: 58vh; padding-right: 6px; }
+        .question-text { font-size: 1.25rem; line-height: 1.6; margin-bottom: 28px; font-weight: 500; color: #0b1e3a; }
+        .options { display: flex; flex-direction: column; gap: 14px; margin-bottom: 12px; }
+        .option { display: flex; align-items: flex-start; gap: 14px; background: #f9fcff; border: 2px solid #dbe2ec; border-radius: 18px; padding: 14px 20px; cursor: pointer; transition: 0.15s; font-size: 1.1rem; line-height: 1.5; }
+        .option:hover { background: #eef4fe; border-color: #b0c7e9; }
+        .option.selected { background: #d9e8ff; border-color: #1e5fbf; box-shadow: 0 0 0 2px rgba(30,95,191,0.15); }
+        .option-letter { font-weight: 700; color: #1e3c72; min-width: 28px; }
+        .nav-buttons { display: flex; flex-wrap: wrap; gap: 12px; margin-top: auto; padding-top: 18px; border-top: 2px solid #e9edf4; }
+        .btn { padding: 12px 24px; border-radius: 60px; border: none; font-weight: 600; font-size: 0.95rem; cursor: pointer; background: white; border: 2px solid #cbd6e6; color: #1e2f4a; transition: 0.1s; display: inline-flex; align-items: center; justify-content: center; gap: 6px; }
+        .btn:hover { background: #f0f6ff; border-color: #8ba9d4; }
+        .btn-primary { background: #1e5fbf; border-color: #1e5fbf; color: white; }
+        .btn-primary:hover { background: #164a9c; border-color: #164a9c; }
+        .btn-warning { background: #f7b731; border-color: #f7b731; color: #1e1e1e; }
+        .btn-warning:hover { background: #e5a61f; border-color: #e5a61f; }
+        .btn-danger { background: #d64545; border-color: #d64545; color: white; }
+        .btn-danger:hover { background: #b83232; border-color: #b83232; }
+        .palette { width: 300px; background: white; border-radius: 28px; box-shadow: 0 12px 30px rgba(0,0,0,0.08); padding: 24px 16px; display: flex; flex-direction: column; height: 85vh; position: sticky; top: 20px; }
+        .palette h3 { text-align: center; margin-bottom: 16px; color: #1e3c72; font-weight: 600; font-size: 1.2rem; }
+        .legend { display: flex; flex-wrap: wrap; gap: 10px 16px; justify-content: center; margin-bottom: 16px; font-size: 0.75rem; color: #2e405b; }
+        .legend span::before { content: "●"; margin-right: 4px; font-size: 1rem; vertical-align: middle; }
+        .legend .answered::before { color: #2ecc71; }
+        .legend .not-answered::before { color: #e74c3c; }
+        .legend .marked::before { color: #f39c12; }
+        .legend .not-visited::before { color: #b0bedb; }
+        .palette-grid { flex: 1; overflow-y: auto; display: grid; grid-template-columns: repeat(5, 1fr); gap: 8px; padding: 6px 4px; align-content: start; }
+        .palette-item { aspect-ratio: 1 / 1; display: flex; align-items: center; justify-content: center; border-radius: 12px; font-weight: 600; font-size: 0.9rem; background: #eef2f8; color: #30445c; border: 2px solid transparent; cursor: pointer; transition: 0.08s; }
+        .palette-item.answered { background: #2ecc71; color: white; border-color: #27ae60; }
+        .palette-item.not-answered { background: #e74c3c; color: white; border-color: #c0392b; }
+        .palette-item.marked { background: #f39c12; color: white; border-color: #d68910; }
+        .palette-item.not-visited { background: #d5deec; color: #3a4b6e; }
+        .palette-item.current { outline: 3px solid #1e5fbf; outline-offset: 2px; }
+        .overlay { position: fixed; inset: 0; background: rgba(10, 20, 40, 0.7); backdrop-filter: blur(6px); display: none; align-items: center; justify-content: center; padding: 30px; z-index: 1000; }
+        .overlay.active { display: flex; }
+        .result-card { background: white; max-width: 1200px; width: 100%; max-height: 90vh; border-radius: 32px; padding: 32px 36px; display: flex; flex-direction: column; overflow: hidden; box-shadow: 0 30px 50px rgba(0,0,0,0.4); }
+        .result-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; flex-wrap: wrap; gap: 16px; }
+        .score-badge { font-size: 2rem; font-weight: 800; background: #1e3c72; color: white; padding: 10px 32px; border-radius: 60px; }
+        .filter-buttons { display: flex; gap: 10px; flex-wrap: wrap; }
+        .filter-btn { padding: 8px 18px; border-radius: 40px; border: 2px solid #cbd6e6; background: white; font-weight: 600; cursor: pointer; transition: 0.1s; }
+        .filter-btn.active { background: #1e5fbf; border-color: #1e5fbf; color: white; }
+        .review-list { overflow-y: auto; flex: 1; padding-right: 8px; display: flex; flex-direction: column; gap: 14px; margin-bottom: 16px; }
+        .review-item { border-left: 8px solid #b0bedb; background: #f9fcff; border-radius: 16px; padding: 16px 20px; font-size: 0.98rem; line-height: 1.5; }
+        .review-item.correct { border-left-color: #2ecc71; background: #f0fff6; }
+        .review-item.incorrect { border-left-color: #e74c3c; background: #fff5f5; }
+        .review-item.skipped { border-left-color: #b0bedb; background: #f5f7fb; }
+        .review-q { font-weight: 600; color: #0b1e3a; }
+        .review-ans { margin-top: 6px; display: flex; gap: 24px; flex-wrap: wrap; font-size: 0.92rem; }
+        .review-ans span { font-weight: 500; }
+        .correct-text { color: #1e7e34; font-weight: 700; }
+        .wrong-text { color: #b71c1c; font-weight: 700; }
+        .download-btn { background: #1e5fbf; border: none; color: white; padding: 10px 28px; border-radius: 40px; font-weight: 600; cursor: pointer; display: inline-flex; align-items: center; gap: 8px; }
+        .download-btn:hover { background: #164a9c; }
+    </style>
+</head>
+<body>
+<div class="app" id="app">
+    <div class="main-panel">
+        <div class="header">
+            <div class="q-counter" id="qCounter">Question 1 / 120</div>
+            <div class="timer" id="timerDisplay">120:00</div>
+        </div>
+        <div class="question-area" id="questionArea">
+            <div class="question-text" id="questionText"></div>
+            <div class="options" id="optionsContainer"></div>
+        </div>
+        <div class="nav-buttons">
+            <button class="btn" id="prevBtn" onclick="prevQuestion()">← Previous</button>
+            <button class="btn btn-warning" id="markBtn" onclick="toggleMark()">⭐ Mark for Review</button>
+            <button class="btn" id="clearBtn" onclick="clearResponse()">✖ Clear Response</button>
+            <button class="btn btn-primary" id="nextBtn" onclick="nextQuestion()">Next →</button>
+            <button class="btn btn-danger" id="submitBtn" onclick="submitTest()" style="margin-left:auto;">✅ Submit</button>
+        </div>
+    </div>
+    <div class="palette">
+        <h3>Question Palette</h3>
+        <div class="legend">
+            <span class="answered">Answered</span>
+            <span class="not-answered">Not Answered</span>
+            <span class="marked">Marked</span>
+            <span class="not-visited">Not Visited</span>
+        </div>
+        <div class="palette-grid" id="paletteGrid"></div>
+    </div>
+</div>
+<div class="overlay" id="resultOverlay">
+    <div class="result-card">
+        <div class="result-header">
+            <div>
+                <span class="score-badge" id="scoreDisplay">0</span>
+                <span style="margin-left:18px;font-weight:600;color:#1e3c72;" id="accuracyDisplay">Accuracy: 0%</span>
+            </div>
+            <div class="filter-buttons" id="filterButtons">
+                <button class="filter-btn active" data-filter="all" onclick="setFilter('all')">All</button>
+                <button class="filter-btn" data-filter="correct" onclick="setFilter('correct')">✅ Correct</button>
+                <button class="filter-btn" data-filter="incorrect" onclick="setFilter('incorrect')">❌ Incorrect</button>
+                <button class="filter-btn" data-filter="unattempted" onclick="setFilter('unattempted')">⏭️ Unattempted</button>
+            </div>
+            <button class="download-btn" onclick="downloadReview()">⬇ Download Review</button>
+        </div>
+        <div class="review-list" id="reviewList"></div>
+    </div>
+</div>
+
+<script>
+    // =======================  QUESTION DATA (1-90 Maths, 91-120 GK) =======================
+    const questions = [
+        // ---------- MATHEMATICS (1-90) ----------
+        { text: "Equation of the plane through the point P on y-axis, which is equidistant from the points A (4,-3, 7) and $B=(2,-1,1)$ is", options: ["$x+y-3y-17=0$", "$x-y+3z-17=0$", "$x-y+3z-34=0$", "$x+y-3z-34=0$"], correct: 1 },
+        { text: "The equation to the plane through the points (2, 2, 1) and (9, 3, 6) and perpendicular to the plane $2x+6y+6z=9$ is", options: ["$3x-4y-5z=9$", "$3x+4y+5z=9$", "$3x+4y+5z+9=0$", "$3x+4y-5z=9$"], correct: 3 },
+        { text: "A plane meets the coordinate axes in A, B, C and the centroid of the triangle ABC is (a, b, c). The equation of the plane is", options: ["$\\frac{x}{a}+\\frac{y}{b}+\\frac{z}{c}=3$", "$\\frac{x}{a}+\\frac{y}{b}+\\frac{z}{c}=1$", "$ax+by+cz=3$", "$3ax+3by+3cz=1$"], correct: 1 },
+        { text: "The foot of the perpendicular from the origin to a plane is (2, 3, 4). The equation of the plane is", options: ["$2x-3y+4z=11$", "$2x+3y+4z=11$", "$2x-3y+4z=29$", "$2x+3y+4z=29$"], correct: 2 },
+        { text: "Equation to the plane through the line of intersection of $x-2y-z+3=0$ and $-3x-5y+2z+1=0$ and perpendicular to the yz-plane is", options: ["$11y+z+10=0$", "$11y+z=10$", "$11y-z+10=0$", "$11y-z=10$"], correct: 1 },
+        { text: "The angle between the pair of planes represented by the equation $2x^{2}-y^{2}+2z^{2}-yz-5zx+xy=0$ is", options: ["$\\frac{\\pi}{4}$", "$\\frac{\\pi}{2}$", "$\\frac{\\pi}{6}$", "$\\frac{\\pi}{3}$"], correct: 3 },
+        { text: "The distance between the parallel planes represented by the equation $x^{2}+4y^{2}+4z^{2}+4xy+8yz+4zx-9x-18y-18z+18=0$ is", options: ["3", "$\\frac{1}{3}$", "1", "$\\frac{1}{2}$"], correct: 2 },
+        { text: "The image of the point (1, 3, 4) in the plane $2x-y+z+3=0$ is", options: ["(-3, 5, 2)", "(-1, 5, 3)", "(-3, 11, 2)", "(-3, 5, 10)"], correct: 0 },
+        { text: "If L is the line $\\frac{x-2}{1}=\\frac{y+3}{-2}=\\frac{z+4}{5}$ and $\\pi$ is the plane $3x+4y+z=4$ then", options: ["L lies on $\\pi$", "L is perpendicular to $\\pi$", "L is parallel to $\\pi$", "L makes an angle $60^{\\circ}$ with $\\pi$"], correct: 2 },
+        { text: "The equation to the plane containing the line $\\frac{x+1}{-3}=\\frac{y-3}{2}=\\frac{z+2}{1}$ and the point (0, 7, -7) is", options: ["$7x-8y+7z-45=0$", "$x+y+z=0$", "$7x+8y-7z-45=0$", "$x+y-z=0$"], correct: 1 },
+        { text: "The line joining (2, 3, 1) and (3, 4, 5) intersects the plane $2x+y+z=7$ in the point", options: ["(3,-2, 7)", "(1, 4, 7)", "(1,-2,-5)", "(1,-2, 7)"], correct: 3 },
+        { text: "The equation of the plane containing the line $\\frac{x-1}{2}=\\frac{y+1}{-1}=\\frac{z-3}{4}$ and is perpendicular to the plane $x+2y+z-12=0$ is", options: ["$9x-2y-5z+4=0$", "$9x-2y+5z+4=0$", "$9x+2y+5z+4=0$", "$9x-2y+5z-4=0$"], correct: 0 },
+        { text: "The length of the perpendicular from the point (2, 4, -1) from the line through the point (-5, -3, 6) whose d.c's are 1, 4, -9 is", options: ["21", "$\\frac{\\sqrt{7}}{\\sqrt{3}}$", "7", "$7\\sqrt{3}$"], correct: 2 },
+        { text: "The volume of the tetrahedron with vertices (0, 0, 0), (-1, 1, 1), (1, 1, -1) and (1,-1, 1) in cubic unity is", options: ["1", "$\\frac{1}{3}$", "$\\frac{2}{3}$", "3"], correct: 2 },
+        { text: "The radius and centre of the Sphere through (0, 0, 0) and making intercepts 3, 4, 5 on the axes is", options: ["$\\frac{5}{\\sqrt{2}},(\\frac{-3}{2},-2,\\frac{-5}{2})$", "$5,(\\frac{-3}{2},-2,\\frac{-5}{2})$", "$\\frac{5}{\\sqrt{2}},(\\frac{3}{2},2,\\frac{5}{2})$", "$5,(\\frac{3}{2},2,\\frac{5}{2})$"], correct: 2 },
+        { text: "The equation of the sphere with (1, 2, 3) and (2, 3, 4) as the ends of a diameter is", options: ["$x^{2}+y^{2}+z^{2}-3x-5y-7z+21=0$", "$x^{2}+y^{2}+z^{2}+3x+5y+7z+21=0$", "$x^{2}+y^{2}+z^{2}-3x-5y-7z+20=0$", "$x^{2}+y^{2}+z^{2}+3x+5y+7z+20=0$"], correct: 2 },
+        { text: "The point of contact of the plane $x-2y+z+12=0$ and the sphere $x^{2}+y^{2}+z^{2}-2x-4y+2z-3=0$", options: ["(-1,0,-2)", "(-1,4,-2)", "(3,4,-2)", "(-1,4, 0)"], correct: 1 },
+        { text: "The pole of the plane $x-y+5z-3=0$ with respect to the sphere $x^{2}+y^{2}+z^{2}=9$ is", options: ["(1,-5,5)", "$(\\frac{1}{3},\\frac{-1}{3},\\frac{5}{3})$", "(3, -3, 5)", "(3,-3, 15)"], correct: 3 },
+        { text: "The limit points of the coaxial system of spheres of which two members are $x^{2}+y^{2}+z^{2}+3x-3y+6=0$ and $x^{2}+y^{2}+z^{2}-6y-6z+6=0$ are", options: ["(-2, 1, 1) (-1,-2, 1)", "(-2, 1,-1), (1,-2,-1)", "(-2, 1, -1), (-1,-2, 1)", "(-2, 1, -1), (-1, 2, 1)"], correct: 0 },
+        { text: "The equation to the cone which contains the three coordinate axes and the lines $\\frac{x}{1}=\\frac{y}{-2}=\\frac{z}{3};\\frac{x}{-1}=\\frac{y}{1}=\\frac{z}{1}$ is", options: ["$5yz-8zx-3xy=0$", "$5yz-8zx+3xy=0$", "$5yz+8zx-3xy=0$", "$5yz+8zx+3xy=0$"], correct: 3 },
+        { text: "The equation of the cone with vertex of the origin and whose base curve is $z=2,x^{2}+y^{2}=4$ is", options: ["$x^{2}+y^{2}=z^{2}$", "$x^{2}+y^{2}+z^{2}=0$", "$x^{2}+y^{2}=4z^{2}$", "$4(x^{2}+y^{2})=z^{2}$"], correct: 0 },
+        { text: "The equation of the cone with vertex of the origin and whose base curve is $z=2,x^{2}+y^{2}=x^{2}+2x-2y=2$ with vertex at (1, 1, 1) is", options: ["$3x^{2}+y-4xy+10x-2y+4z+6=0$", "$3x^{2}-y^{2}-4zx+10x+2y-4z+6=0$", "$3x^{2}-y^{2}+4xy-10x+2y-4z+6=0$", "$3x^{2}-y^{2}+4zx-10x+2y-4z+6=0$"], correct: 3 },
+        { text: "Let (C, +, .) and (R, +, .) be the field of complex numbers and the field of real numbers respectively. The $\\text{dim}_R C =$", options: ["1", "2", "4", "$\\infty$"], correct: 1 },
+        { text: "A basis of the vector space $P(x)$ of polynomials of degree $n$ in the variable x over a field F is", options: ["$\\{1,x,x^{2},........,x^{n}\\}$", "$\\{1,x,x^{2},......,x^{n-1}\\}$", "$\\{1,x^{2},x^{3},.....,x^{n}\\}$", "$\\{1, x, x^2, \\dots\\}$"], correct: 0 },
+        { text: "Let $M_{2}(C)=\\{(\\begin{matrix}a & b\\\\ c & d\\end{matrix}) \\mid a,b,c,d \\in C\\}$ where C is the field of complex numbers. Then the dimension of the vector space $M_{2}(C)$ over the field of real numbers is", options: ["8", "4", "2", "$\\infty$"], correct: 0 },
+        { text: "Let $S=\\{v_{1},v_{2},......,v_{n}\\}$ be a set of linearly independent vector in a vector space V over a field F. Which of the following statements is false ?", options: ["None of the vectors in S is a linear combination of other vectors.", "Some vector in S is a linear combination of other vectors in S.", "None of the vectors in S is a zero vector.", "S can be extended to a basis of V over F."], correct: 1 },
+        { text: "Which of the following sets in $R^{2}$ is not a basis of $R^{2}$ over the field R of real numbers ?", options: ["\\{(1,0), (0,-1)\\}", "\\{(1, 1), (-1, 1)\\}", "\\{(-2, 1), (1, 0)\\}", "\\{(1,-1), (-2, 2)\\}"], correct: 3 },
+        { text: "The dimension of the subspace $W=[\\begin{matrix}x_{i} & -x \\\\ y_{i} & z\\end{matrix} \\mid x_{i}, y, z \\in R]$. If the vector space.", options: ["4", "3", "2", "1"], correct: 1 },
+        { text: "If $W_{1}$ and $W_{2}$ are subspaces of the vector space of $M_{2}(R)$ of $2\\times2$ matrices over the field R of real numbers then $\\text{dim}_R(W_{1}+W_{2})=$", options: ["1", "2", "3", "4"], correct: 3 },
+        { text: "If $T: R^{2}\\rightarrow R^{2}$ is a linear transformation defined by $T(1,0)=(1,-1)$ and $T(0,1)=(1,2)$ then $T(-3, 4)=$", options: ["(1, 11)", "(7,5)", "(7, 11)", "(1,5)"], correct: 0 },
+        { text: "The angle through which a curve drawn through the point $z_{0}=5i$ is rotated under the map $w=z^{2}$ is", options: ["$\\frac{\\pi}{6}$", "$\\frac{\\pi}{4}$", "$\\frac{\\pi}{3}$", "$\\frac{\\pi}{2}$"], correct: 3 },
+        { text: "The value of the integral $\\int_{0}^{1+i}(x-y+ix^{2})dx$ along the curve of the parabola $y=x^{2}$ from 0 to $1+i$ is", options: ["$\\frac{-1}{3}-\\frac{i}{2}$", "$\\frac{1}{3}+\\frac{i}{2}$", "$\\frac{-1}{3}+\\frac{i}{2}$", "$\\frac{2}{3}+\\frac{i}{2}$"], correct: 2 },
+        { text: "If $\\gamma$ is a closed path in the complex plane then $\\int_{\\gamma}e^{-z^{2}}dz=$", options: ["0", "1", "$\\frac{1}{2\\pi}$", "$2\\pi$"], correct: 0 },
+        { text: "The value of the integral $\\int_C \\frac{z+1}{z^{3}-2z^{2}} dz$ in the annulus $1<|z+1|<2$ is", options: ["0", "$\\frac{5\\pi i}{2}$", "$\\frac{3\\pi i}{2}$", "$\\frac{3\\pi i}{4}$"], correct: 0 },
+        { text: "The radius of convergence of the power series $\\sum_{n=0}^{\\infty}\\frac{n^{3}}{3^{n}}z^{n}$ is", options: ["$\\frac{1}{3}$", "3", "$e^{3}$", "$\\frac{1}{e^{3}}$"], correct: 1 },
+        { text: "The radius of convergence of the power series $\\sum_{n=0}^{\\infty}[3-(-1)^{n}]^{n}z^{n}$ is", options: ["2", "$\\frac{1}{2}$", "4", "$\\frac{1}{4}$"], correct: 3 },
+        { text: "The Taylor's series expansion of the function $f(z)=\\frac{z+3}{(z+1)(z-4)}$ at $z=2$ is", options: ["$\\sum_{n=0}^{\\infty}[\\frac{4}{3}(-1)^{n}-\\frac{7}{6}\\frac{1}{2^{n}}](z-2)^{n}$", "$\\sum_{n=0}^{\\infty}[\\frac{4}{3}-\\frac{7}{6}\\frac{1}{2^{n}}](z-2)^{n}$", "$\\sum_{n=0}^{\\infty}[\\frac{4}{3}(-1)^{n}+\\frac{7}{6}2^{n}](z-2)^{n}$", "$\\sum_{n=0}^{\\infty}[\\frac{4}{3}(-1)^{n}-\\frac{7}{6}2^{n}](z-2)^{n}$"], correct: 0 },
+        { text: "The Laurent's series expansion of the function $f(z)=\\frac{1}{z(z-1)}$ in the annulus $1<|z+1|<2$ is", options: ["$\\sum_{n=0}^{\\infty}\\frac{1}{(z+1)^{n}}+\\sum_{n=0}^{\\infty}\\frac{1}{2^{n+1}}(z+1)^{n}$", "$\\sum_{n=0}^{\\infty}\\frac{1}{(z+1)^{n}}+\\sum_{n=0}^{\\infty}\\frac{1}{2^{n}}(z+1)^{n}$", "$\\sum_{n=0}^{\\infty}\\frac{1}{(z+1)^{n+1}}+\\sum_{n=0}^{\\infty}\\frac{1}{2^{n+1}}(z+1)^{n}$", "$\\sum_{n=0}^{\\infty}\\frac{1}{(z+1)^{n+1}}+\\sum_{n=0}^{\\infty}\\frac{1}{2^{n+1}}(z+1)^{n+1}$"], correct: 2 },
+        { text: "For the function $f(z)=\\frac{e^{z^{2}}}{z^{3}}$ the point $z=0$ is a", options: ["Simple zero", "Simple pole", "Zero of order 3", "Pole of order 3"], correct: 3 },
+        { text: "The function $f(z)=\\frac{1}{\\cos z+\\cos a}$ has simple poles at $z=$", options: ["$2k\\pi \\pm a, k=0,\\pm1,\\pm2\\dots$", "$(2k+1)\\pi\\pm a, k=0,\\pm1,\\pm2\\dots$", "$(k+1)\\pi\\pm a, k=0,\\pm1,\\pm2\\dots$", "$k\\pi\\pm a, k=0,\\pm1,\\pm2\\dots$"], correct: 1 },
+        { text: "The residue of the function $f(z)=\\frac{z^{2}}{(z-2)^{2}(z^{2}+4)}$ at the pole $z=2i$ is", options: ["$-\\frac{1}{8}$", "$\\frac{1}{8}$", "$-\\frac{i}{8}$", "$\\frac{i}{8}$"], correct: 1 },
+        { text: "The residue of the function $f(z)=\\frac{z^{2}}{(z-1)(z+2)^{2}}$ at the pole $z=-2$ is", options: ["0", "$-\\frac{8}{9}$", "$\\frac{4}{9}$", "$\\frac{8}{9}$"], correct: 3 },
+        { text: "The orthogonal trajectories of $ay^{2}=x^{3}$ is", options: ["$2x^{3}+3y^{2}=c$", "$2x^{2}+3y^{2}=c$", "$y^{2}+2x^{3}=c$", "$x^{2}+y^{3}=c$"], correct: 0 },
+        { text: "The general solution of the differential equation $\\frac{dy}{dx}=(4x+y+1)^{2}$ is", options: ["$\\frac{1}{2}\\tan^{-1}(\\frac{4x+y+1}{2})=x+c$", "$\\tan^{-1}(\\frac{4x+y+1}{2})=x+c$", "$\\tan^{-1}(4x+y+1)=x+c$", "$\\frac{1}{2}\\tan^{-1}(4x+y+1)=x+c$"], correct: 0 },
+        { text: "The value of h, k so that the substitution $x=X+h, y=Y+k$ transforms the differential equation $\\frac{dy}{dx}=\\frac{x+2y-1}{2x+y-3}$ into a homogeneous equation, are respectively", options: ["1, -1", "1, 2", "1, 1", "-1, 2"], correct: 0 },
+        { text: "Which of the following differential equations is not exact equation?", options: ["$(e^{y}+1)\\cos xdx+e^{y}\\sin xdy=0$", "$x(1+y^{2})dx+y(1+x^{2})dy=0$", "$y\\sin 2x dx=(y^{2}+\\cos^{2}x)dy$", "$x^{2}y dx=(x^{3}+y^{3})dy$"], correct: 3 },
+        { text: "The integrating factor of the differential equation $y(x^{2}y^{2}+2)dx+x(2-2x^{2}y^{2})dy=0$ is", options: ["$-\\frac{1}{3x^{3}y^{3}}$", "$\\frac{1}{3x^{3}y^{3}}$", "$-x^{3}y^{3}$", "$x^{3}y^{3}$"], correct: 1 },
+        { text: "The general solution of the differential equation $\\frac{dy}{dx}+y=e^{e^{x}}$ is", options: ["$ye^{x}=e^{e^{x}}+c$", "$ye^{x}=e^{x}e^{e^{x}}+c$", "$y=e^{e^{x}}+c$", "$ye^{x}=e^{x}e^{x}-e^{x}+c$"], correct: 0 },
+        { text: "The general solution of the differential equation $x^{2}p^{2}+3xyp+2y^{2}=0,$ where $p=\\frac{dy}{dx}$ is", options: ["$(xy-c)(y^{2}x-c)=0$", "$(x-cy)(y^{2}-cx)=0$", "$(xy-c)(x^{2}y-c)=0$", "$(x-cy)(x^{2}-cy)=0$"], correct: 2 },
+        { text: "The solution of the differential equation $(\\frac{dy}{dx})^{2}(x^{2}-a^{2})-2(\\frac{dy}{dx})xy+y^{2}-b^{2}=0$ is", options: ["$(y+cx)^{2}=a^{2}c^{2}+b^{2}$", "$(cy+x)=a^{2}c^{2}+b^{2}$", "$(cy-x)^{2}=a^{2}c^{2}+b^{2}$", "$(y-cx)^{2}=a^{2}c^{2}+b^{2}$"], correct: 3 },
+        { text: "The singular solution of the differential equation $p^{2}(x^{2}-a^{2})-2pxy+y^{2}-a^{2}=0,$ where $p=\\frac{dy}{dx},$ is", options: ["$x^{2}+y^{2}=a^{2}$", "$x^{2}-y^{2}=a^{2}$", "$x^{2}+2y^{2}=a^{2}$", "$x^{2}-2y^{2}=a^{2}$"], correct: 0 },
+        { text: "The general solution of the differential equation $\\frac{d^{3}y}{dx^{3}}-3\\frac{dy}{dx}+2y=0$ is", options: ["$y=(c_{1}+c_{2}x)e^{x}+c_{3}e^{2x}$", "$y=c_{1}e^{x}+c_{2}e^{x}+c_{3}e^{-2x}$", "$y=(c_{1}+c_{2}x)e^{x}+c_{3}e^{-2x}$", "$y=(c_{1}+c_{2}x)e^{-x}+c_{3}e^{-2x}$"], correct: 2 },
+        { text: "The general solution of the differential equation $\\frac{d^{2}y}{dx^{2}}+\\frac{dy}{dx}+y=0$ is", options: ["$y=e^{\\frac{x}{2}}(C_{1}\\cos\\frac{x\\sqrt{3}}{2}+C_{2}\\sin\\frac{x\\sqrt{3}}{2})$", "$y=e^{\\frac{-x}{2}}(C_{1}\\cos\\frac{x\\sqrt{3}}{2}+C_{2}\\sin\\frac{x\\sqrt{3}}{2})$", "$y=e^{x}(C_{1}\\cos x\\sqrt{3}+C_{2}\\sin x\\sqrt{3})$", "$y=e^{-x}(C_{1}\\cos x\\sqrt{3}+C_{2}\\sin x\\sqrt{3})$"], correct: 1 },
+        { text: "The particular integral of the differential equation $(D^{2}-6D+13)y=8e^{3x}\\sin 2x$ is", options: ["$xe^{3x}\\cos 2x$", "$2xe^{3x}\\cos 2x$", "$-xe^{3x}\\cos 2x$", "$-2xe^{3x}\\cos 2x$"], correct: 3 },
+        { text: "The auxiliary equation of the homogeneous linear differential equation is $(x^{2}D^{2}+3xD+1)y=\\frac{1}{(1-x)^{2}}$", options: ["$m^{2}+2m+1=0$", "$m^{2}-2m+1=0$", "$m^{2}-m-1=0$", "$m^{2}+m+1=0$"], correct: 0 },
+        { text: "The general solution of the homogeneous linear differential equation $(x^{2}D^{2}-4xD+6)y=x^{2}$ is", options: ["$y=C_{1}x^{3}-C_{2}x^{2}-x^{2}\\log x$", "$y=C_{1}x^{3}+C_{2}x^{2}+x\\log x$", "$y=C_{1}x^{3}+C_{2}x^{2}-x\\log x$", "$y=C_{1}x^{3}+C_{2}x^{2}-x^{2}\\log x$"], correct: 3 },
+        { text: "The partial differential equation formed by eliminating the arbitrary function f from $z=xy+f(x^{2}+y^{2})$ is", options: ["$py-qx=x^{2}+y^{2}$", "$py+qx=x^{2}+y^{2}$", "$py-qx=y^{2}-x^{2}$", "$py+qx=x^{2}-y^{2}$"], correct: 2 },
+        { text: "The general solution of the partial differential equation $z(p-q)=z^{2}+(x+y)^{2}$ is", options: ["$\\phi(x+y,z^{2}-(x+y)^{2})=0$", "$\\phi(x+y,z^{2}+(x+y)^{2})=0$", "$\\phi(x-y,z^{2}-(x-y)^{2})=0$", "$\\phi(x+y,\\log(z^{2}+(x+y)^{2})-2x)=0$"], correct: 3 },
+        { text: "The general solution of the partial differential equation $x(y^{2}-z^{2})p-y(z^{2}+x^{2})q=z(x^{2}+y^{2})$ is", options: ["$\\phi(-x^{3}+y^{3}-z^{2},xyz)=0$", "$\\phi(x^{2}+y^{2}-z^{2},xyz)=0$", "$\\phi(x^{2}-y^{2}-z^{2},xyz)=0$", "$\\phi(x^{2}+y^{2}+z^{2},xyz)=0$"], correct: 1 },
+        { text: "The general solution of the partial differential equation $y^{2}(x-y)p+x^{2}(y-x)q=z(x^{2}+y^{2})$ is", options: ["$\\phi(x^{3}+y^{3},(x-y)/z)=0$", "$\\phi(x^{3}+y^{3},(x+y)/z)=0$", "$\\phi(x^{3}+y^{3},(x+y)/3)=0$", "$\\phi(x^{3}-y^{3},(x-y)/z)=0$"], correct: 0 },
+        { text: "If $T: R^{2} \\rightarrow R^{2}$ is a linear transformation defined by $T(3,1)=(2,-4)$ and $T(1,1)=(0,2),$ then for $(a, b) \\in R^{2}, T(a, b)=$", options: ["$(5b-3a, a-b)$", "$(2a,-3b)$", "$(a-b, 5b-3a)$", "$(a+b, a-b)$"], correct: 2 },
+        { text: "If $f:R^{3}\\rightarrow R^{3}$ is a linear transformation defined by $f(x_{1}, x_{2}, x_{3})=(x_{1}-x_{2}, x_{2}-x_{3}, x_{3}-x_{1})$ then $(a, b, c) \\in \\text{Im} f$ implies that", options: ["$a+b+c=0$", "$a=b=c$", "$a=b+c$", "$2a=b+c$"], correct: 0 },
+        { text: "If $f:R^{4}\\rightarrow R^{4}$ is a linear transformation given by $f(a,b,c,d)=(2a,0,0,c+d),$ then $\\text{rank } f=$", options: ["4", "3", "2", "1"], correct: 1 },
+        { text: "If $f: R^{4}\\rightarrow R^{2}$ is a linear transformation defined by $f(a,b,c,d)=(2a,-b)$ then $\\text{nullity } f=$", options: ["4", "3", "2", "1"], correct: 2 },
+        { text: "If S and T are linear transformation on $R^{2}$ defined by $S(x,y)=(-y,x)$ and $T(x,y)=(0,x)$, then which of the following statements is true?", options: ["$S^{2}=I, T^{2}=I$", "$S^{2}=I, T^{2}=0$", "$S^{2}=-I, T^{2}=0$", "$S^{2}=-I, T^{2}=-T$"], correct: 2 },
+        { text: "The matrix of the linear transformation $T: R^{2} \\rightarrow R^{2}$ given by $T(a,b)=(-b,a)$ in the basis \\{(1, 2), (-1, 1)\\} is", options: ["$\\begin{pmatrix} \\frac{-1}{3} & \\frac{4}{3} \\\\ 8 & \\frac{1}{3} \\end{pmatrix}$", "$\\begin{pmatrix} \\frac{-1}{3} & \\frac{-2}{3} \\\\ \\frac{5}{3} & \\frac{1}{3} \\end{pmatrix}$", "$\\begin{pmatrix} 0 & -1 \\\\ 1 & 0 \\end{pmatrix}$", "$\\begin{pmatrix} \\frac{-1}{3} & \\frac{-2}{3} \\\\ \\frac{7}{3} & \\frac{1}{3} \\end{pmatrix}$"], correct: 1 },
+        { text: "The matrix of the linear transformation $T:R^{3} \\rightarrow R^{2}$ with respect to the standard bases of $R^{3}$ and $R^{2}$ is $\\begin{pmatrix} 1 & 0 & -2 \\\\ 0 & -1 & 1 \\end{pmatrix}$. $T(a,-2b,3c)=$ for $(a,-2b,3c)\\in R^{3},$", options: ["$(a-3c,2b-3c)$", "$(a-6c,2b-3c)$", "$(a+6c,2b-3c)$", "$(a-6c,2b+3c)$"], correct: 3 },
+        { text: "Let $M_{2}(R)$ be the vector space of $2\\times2$ matrices over the field R of real number. The matrix of the linear transformation $T:M_{2}(R)\\rightarrow M_{2}(R)$ given by $T(v)=\\begin{pmatrix}1&1\\\\1&1\\end{pmatrix}v$ for $v \\in M_{2}(R)$ with respect to the basis $\\{\\begin{pmatrix}1&0\\\\0&0\\end{pmatrix},\\begin{pmatrix}0&1\\\\0&0\\end{pmatrix},\\begin{pmatrix}0&0\\\\1&0\\end{pmatrix},\\begin{pmatrix}0&0\\\\0&1\\end{pmatrix}\\}$ of $M_{2}(R)$ over R is", options: ["$\\begin{bmatrix}1&0&1&0\\\\0&1&0&1\\\\1&0&1&0\\\\0&1&0&1\\end{bmatrix}$", "$\\begin{pmatrix}1&0&0&1\\\\0&1&1&0\\\\0&1&1&0\\\\1&0&0&1\\end{pmatrix}$", "$\\begin{bmatrix}1&1&0&0\\\\0&1&1&0\\\\0&1&1&0\\\\0&0&1&1\\end{bmatrix}$", "$\\begin{pmatrix}1&1&1&1\\\\1&1&1&1\\\\1&1&1&1\\\\1&1&1&1\\end{pmatrix}$"], correct: 0 },
+        { text: "The rank of the following matrix is $\\begin{pmatrix}1&2&-4&3\\\\2&-1&-3&5\\\\-1&8&-6&-1\\end{pmatrix}$", options: ["1", "2", "3", "4"], correct: 1 },
+        { text: "If the following matrix is a symmetric matrix then (x, y) = $\\begin{pmatrix}4&-2&1&6\\\\-2&0&3&-1\\\\y+4&3&5&-2\\\\6&-1&-x+1&-3\\end{pmatrix}$", options: ["(-3, 3)", "(3,5)", "(1,-3)", "(3,-3)"], correct: 3 },
+        { text: "The characteristic polynomial of the following matrix is $\\begin{pmatrix}1&2&1\\\\1&-1&1\\\\2&0&1\\end{pmatrix}$", options: ["$\\lambda^{3}-\\lambda^{2}-5\\lambda-3=0$", "$\\lambda^{3}+\\lambda^{2}-5\\lambda-3=0$", "$\\lambda^{3}-\\lambda^{2}-4\\lambda-3=0$", "$\\lambda^{3}+\\lambda^{2}-4\\lambda-3=0$"], correct: 0 },
+        { text: "If $A=\\begin{pmatrix}2&2\\\\3&1\\end{pmatrix}$ then,", options: ["$A^{2}-3A+7I=0$", "$A^{2}-5A+5I=0$", "$A^{2}-3A-7I=0$", "$A^{2}-3A-4I=0$"], correct: 3 },
+        { text: "The eigen values of the matrix $\\begin{pmatrix}\\cos\\theta&\\sin\\theta\\\\-\\sin\\theta&\\cos\\theta\\end{pmatrix}$ are", options: ["1,-1", "$\\cos\\theta, \\sin\\theta$", "$\\cos\\theta, -\\sin\\theta$", "$e^{-i\\theta}, e^{i\\theta}$"], correct: 3 },
+        { text: "The eigen vector of the matrix $\\begin{pmatrix}1&1&-1\\\\0&1&0\\\\1&0&1\\end{pmatrix}$ corresponding to the eigen values 1 is", options: ["(1,0,1)", "(0, 1, 1)", "(1,1,0)", "(1, 1, 1)"], correct: 1 },
+        { text: "The inverse of the matrix $A=\\begin{pmatrix}1&-3&3\\\\0&-1&2\\\\0&-3&1\\end{pmatrix}$ is", options: ["$\\frac{1}{5}(A^{2}-A+5I)$", "$\\frac{1}{5}(A^{2}+A-5I)$", "$\\frac{1}{7}(A^{2}-A+7I)$", "$\\frac{1}{7}(A^{2}+A-7I)$"], correct: 0 },
+        { text: "If $x=r\\cos\\theta, y=r\\sin\\theta$, then $\\frac{\\partial y}{\\partial x}$ is equal to", options: ["$\\sec\\theta$", "$\\sin\\theta$", "$-\\cot\\theta$", "$\\csc\\theta$"], correct: 2 },
+        { text: "If $\\{e_i\\}$ is an orthonormal set in a Hilbert space $H$. If x is any vector in H then the set $S=\\{e_{i} \\mid (x,e_{i})\\ne0\\}$ is", options: ["always empty set", "always finite set", "either empty or finite set", "either empty or countable set"], correct: 3 },
+        { text: "Let $\\bar{r}=x\\hat{i}+y\\hat{j}+z\\hat{k}$ and $|\\bar{r}|=r$. The directional derivative of $\\frac{1}{r}$ in the direction of $\\bar{r}$ is:", options: ["$\\frac{2}{r}$", "$\\frac{1}{r}$", "$\\frac{-1}{r^{2}}$", "$\\frac{1}{r^{2}}$"], correct: 2 },
+        { text: "If $R(t)=3t^{2}\\bar{I}+t\\bar{J}-t^{3}\\bar{K},$ then what is the value $\\int_{0}^{1}(R\\times\\frac{d^{2}R}{dt^{2}})dt?$", options: ["$-2\\bar{I}-3\\bar{J}-3\\bar{K}$", "$-2\\bar{I}+3\\bar{J}-3\\bar{K}$", "$2\\bar{I}+3\\bar{J}-3\\bar{K}$", "$2\\bar{I}-3\\bar{J}-3\\bar{K}$"], correct: 1 },
+        { text: "What is the p-discriminant of the equation $y=px+\\frac{1}{p}$ ?", options: ["$y=4x$", "$y^{2}=4x$", "$y=x$", "$y=-x$"], correct: 1 },
+        { text: "A subset of a topological space is closed, if it:", options: ["contains only one limit point", "does not contain any of its limit points", "contains each of its limit points", "is an empty set"], correct: 2 },
+        { text: "Metric d is known as pseudo metric if -", options: ["$d(x,y)=0 \\Rightarrow x=y$", "$d(x,y)=0 \\Leftrightarrow x=y$", "$x=y \\Rightarrow d(x,y)=0$", "none of these"], correct: 2 },
+        { text: "Value of $\\lim_{n\\rightarrow\\infty}(\\frac{1}{n+1}+\\frac{1}{n+2}+...+\\frac{1}{n+n})$ is-", options: ["$\\log\\frac{1}{2}$", "$\\log 1$", "$\\log 2$", "$\\log 4$"], correct: 2 },
+        { text: "The value of p such that the function $f(z)=\\frac{1}{2}\\log(x^{2}+y^{2})+i\\tan^{-1}(\\frac{px}{y})$ is analytic is", options: ["1", "-1", "2", "-2"], correct: 1 },
+        { text: "If $u=e^{-z}\\cos x$ the analytical function $f(z)=u+iv$ is", options: ["$e^{z}$", "$e^{iz}$", "$e^{-iz}$", "$e^{-z}$"], correct: 3 },
+        { text: "The set points at which the function $f(z)=|z|^{2}$ for z in C, is analytic is", options: ["C", "$C-\\{0\\}$", "$\\{0\\}$", "$\\emptyset$"], correct: 3 },
+        { text: "The image of the circle $|z|=2$ under the transformation $w=\\sqrt{2}e^{i\\frac{\\pi}{4}}\\cdot z$ where $w=u+iv,$ is the circle", options: ["$|w|=2$", "$|w|=2\\sqrt{2}$", "$|w|=\\sqrt{2}$", "$|w|=4$"], correct: 1 },
+        { text: "The invariant points of the transformation $w=\\frac{3z-5i}{iz-1}$ are", options: ["$10i,-2i$", "$-10i, 2i$", "$5i,-i$", "$-5i, i$"], correct: 3 },
+        { text: "The bilinear transformation which maps the points $z_{1}=0, z_{2}=1$ and $z_{3}=-\\infty$ into the points $w_{1}=i, w_{2}=1, w_{3}=-i$ is", options: ["$w=\\frac{z-i}{iz+1}$", "$w=\\frac{z+i}{z-1}$", "$w=\\frac{z+i}{iz+1}$", "$w=\\frac{z-i}{z+1}$"], correct: 2 },
+        { text: "The part of the plane shrunk by the map $w=\\frac{1}{z}$ is", options: ["$|z|>1$", "$|z|<1$", "$|z|>\\frac{1}{2}$", "$|z|<\\frac{1}{2}$"], correct: 0 },
+        { text: "If the order of an element a in a group G is $O(a)=10,$ then for $b\\in G$ the order of the elements $ba^{2}b^{-1}$ is", options: ["5", "10", "15", "20"], correct: 0 },
+        { text: "The index of $A_4$ in $S_4$ is", options: ["12", "6", "4", "2"], correct: 3 },
+        { text: "The set of generators of the group $(Z_{12},\\oplus)$ is", options: ["\\{1, 3, 5, 7, 9, 11\\}", "\\{1, 5, 7, 11\\}", "\\{1, 2, 4, 6, 8, 10\\}", "\\{1, 2, 3, 4, 6\\}"], correct: 1 },
+        { text: "In $S_{3}$ the conjugate of the element $\\begin{pmatrix}1&2&3\\\\2&3&1\\end{pmatrix}$ with respect to the elements $\\begin{pmatrix}1&2&3\\\\1&3&2\\end{pmatrix}$ is", options: ["$\\begin{pmatrix}1&2&3\\\\3&2&1\\end{pmatrix}$", "$\\begin{pmatrix}1&2&3\\\\2&1&3\\end{pmatrix}$", "$\\begin{pmatrix}1&2&3\\\\3&1&2\\end{pmatrix}$", "$\\begin{pmatrix}1&2&3\\\\2&3&1\\end{pmatrix}$"], correct: 2 },
+        { text: "The number of automorphisms of the group $(Z_{16},\\oplus)$ is", options: ["2", "4", "6", "8"], correct: 3 },
+        { text: "Which of the following permutations is an even permutation?", options: ["$\\begin{pmatrix}1&2&3&4&5&6\\\\5&4&1&2&3&6\\end{pmatrix}$", "$\\begin{pmatrix}1&2&3&4&5&6\\\\3&4&6&5&1&2\\end{pmatrix}$", "$\\begin{pmatrix}1&2&3&4&5&6\\\\1&5&3&6&4&2\\end{pmatrix}$", "$\\begin{pmatrix}1&2&3&4&5&6\\\\6&5&2&4&1&3\\end{pmatrix}$"], correct: 1 },
+        { text: "The number of generators of the group $(Z,+)$ of integers with respect to the usual addition '+' is", options: ["0", "1", "2", "$\\infty$"], correct: 2 },
+        { text: "The quotient group of the subgroup $H=\\{1, -1\\}$ of the group $G=(R^*, .)$ of the set of non zero real numbers with respect to the multiplication '.' G/H is", options: ["$\\{\\{r,-r\\} \\mid r \\in R^*\\}$", "$\\{\\{\\frac{1}{r},\\frac{-1}{r}\\} \\mid r \\in R^*\\}$", "$\\{Q^*\\}$ where $Q^*$ is the set of nonzero rationales", "$\\{\\{r,-r\\} \\mid r \\in Q^*\\}$"], correct: 0 },
+        { text: "Let N be a normal subgroup of a group G. For $gN \\in G/N$, if $O(gN)$ is finite then", options: ["$O(gN) \\mid O(g)$", "$O(g) \\mid O(gN)$", "$O(gN)=O(g)$", "$O(g)$ need not be finite"], correct: 0 },
+        { text: "Let R be the set of real numbers. The zero and the identity elements of the ring $(R,\\oplus,\\odot)$ where $a \\oplus b = a+b+1$ and $a \\odot b = ab+a+b$, for all $a, b \\in R$, are respectively", options: ["0, 1", "1, 0", "-1, 1", "-1, 0"], correct: 3 },
+        { text: "The set $\\{\\begin{pmatrix}x&x\\\\x&x\\end{pmatrix} \\mid x \\in R\\}$, where R is a real number, with respect to the addition and multiplication of matrices is", options: ["a non-commutative ring with identity", "an integral domain but not a field", "a division ring but not a field", "a field"], correct: 0 },
+        { text: "In the following rings, which is an integral domain", options: ["$(Z_{15}, \\oplus, \\odot)$", "$(Z_{111}, \\oplus, \\odot)$", "$(Z_{37}, \\oplus, \\odot)$", "$(Z_{51}, \\oplus, \\odot)$"], correct: 2 },
+        // ---------- GK (91-120) ----------
+        { text: "The World Development Report 2026, released by the World Bank, focuses on:", options: ["Migration", "Artificial Intelligence", "Climate finance", "Global supply chains"], correct: 1 },
+        { text: "Air Marshal Ashutosh Dixit takes charge as India's Chief of the Air Staff on:", options: ["31 August 2026", "30 September 2026", "31 October 2026", "1 January 2027"], correct: 2 },
+        { text: "Djokovic's seventh China Open title (October 2026) was his career tour-level trophy number:", options: ["100th", "102nd", "105th", "98th"], correct: 1 },
+        { text: "The reintroduced hard-ground Barasingha population (October 2026 news) reached about 303 individuals in which tiger reserve?", options: ["Kanha", "Satpura", "Bandhavgarh", "Panna"], correct: 1 },
+        { text: "The SIDM awards, presented in New Delhi in October 2026, are associated with:", options: ["Indian defence manufacturing", "Agricultural exports", "Space tourism", "Civil aviation"], correct: 0 },
+        { text: "Which of the following is the highest level of Bloom's revised taxonomy?", options: ["Understanding", "Applying", "Creating", "Remembering"], correct: 2 },
+        { text: "A \"null hypothesis\" states that:", options: ["A significant difference exists between variables", "No significant difference exists between the variables studied", "The research is invalid", "The sample is biased"], correct: 1 },
+        { text: "Which of the following is the best indicator of effective teaching?", options: ["Coverage of the full syllabus", "Measurable improvement in learners' knowledge and skills", "Strict discipline", "Use of expensive equipment"], correct: 1 },
+        { text: "\"Ethnography\" as a research method involves:", options: ["Statistical modelling of census data", "Immersive field study of a culture or group", "Laboratory experiments", "Content analysis of newspapers"], correct: 1 },
+        { text: "The normal curve of distribution in educational measurement is:", options: ["Skewed to the right", "Skewed to the left", "Symmetrical and bell-shaped", "Rectangular"], correct: 2 },
+        { text: "Which of the following is a spreadsheet software?", options: ["MS PowerPoint", "MS Excel", "MS Word", "Notepad"], correct: 1 },
+        { text: "In Internet addresses, \".edu\" domain generally indicates:", options: ["Commercial entities", "Educational institutions", "Government bodies", "Network providers"], correct: 1 },
+        { text: "Which of the following is an example of cloud storage service?", options: ["Google Drive", "MS Paint", "VLC Player", "Calculator"], correct: 0 },
+        { text: "\"Internet of Things (IoT)\" refers to:", options: ["A social media platform", "Network of physical devices connected and exchanging data", "A programming language", "A type of computer virus"], correct: 1 },
+        { text: "In e-mail, an \"attachment\" is:", options: ["The sender's signature", "A file sent along with the e-mail message", "The reply to a mail", "A spam filter"], correct: 1 },
+        { text: "Which of the following is the largest source of renewable energy in India's electricity generation?", options: ["Solar", "Wind", "Hydro power", "Biomass"], correct: 2 },
+        { text: "The \"Narmada Bachao Andolan\" was led by:", options: ["Medha Patkar", "Sundarlal Bahuguna", "Baba Amte", "Chandi Prasad Bhatt"], correct: 0 },
+        { text: "\"Desertification\" refers to:", options: ["Conversion of desert into forest", "Land degradation in arid, semi-arid areas leading to desert-like conditions", "Urbanisation of coastal areas", "Artificial creation of sand dunes"], correct: 1 },
+        { text: "The \"Basel Convention\" deals with:", options: ["Climate change", "Transboundary movement of hazardous wastes", "Ozone protection", "Biodiversity of deserts"], correct: 1 },
+        { text: "Which gas is primarily responsible for the depletion of the ozone layer?", options: ["Carbon dioxide", "Chlorofluorocarbons", "Methane", "Nitrogen"], correct: 1 },
+        { text: "Who was the founder of the Maurya Empire?", options: ["Ashoka", "Chandragupta Maurya", "Bindusara", "Samudragupta"], correct: 1 },
+        { text: "The Jallianwala Bagh massacre took place in:", options: ["1917", "1919", "1921", "1924"], correct: 1 },
+        { text: "The capital of the Mughal Empire under Akbar was:", options: ["Agra", "Fatehpur Sikri", "Delhi", "Lahore"], correct: 1 },
+        { text: "The Vindhya mountain range lies to the north of which plain?", options: ["Malwa Plateau", "Deccan Plateau", "Ganga Plain", "Thar Desert"], correct: 1 },
+        { text: "Which Indian river forms the Dhuandhar Falls?", options: ["Narmada", "Godavari", "Krishna", "Kaveri"], correct: 0 },
+        { text: "The Constituent Assembly of India was formed under the plan of:", options: ["Mountbatten Plan", "Cabinet Mission Plan, 1946", "Cripps Mission", "Wavell Plan"], correct: 1 },
+        { text: "How many schedules does the Indian Constitution originally contain?", options: ["8", "10", "12", "14"], correct: 0 },
+        { text: "The Finance Commission of India is a:", options: ["Statutory body", "Constitutional body", "Executive body", "Private organisation"], correct: 1 },
+        { text: "Which of the following is an indirect tax?", options: ["Income tax", "Goods and Services Tax (GST)", "Corporate tax", "Wealth tax"], correct: 1 },
+        { text: "The \"Service Sector\" in India includes:", options: ["Only agriculture", "Trade, transport, communication, finance and IT", "Only mining", "Only construction"], correct: 1 }
+    ];
+
+    // =======================  STATE  =======================
+    let currentIndex = 0;
+    let userAnswers = new Array(120).fill(null);
+    let marked = new Array(120).fill(false);
+    let visited = new Array(120).fill(false);
+    let timeLeft = 120 * 60;
+    let timerInterval = null;
+    let testSubmitted = false;
+
+    // =======================  ELEMENTS  =======================
+    const questionText = document.getElementById('questionText');
+    const optionsContainer = document.getElementById('optionsContainer');
+    const qCounter = document.getElementById('qCounter');
+    const timerDisplay = document.getElementById('timerDisplay');
+    const paletteGrid = document.getElementById('paletteGrid');
+    const markBtn = document.getElementById('markBtn');
+    const resultOverlay = document.getElementById('resultOverlay');
+    const scoreDisplay = document.getElementById('scoreDisplay');
+    const accuracyDisplay = document.getElementById('accuracyDisplay');
+    const reviewList = document.getElementById('reviewList');
+
+    // =======================  RENDER  =======================
+    function renderQuestion() {
+        if (testSubmitted) return;
+        const q = questions[currentIndex];
+        questionText.innerHTML = `Q${currentIndex + 1}. ${q.text}`;
+        let html = '';
+        q.options.forEach((opt, idx) => {
+            const selected = userAnswers[currentIndex] === idx;
+            html += `<div class="option ${selected ? 'selected' : ''}" onclick="selectOption(${idx})">
+                <span class="option-letter">${String.fromCharCode(65 + idx)}.</span>
+                <span>${opt}</span>
+            </div>`;
+        });
+        optionsContainer.innerHTML = html;
+        qCounter.textContent = `Question ${currentIndex + 1} / 120`;
+        if (marked[currentIndex]) {
+            markBtn.style.background = '#f39c12';
+            markBtn.style.borderColor = '#d68910';
+            markBtn.style.color = 'white';
+        } else {
+            markBtn.style.background = 'white';
+            markBtn.style.borderColor = '#cbd6e6';
+            markBtn.style.color = '#1e2f4a';
+        }
+        visited[currentIndex] = true;
+        updatePalette();
+        if (window.MathJax && MathJax.typesetPromise) {
+            MathJax.typesetPromise([questionText, optionsContainer]);
+        }
+    }
+
+    function updatePalette() {
+        paletteGrid.innerHTML = '';
+        for (let i = 0; i < 120; i++) {
+            const div = document.createElement('div');
+            div.className = 'palette-item';
+            if (userAnswers[i] !== null) div.classList.add('answered');
+            else if (visited[i]) div.classList.add('not-answered');
+            else div.classList.add('not-visited');
+            if (marked[i]) div.classList.add('marked');
+            if (i === currentIndex) div.classList.add('current');
+            div.textContent = i + 1;
+            div.onclick = () => { if (!testSubmitted) { currentIndex = i; renderQuestion(); } };
+            paletteGrid.appendChild(div);
+        }
+    }
+
+    // =======================  ACTIONS  =======================
+    function selectOption(idx) {
+        if (testSubmitted) return;
+        if (userAnswers[currentIndex] === idx) userAnswers[currentIndex] = null;
+        else userAnswers[currentIndex] = idx;
+        renderQuestion();
+    }
+
+    function prevQuestion() {
+        if (testSubmitted) return;
+        if (currentIndex > 0) { currentIndex--; renderQuestion(); }
+    }
+
+    function nextQuestion() {
+        if (testSubmitted) return;
+        if (currentIndex < 119) { currentIndex++; renderQuestion(); }
+    }
+
+    function toggleMark() {
+        if (testSubmitted) return;
+        marked[currentIndex] = !marked[currentIndex];
+        renderQuestion();
+    }
+
+    function clearResponse() {
+        if (testSubmitted) return;
+        userAnswers[currentIndex] = null;
+        renderQuestion();
+    }
+
+    // =======================  TIMER  =======================
+    function startTimer() {
+        timerInterval = setInterval(() => {
+            if (testSubmitted) return;
+            timeLeft--;
+            const mins = Math.floor(timeLeft / 60);
+            const secs = timeLeft % 60;
+            timerDisplay.textContent = `${String(mins).padStart(2, '0')}:${String(secs).padStart(2, '0')}`;
+            if (timeLeft <= 0) {
+                clearInterval(timerInterval);
+                submitTest();
+            }
+        }, 1000);
+    }
+
+    // =======================  SUBMIT  =======================
+    function submitTest() {
+        if (testSubmitted) return;
+        if (timeLeft > 0 && !confirm('Are you sure you want to submit the test?')) return;
+        testSubmitted = true;
+        clearInterval(timerInterval);
+        let correctCount = 0, wrongCount = 0, skipped = 0;
+        for (let i = 0; i < 120; i++) {
+            if (userAnswers[i] === null) skipped++;
+            else if (userAnswers[i] === questions[i].correct) correctCount++;
+            else wrongCount++;
+        }
+        const score = correctCount * 3 - wrongCount;
+        const attempted = correctCount + wrongCount;
+        const accuracy = attempted > 0 ? (correctCount / attempted * 100) : 0;
+        scoreDisplay.textContent = `Score: ${score}`;
+        accuracyDisplay.textContent = `Accuracy: ${accuracy.toFixed(2)}%  (${correctCount} correct, ${wrongCount} wrong, ${skipped} skipped)`;
+        renderReview('all');
+        resultOverlay.classList.add('active');
+        updatePalette();
+    }
+
+    function renderReview(filter) {
+        document.querySelectorAll('.filter-btn').forEach(btn => {
+            btn.classList.toggle('active', btn.dataset.filter === filter);
+        });
+        let html = '';
+        let count = 0;
+        for (let i = 0; i < 120; i++) {
+            const q = questions[i];
+            const userAns = userAnswers[i];
+            const isCorrect = userAns === q.correct;
+            const isSkipped = userAns === null;
+            if (filter === 'correct' && !isCorrect) continue;
+            if (filter === 'incorrect' && (isCorrect || isSkipped)) continue;
+            if (filter === 'unattempted' && !isSkipped) continue;
+            count++;
+            let itemClass = 'review-item ';
+            if (isSkipped) itemClass += 'skipped';
+            else if (isCorrect) itemClass += 'correct';
+            else itemClass += 'incorrect';
+
+            const userLetter = userAns !== null ? String.fromCharCode(65 + userAns) : '—';
+            const correctLetter = String.fromCharCode(65 + q.correct);
+            html += `<div class="${itemClass}">
+                <div class="review-q">Q${i + 1}. ${q.text}</div>
+                <div class="review-ans">
+                    <span>Your answer: <span class="${isCorrect ? 'correct-text' : (isSkipped ? '' : 'wrong-text')}">${userLetter} ${userAns !== null ? q.options[userAns] : '(not attempted)'}</span></span>
+                    <span>Correct answer: <span class="correct-text">${correctLetter} ${q.options[q.correct]}</span></span>
+                </div>
+            </div>`;
+        }
+        if (count === 0) html = '<p style="text-align:center;padding:30px;color:#4a5e7a;">No questions match this filter.</p>';
+        reviewList.innerHTML = html;
+        if (window.MathJax && MathJax.typesetPromise) {
+            MathJax.typesetPromise([reviewList]);
+        }
+    }
+
+    function setFilter(filter) {
+        renderReview(filter);
+    }
+
+    // =======================  DOWNLOAD  =======================
+    function downloadReview() {
+        let content = `MCQ Test Performance & Solutions\nScore: ${scoreDisplay.textContent}\n${accuracyDisplay.textContent}\n\n`;
+        for (let i = 0; i < 120; i++) {
+            const q = questions[i];
+            const userAns = userAnswers[i];
+            const isSkipped = userAns === null;
+            const userLetter = userAns !== null ? String.fromCharCode(65 + userAns) : '—';
+            const correctLetter = String.fromCharCode(65 + q.correct);
+            content += `Q${i + 1}. ${q.text.replace(/\$/g, '')}\n`;
+            content += `Your answer: ${userLetter} ${userAns !== null ? q.options[userAns].replace(/\$/g, '') : '(not attempted)'}\n`;
+            content += `Correct answer: ${correctLetter} ${q.options[q.correct].replace(/\$/g, '')}\n\n`;
+        }
+        const blob = new Blob([content], { type: 'text/plain;charset=utf-8' });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = 'performance_review.txt';
+        a.click();
+        URL.revokeObjectURL(url);
+    }
+
+    // =======================  INIT  =======================
+    function init() {
+        renderQuestion();
+        startTimer();
+        updatePalette();
+        document.addEventListener('keydown', (e) => {
+            if (testSubmitted) return;
+            if (e.key === 'ArrowLeft') prevQuestion();
+            if (e.key === 'ArrowRight') nextQuestion();
+        });
+    }
+
+    init();
+
+    window.selectOption = selectOption;
+    window.prevQuestion = prevQuestion;
+    window.nextQuestion = nextQuestion;
+    window.toggleMark = toggleMark;
+    window.clearResponse = clearResponse;
+    window.submitTest = submitTest;
+    window.setFilter = setFilter;
+    window.downloadReview = downloadReview;
+</script>
+</body>
+</html>
