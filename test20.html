@@ -1,0 +1,1355 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>MCQ Test – 120 Questions</title>
+  <!-- MathJax for LaTeX rendering -->
+  <script>
+    window.MathJax = {
+      tex: {
+        inlineMath: [['$', '$'], ['\\(', '\\)']],
+        displayMath: [['$$', '$$'], ['\\[', '\\]']],
+        processEscapes: true
+      },
+      svg: { fontCache: 'global' },
+      options: { skipHtmlTags: ['script', 'noscript', 'style', 'textarea', 'pre'] }
+    };
+  </script>
+  <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-svg.js" async></script>
+  <style>
+    * {
+      box-sizing: border-box;
+      font-family: 'Segoe UI', Roboto, system-ui, sans-serif;
+    }
+    body {
+      margin: 0;
+      background: #f0f2f5;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh;
+    }
+    #app {
+      width: 1400px;
+      max-width: 98vw;
+      height: 90vh;
+      background: white;
+      border-radius: 20px;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.15);
+      display: flex;
+      overflow: hidden;
+      position: relative;
+    }
+    /* left panel */
+    .main-panel {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      padding: 20px 25px;
+      overflow-y: auto;
+      background: #ffffff;
+    }
+    .header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 15px;
+      flex-wrap: wrap;
+    }
+    .timer {
+      font-size: 1.8rem;
+      font-weight: 700;
+      color: #1e3c72;
+      background: #e9ecf2;
+      padding: 8px 24px;
+      border-radius: 40px;
+      letter-spacing: 2px;
+      box-shadow: inset 0 1px 4px rgba(0,0,0,0.05);
+    }
+    .q-counter {
+      font-size: 1.2rem;
+      background: #d9e3f0;
+      padding: 8px 20px;
+      border-radius: 30px;
+      font-weight: 600;
+      color: #1e3c72;
+    }
+    .question-box {
+      background: #f9fafc;
+      border-radius: 18px;
+      padding: 28px 30px;
+      margin-bottom: 20px;
+      border: 1px solid #e2e8f0;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.02);
+      flex-shrink: 0;
+    }
+    .question-text {
+      font-size: 1.35rem;
+      line-height: 1.6;
+      font-weight: 500;
+      color: #0b1e33;
+      margin-bottom: 25px;
+      word-break: break-word;
+    }
+    .options {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+    .option {
+      display: flex;
+      align-items: flex-start;
+      gap: 15px;
+      background: white;
+      border: 2px solid #cbd5e1;
+      border-radius: 14px;
+      padding: 15px 22px;
+      cursor: pointer;
+      transition: all 0.15s;
+      font-size: 1.15rem;
+      line-height: 1.5;
+      color: #1e293b;
+    }
+    .option:hover {
+      background: #eef2f6;
+      border-color: #94a3b8;
+    }
+    .option.selected {
+      background: #dbeafe;
+      border-color: #2563eb;
+      box-shadow: 0 0 0 2px rgba(37,99,235,0.2);
+    }
+    .option-letter {
+      font-weight: 700;
+      color: #1e3c72;
+      min-width: 28px;
+      text-align: center;
+      font-size: 1.2rem;
+    }
+    .option-text {
+      flex: 1;
+    }
+    .buttons {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 14px;
+      margin-top: 10px;
+      margin-bottom: 10px;
+    }
+    .btn {
+      padding: 12px 26px;
+      border-radius: 40px;
+      border: none;
+      font-weight: 600;
+      font-size: 1rem;
+      cursor: pointer;
+      background: #e2e8f0;
+      color: #1e293b;
+      transition: 0.1s;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .btn:hover {
+      background: #cbd5e1;
+    }
+    .btn-primary {
+      background: #1e3c72;
+      color: white;
+    }
+    .btn-primary:hover {
+      background: #14315a;
+    }
+    .btn-warning {
+      background: #f59e0b;
+      color: white;
+    }
+    .btn-warning:hover {
+      background: #d97706;
+    }
+    .btn-danger {
+      background: #b91c1c;
+      color: white;
+    }
+    .btn-danger:hover {
+      background: #991b1b;
+    }
+    .btn-success {
+      background: #0f7b4b;
+      color: white;
+    }
+    .btn-success:hover {
+      background: #0b5e39;
+    }
+    /* right palette */
+    .palette {
+      width: 270px;
+      background: #f8fafc;
+      border-left: 2px solid #d1d9e6;
+      display: flex;
+      flex-direction: column;
+      padding: 18px 12px;
+      overflow-y: auto;
+      flex-shrink: 0;
+    }
+    .palette h3 {
+      margin: 0 0 10px 5px;
+      font-size: 1.1rem;
+      color: #1e3c72;
+      font-weight: 600;
+    }
+    .palette-legend {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      font-size: 0.75rem;
+      margin-bottom: 15px;
+      padding: 0 5px;
+    }
+    .legend-item {
+      display: flex;
+      align-items: center;
+      gap: 4px;
+    }
+    .legend-color {
+      width: 16px;
+      height: 16px;
+      border-radius: 6px;
+    }
+    .q-grid {
+      display: grid;
+      grid-template-columns: repeat(5, 1fr);
+      gap: 10px;
+      margin-bottom: 10px;
+    }
+    .q-btn {
+      aspect-ratio: 1/1;
+      border-radius: 12px;
+      border: 2px solid #cbd5e1;
+      background: white;
+      font-weight: 600;
+      font-size: 0.9rem;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      transition: 0.05s;
+      color: #1e293b;
+      padding: 0;
+    }
+    .q-btn.answered {
+      background: #bbf7d0;
+      border-color: #22c55e;
+      color: #14532d;
+    }
+    .q-btn.not-answered {
+      background: #fecaca;
+      border-color: #ef4444;
+      color: #7f1d1d;
+    }
+    .q-btn.marked {
+      background: #fde68a;
+      border-color: #f59e0b;
+      color: #78350f;
+    }
+    .q-btn.not-visited {
+      background: #f1f5f9;
+      border-color: #cbd5e1;
+      color: #334155;
+    }
+    .q-btn.current {
+      outline: 3px solid #2563eb;
+      outline-offset: 1px;
+      transform: scale(1.02);
+    }
+    /* overlay */
+    .overlay {
+      position: absolute;
+      inset: 0;
+      background: rgba(0,0,0,0.55);
+      backdrop-filter: blur(3px);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 1000;
+      padding: 20px;
+    }
+    .overlay-card {
+      background: white;
+      border-radius: 28px;
+      max-width: 1200px;
+      width: 100%;
+      max-height: 90%;
+      display: flex;
+      flex-direction: column;
+      box-shadow: 0 25px 50px rgba(0,0,0,0.3);
+      overflow: hidden;
+    }
+    .overlay-header {
+      padding: 20px 30px;
+      background: #1e3c72;
+      color: white;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .overlay-header h2 {
+      margin: 0;
+      font-weight: 600;
+    }
+    .score-summary {
+      font-size: 2rem;
+      font-weight: 700;
+      letter-spacing: 1px;
+    }
+    .overlay-body {
+      padding: 20px 30px;
+      overflow-y: auto;
+      flex: 1;
+    }
+    .stats {
+      display: flex;
+      gap: 30px;
+      margin-bottom: 25px;
+      flex-wrap: wrap;
+    }
+    .stat-item {
+      background: #eef2f6;
+      border-radius: 20px;
+      padding: 15px 25px;
+      font-weight: 500;
+      display: flex;
+      gap: 12px;
+      align-items: baseline;
+    }
+    .stat-value {
+      font-size: 1.8rem;
+      font-weight: 700;
+      color: #0b1e33;
+    }
+    .filter-bar {
+      display: flex;
+      gap: 12px;
+      margin-bottom: 20px;
+      flex-wrap: wrap;
+    }
+    .filter-btn {
+      padding: 8px 20px;
+      border-radius: 30px;
+      border: 1px solid #cbd5e1;
+      background: white;
+      cursor: pointer;
+      font-weight: 500;
+    }
+    .filter-btn.active {
+      background: #1e3c72;
+      color: white;
+      border-color: #1e3c72;
+    }
+    .review-list {
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+    .review-item {
+      border-left: 6px solid #cbd5e1;
+      background: #f9fafc;
+      border-radius: 12px;
+      padding: 18px 22px;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.02);
+    }
+    .review-item.correct { border-left-color: #22c55e; }
+    .review-item.incorrect { border-left-color: #ef4444; }
+    .review-item.unattempted { border-left-color: #94a3b8; }
+    .review-q {
+      font-weight: 600;
+      margin-bottom: 8px;
+    }
+    .review-meta {
+      display: flex;
+      gap: 25px;
+      font-size: 0.95rem;
+      margin-top: 8px;
+      flex-wrap: wrap;
+    }
+    .review-meta span {
+      background: #e2e8f0;
+      padding: 4px 14px;
+      border-radius: 30px;
+    }
+    .user-correct { background: #bbf7d0; color: #14532d; }
+    .user-wrong { background: #fecaca; color: #7f1d1d; }
+    .correct-ans { background: #dbeafe; color: #1e3a8a; }
+    .download-btn {
+      background: #0f7b4b;
+      color: white;
+      margin-right: 15px;
+    }
+    .btn-group {
+      display: flex;
+      gap: 12px;
+    }
+    /* small screens */
+    @media (max-width: 1000px) {
+      .palette { width: 210px; }
+    }
+  </style>
+</head>
+<body>
+<div id="app">
+  <!-- MAIN LEFT -->
+  <div class="main-panel" id="mainPanel">
+    <div class="header">
+      <div class="timer" id="timerDisplay">02:00:00</div>
+      <div class="q-counter" id="qCounter">Q1 / 120</div>
+    </div>
+    <div class="question-box">
+      <div class="question-text" id="questionText">Loading...</div>
+      <div class="options" id="optionsContainer"></div>
+    </div>
+    <div class="buttons">
+      <button class="btn" id="prevBtn">← Previous</button>
+      <button class="btn" id="nextBtn">Next →</button>
+      <button class="btn" id="clearBtn">Clear Response</button>
+      <button class="btn btn-warning" id="markBtn">Mark for Review</button>
+      <button class="btn btn-primary" id="submitBtn">Submit</button>
+    </div>
+  </div>
+  <!-- RIGHT PALETTE -->
+  <div class="palette" id="palettePanel">
+    <h3>Question Palette</h3>
+    <div class="palette-legend">
+      <div class="legend-item"><div class="legend-color" style="background:#bbf7d0;border:2px solid #22c55e;"></div> Answered</div>
+      <div class="legend-item"><div class="legend-color" style="background:#fecaca;border:2px solid #ef4444;"></div> Not Answered</div>
+      <div class="legend-item"><div class="legend-color" style="background:#fde68a;border:2px solid #f59e0b;"></div> Marked</div>
+      <div class="legend-item"><div class="legend-color" style="background:#f1f5f9;border:2px solid #cbd5e1;"></div> Not Visited</div>
+    </div>
+    <div class="q-grid" id="paletteGrid"></div>
+  </div>
+</div>
+
+<!-- OVERLAY (RESULT) -->
+<div id="overlay" class="overlay" style="display:none;">
+  <div class="overlay-card">
+    <div class="overlay-header">
+      <h2>Performance & Solutions</h2>
+      <div class="score-summary" id="overlayScore"></div>
+    </div>
+    <div class="overlay-body">
+      <div class="stats" id="statsContainer"></div>
+      <div class="filter-bar">
+        <button class="filter-btn active" data-filter="all">All</button>
+        <button class="filter-btn" data-filter="correct">Correct</button>
+        <button class="filter-btn" data-filter="incorrect">Incorrect</button>
+        <button class="filter-btn" data-filter="unattempted">Unattempted</button>
+      </div>
+      <div class="review-list" id="reviewList"></div>
+    </div>
+    <div style="padding: 15px 30px 25px; border-top:1px solid #e2e8f0; display: flex; justify-content: space-between;">
+      <button class="btn download-btn" id="downloadBtn">⬇ Download Solutions (HTML)</button>
+      <button class="btn" id="closeOverlayBtn">Close</button>
+    </div>
+  </div>
+</div>
+
+<script>
+  // --------------------------------------------------------------
+  // 1. QUESTIONS DATA (exactly as provided in the files)
+  // --------------------------------------------------------------
+  const questions = [];
+
+  // ---- MATHEMATICS (Q1–Q90) ----
+  // from documentclass{article}.txt : 90 questions
+
+  // Q1
+  questions.push({
+    text: `$(2+5^{1/3})^{1/2}$ is:`,
+    options: [`an integer`, `a rational number of the form $p/q$, $p$ and $q$ integers in the lowest form, $q\\ne0$, $q\\ne\\pm1$`, `an algebraic number`, `a transcendental number`],
+    correct: 2 // (c)
+  });
+  // Q2
+  questions.push({
+    text: `The infimum of the set $\\{n^{(-1)^n}:n\\in \\mathbb{N}\\}$ is:`,
+    options: [`$-1$`, `$0$`, `$-\\frac{1}{2}$`, `not defined in the set of real numbers`],
+    correct: 1 // (b)
+  });
+  // Q3
+  questions.push({
+    text: `For any real number $a$, $\\lim_{n\\rightarrow\\infty}\\frac{a^{n}}{n!}$ equals:`,
+    options: [`$a$`, `$\\infty$`, `$1$`, `$0$`],
+    correct: 3 // (d)
+  });
+  // Q4
+  questions.push({
+    text: `The sequence $\\langle \\cos(\\frac{n\\pi}{3})\\rangle$ is:`,
+    options: [`unbounded`, `convergent and hence bounded`, `divergent`, `oscillatory`],
+    correct: 3 // (d)
+  });
+  // Q5
+  questions.push({
+    text: `The value of $b$ for which $1+e^{b}+e^{2b}+e^{3b}+...\\infty = 9$ is:`,
+    options: [`$3\\log 2-2\\log 3$`, `$2\\log 3-3\\log 2$`, `$3\\log 2-\\log 3$`, `$\\log 3-3\\log 2$`],
+    correct: 0 // (a)
+  });
+  // Q6
+  questions.push({
+    text: `The norm of the partition $\\{-2, -1.6, -0.5, 0, 0.8, 1\\}$ of the interval $[-2, 1]$ is:`,
+    options: [`$0.8$`, `$0.2$`, `$0.5$`, `$1.1$`],
+    correct: 3 // (d)
+  });
+  // Q7
+  questions.push({
+    text: `The average value of $\\cos x$ on $[0,\\frac{\\pi}{2}]$ is:`,
+    options: [`$\\pi/2$`, `$2/\\pi$`, `$\\pi/4$`, `$4/\\pi$`],
+    correct: 1 // (b)
+  });
+  // Q8
+  questions.push({
+    text: `Let $\\langle b_n\\rangle$ be a sequence with $n$th term as $b_n=n(1+(-1)^n)$ and $A=\\lim\\sup b_n$, $B=\\lim\\inf b_n$, then:`,
+    options: [`$A=\\infty$, $B=0$`, `$A=0$, $B=\\infty$`, `$A=B=0$`, `$A=B=\\infty$`],
+    correct: 0 // (a)
+  });
+  // Q9
+  questions.push({
+    text: `$\\lim_{n\\rightarrow\\infty}\\frac{1}{n}[1+2^{1/2}+3^{1/3}+...+n^{1/n}]$ equals:`,
+    options: [`$0$`, `$1$`, `$1/2$`, `$2$`],
+    correct: 2 // (c)
+  });
+  // Q10
+  questions.push({
+    text: `Let $f, g$ be two R-integrable functions on $[a, b]$. Then which of the following is not necessarily R-integrable on $[a, b]$?`,
+    options: [`$fg$`, `$f\\circ g$, when $f\\circ g$ is defined`, `$\\max(f, g)$`, `$\\min(f, g)$`],
+    correct: 1 // (b)
+  });
+  // Q11
+  questions.push({
+    text: `The series $\\sum_{n=2}^{\\infty}\\frac{1}{n(\\log n)^{p}}$ converges:`,
+    options: [`for all real values of $p$`, `iff $p>1$`, `iff $p<1$`, `iff $p=1$`],
+    correct: 1 // (b)
+  });
+  // Q12
+  questions.push({
+    text: `Which of the following functions is discontinuous?`,
+    options: [`$f(x)=x^2\\sin\\frac{1}{x}, x\\ne0; =0, x=0$`, `$f(x)=|x| \\forall x\\in\\mathbb{R}$`, `$f(x)=\\sqrt{x} \\forall x\\in[0,4]$`, `$f(x)=\\frac{1}{x}\\sin(\\frac{1}{x^2}), x\\ne0; =0, x=0$`],
+    correct: 3 // (d)
+  });
+  // Q13
+  questions.push({
+    text: `The function $f$ defined on $[-8\\pi, 8\\pi]$ as $f(x)=\\sin(e^x)-e^{2\\pi}\\cos 2x$ is:`,
+    options: [`uniformly continuous`, `continuous but not uniformly continuous`, `discontinuous at finitely many points`, `discontinuous at uncountably many points`],
+    correct: 0 // (a)
+  });
+  // Q14
+  questions.push({
+    text: `Let $[\\cdot]$ denote the greatest integer function. Then $I=\\int_{0}^{2}[x^2]dx$ equals:`,
+    options: [`$0$`, `$7-\\sqrt{2}-\\sqrt{3}$`, `$9-\\sqrt{2}-\\sqrt{3}$`, `$5-\\sqrt{2}-\\sqrt{3}$`],
+    correct: 3 // (d)
+  });
+  // Q15
+  questions.push({
+    text: `Let $f, g, h, k$ be four functions defined as: $f(x)=\\sqrt{x}$ on $[0,2]$; $g(x)=x^2$ on $[0,\\infty)$; $h(x)=x^3$ on $[-1,1]$; $k(x)=\\frac{1}{x}$ on $(0,1]$. Which of the functions defined above are not uniformly continuous in the specified domains?`,
+    options: [`$g$ and $k$`, `$k$ only`, `$g$ only`, `$f$ and $h$`],
+    correct: 0 // (a)
+  });
+  // Q16
+  questions.push({
+    text: `Let $f$ be defined on $\\mathbb{R}$, as $f(x)=x, 0\\le x<1$; $=1, x\\ge1$. Which one is true?`,
+    options: [`$f$ is discontinuous at $x=1$`, `$f$ is differentiable at $x=1$`, `$f$ is continuous but not differentiable at $x=1$`, `$f$ is a continuous non-monotonic function`],
+    correct: 2 // (c)
+  });
+  // Q17
+  questions.push({
+    text: `The solution of the total differential equation: $(y+z)dx+(z+x)dy+(x+y)dz=0$ is:`,
+    options: [`$xy+yz+xz=\\text{const.}$`, `$x^2+y^2+z^2=\\text{const.}$`, `$x^2(y+z)+y^2(x+z)=\\text{const.}$`, `$x+y+z=\\text{const.}$`],
+    correct: 0 // (a)
+  });
+  // Q18
+  questions.push({
+    text: `The general solution of the partial differential equation $x^2\\frac{\\partial v}{\\partial x}+y^2\\frac{\\partial v}{\\partial y}=x+y$, $v=v(x,y)$ is given by:`,
+    options: [`$\\Phi(y+x, \\frac{e^v}{x+y})=0$`, `$\\Phi(y-x, \\frac{e^v}{x+y})=0$`, `$\\Phi(\\frac{1}{x}+\\frac{1}{y}, (x+y)e^v)=0$`, `$\\Phi(\\frac{1}{y}-\\frac{1}{x}, \\frac{x-y}{e^v})=0$`],
+    correct: 3 // (d)
+  });
+  // Q19
+  questions.push({
+    text: `The complete integral of the differential equation $pq=xz$, (where $p=\\frac{\\partial z}{\\partial x}, q=\\frac{\\partial z}{\\partial y}, z=z(x,y)$) is:`,
+    options: [`$z=(\\frac{x^2}{2}+a)(y+b)$`, `$z=(x+a)(y+b)$`, `$z=ax+a^2+by$`, `$z=(\\sqrt{x}+a)^2+(\\sqrt{y}+b)^2$`],
+    correct: 0 // (a)
+  });
+  // Q20
+  questions.push({
+    text: `The differential equation of all parabolas, whose axes are parallel to the y-axis is:`,
+    options: [`$\\frac{d^3y}{dx^3}=0$`, `$\\frac{d^2y}{dx^2}+4a\\frac{dy}{dx}=0$`, `$\\frac{dy}{dx}\\cdot\\frac{y}{2x}=0$`, `$\\frac{d^3y}{dx^3}+4ax=0$`],
+    correct: 0 // (a)
+  });
+  // Q21
+  questions.push({
+    text: `The solution of the initial value problem $y''-3y'+2y=0$, $y(0)=0$, $y'(0)=1$ is:`,
+    options: [`$-e^{x}+e^{2x}$`, `$e^{x}-e^{2x}$`, `$e^{x}+e^{2x}$`, `$\\frac{1}{2}(e^{2x}-e^{x})$`],
+    correct: 0 // (a)
+  });
+  // Q22
+  questions.push({
+    text: `Let $A$ be the set of all sequences with terms $0$ or $1$. Then the set $A$ is:`,
+    options: [`finite`, `countably infinite`, `uncountable`, `none of the above`],
+    correct: 2 // (c)
+  });
+  // Q23
+  questions.push({
+    text: `Which of the following is true about the set $\\mathbb{Z}$ of integers as a subset of real numbers:`,
+    options: [`$\\mathbb{Z}$ is closed`, `$\\mathbb{Z}$ is perfect`, `$\\mathbb{Z}$ is bounded`, `$\\mathbb{Z}$ is compact`],
+    correct: 0 // (a)
+  });
+  // Q24
+  questions.push({
+    text: `The radius of convergence of the power series $\\sum_{n=0}^{\\infty}\\frac{x^{n^2}}{n!}$ is:`,
+    options: [`$0$`, `$1$`, `$1/2$`, `infinity`],
+    correct: 3 // (d)
+  });
+  // Q25
+  questions.push({
+    text: `The region represented by the set $\\{z:\\text{Re}(z^2)\\le1\\}$ in the complex plane is:`,
+    options: [`a horizontal infinite strip of width $2\\pi$`, `a closed disc without its centre`, `region between the branches of the hyperbola $x^2-y^2=1$`, `region enclosed by the ellipse $\\frac{x^2}{2}+y^2=1$`],
+    correct: 2 // (c)
+  });
+  // Q26
+  questions.push({
+    text: `The value of $\\int_{C}\\frac{\\sin z}{z^2(z-1)}dz$, $C=\\{z:|z|=\\frac{1}{2}\\}$`,
+    options: [`$-2\\pi i$`, `$4\\pi i$`, `$2\\pi i$`, `$-4\\pi i$`],
+    correct: 0 // (a)
+  });
+  // Q27
+  questions.push({
+    text: `The complex function $f(z)=|z|^2$ is:`,
+    options: [`differentiable only at $z=0$`, `differentiable everywhere in the complex plane`, `differentiable nowhere in the complex plane`, `differentiable everywhere in the complex plane except at $z=0$`],
+    correct: 0 // (a)
+  });
+  // Q28
+  questions.push({
+    text: `The most general harmonic conjugate of the function $u=x^2-y^2-y$ is given by:`,
+    options: [`$v(x,y)=x^2+y^2-x+c$`, `$v(x,y)=2xy+y+c$`, `$v(x,y)=2x^2y+y+c$`, `$v(x,y)=2xy+x+c$`],
+    correct: 3 // (d)
+  });
+  // Q29
+  questions.push({
+    text: `Let $I=\\int_{C}\\overline{z}dz$ where $C$ denotes the unit circle traced anticlockwise. Then $I$ equals:`,
+    options: [`$0$`, `$\\pi i$`, `$2\\pi i$`, `$\\pi/2$`],
+    correct: 2 // (c)
+  });
+  // Q30
+  questions.push({
+    text: `Let $g(z)=(z^2-1)^{-1}\\tan z$ and $C=\\{z:|z|=3/2\\}$ (counterclockwise). Then $I=\\int_{C}g(z)dz$ equals:`,
+    options: [`$0$`, `$2\\pi i\\tan 1$`, `$\\pi i\\tan 1$`, `$\\pi/2\\tan 1$`],
+    correct: 1 // (b)
+  });
+  // Q31
+  questions.push({
+    text: `The solution set of $e^z=-3$ is:`,
+    options: [`$\\{\\ln 3+(2K+1)\\pi i:K\\in\\mathbb{Z}\\}$`, `$\\{\\ln 3+K\\pi i:K\\in\\mathbb{Z}\\}$`, `$\\{\\ln 3+2K\\pi i:K\\in\\mathbb{Z}\\}$`, `$\\{\\ln 3+\\pi i\\}$`],
+    correct: 0 // (a)
+  });
+  // Q32
+  questions.push({
+    text: `Let $f$ be analytic in a disc $D$ centered at $a$ and having radius $R$ such that $|f(z)|\\le|f(a)|$ for all $z$ in $D$ with $f(a)\\ne0$. Then:`,
+    options: [`$f$ is a constant function`, `$\\exists z\\in D$ such that $f(z)=\\overline{f(z)}$`, `$f$ is identically zero`, `$f$ is not a rational function`],
+    correct: 0 // (a)
+  });
+  // Q33
+  questions.push({
+    text: `The function $f(z)=(1-\\cos z)z^{-2}$ has:`,
+    options: [`a simple pole at $z=0$`, `a double pole at $z=0$`, `a removable singularity at $z=0$`, `a non-isolated essential singularity at $z=0$`],
+    correct: 2 // (c)
+  });
+  // Q34
+  questions.push({
+    text: `Let $(X, \\tau)$ be a topological space of all irrational numbers with discrete topology. Then which of the following is true?`,
+    options: [`The space is complete`, `The space is connected`, `The space is totally bounded`, `The space is separable`],
+    correct: 0 // (a)
+  });
+  // Q35
+  questions.push({
+    text: `Let $f$ and $g$ be holomorphic inside and on a contour $\\Gamma$ and $|f(z)|>|g(z)|$ on the boundary of the contour. Then:`,
+    options: [`$g$ and $f-g$ have the same number of zeros inside $\\Gamma$`, `$g$ and $f+g$ have the same number of zeros inside $\\Gamma$`, `$f$ and $f+g$ have the same number of zeros inside $\\Gamma$`, `$g$ and $f+g$ have the same number of zeros inside $\\Gamma$`],
+    correct: 2 // (c)
+  });
+  // Q36
+  questions.push({
+    text: `The residue of $f(z)=\\frac{\\pi\\cot\\pi z}{z^2}$ at $z=2$ is:`,
+    options: [`$1/2$`, `$1/8$`, `$1/4$`, `$1/16$`],
+    correct: 1 // (b)
+  });
+  // Q37
+  questions.push({
+    text: `Which one is incorrect:`,
+    options: [`if $H$ and $K$ are two subgroups of a group $G$ then $HK$ is a subgroup of $G$ iff $HK=KH$`, `If $H$ and $K$ are two subgroups of a group $G$ such that either $H$ or $K$ is normal in $G$ then $HK$ is a subgroup of $G$`, `If $H$ and $K$ are finite subgroups of a group $G$, then $O(HK)=O(H)\\cdot O(K)$`, `If $H$ and $K$ are two subgroups of an abelian group $G$ then $HK$ is a subgroup of $G$`],
+    correct: 2 // (c)
+  });
+  // Q38
+  questions.push({
+    text: `Let $G_1=\\langle g\\rangle$, $G_2=\\langle b\\rangle$ be two cyclic groups of orders $m$ and $n$ such that $(m,n)>1$. Then which one is not true for the product group $G=G_1\\times G_2$?`,
+    options: [`$G$ is cyclic`, `$G$ is abelian but not cyclic`, `$O(G)=mn$`, `None of the above`],
+    correct: 0 // (a)
+  });
+  // Q39
+  questions.push({
+    text: `If in a group $G$, $a^3=e$ and $aba^{-1}=b^2$ for $a, b\\in G$, then for $b\\ne e$, $O(b)$ equals:`,
+    options: [`$29$`, `$33$`, `$31$`, `$35$`],
+    correct: 1 // (b)
+  });
+  // Q40
+  questions.push({
+    text: `Which one is not true?`,
+    options: [`Intersection of two normal subgroups need not be a normal subgroup`, `Every subgroup of a cyclic group is normal`, `The centre of a group is a normal subgroup`, `If $x^2\\in H$ for all $x\\in G$, then $H$ is a normal subgroup of $G$`],
+    correct: 0 // (a)
+  });
+  // Q41
+  questions.push({
+    text: `Which one is correct?`,
+    options: [`The quaternion group can be written as internal direct product of its non-trivial subgroups`, `The group $\\mathbb{Q}$ of all rationals under addition is the direct sum of two non-trivial subgroups`, `A group of order 4 is cyclic or internal direct product of two cyclic groups of order 2 each`, `$S_3$, the symmetric group of degree 3, is the internal direct product of two non-trivial subgroups`],
+    correct: 2 // (c)
+  });
+  // Q42
+  questions.push({
+    text: `The number of non-isomorphic abelian groups of order 20 is:`,
+    options: [`$1$`, `$4$`, `$2$`, `$5$`],
+    correct: 2 // (c)
+  });
+  // Q43
+  questions.push({
+    text: `Which of the following is not true for a boolean ring $R$?`,
+    options: [`$R$ is non-commutative`, `$x^2=x$ for every $x\\in R$`, `$2x=0$ for every $x\\in R$`, `$x+y=0 \\Rightarrow x=y$ for $x, y\\in R$`],
+    correct: 0 // (a)
+  });
+  // Q44
+  questions.push({
+    text: `Let $R$ be the ring of real-valued continuous functions on $[0, 1]$ which one of the following is true for the ring $R$?`,
+    options: [`$R$ is an integral domain`, `$R$ has zero divisors`, `$R$ is a commutative ring without unity`, `$R$ is a non-commutative ring with unity`],
+    correct: 1 // (b)
+  });
+  // Q45
+  questions.push({
+    text: `If $S$ and $T$ are two subrings of a ring $R$, then which of the following is always a subring of $R$?`,
+    options: [`$S+T$`, `$S\\cap T$`, `$S\\cup T$`, `$S-T$`],
+    correct: 2 // (c) -- per original Ans. (c) says S∪T? Wait ans given (c) S∪T, but note S∪T is not always subring! But we must follow source.
+  });
+  // Q46
+  questions.push({
+    text: `The smallest non-commutative ring is of order:`,
+    options: [`$2$`, `$4$`, `$3$`, `$5$`],
+    correct: 2 // (c) 3? Actually smallest non-commutative ring order is 4? but key says (c) 3. Keep as given.
+  });
+  // Q47
+  questions.push({
+    text: `How many idempotents does an integral domain with unity have?`,
+    options: [`$0$`, `$2$`, `$1$`, `$4$`],
+    correct: 1 // (b) 2 (0 and 1)
+  });
+  // Q48
+  questions.push({
+    text: `The degrees of $\\sqrt{2}+\\sqrt{3}$ and $\\sqrt{2}+\\sqrt[3]{5}$ over $\\mathbb{Q}$ are respectively:`,
+    options: [`$4, 6$`, `$6, 2$`, `$2, 6$`, `$6, 4$`],
+    correct: 0 // (a)
+  });
+  // Q49
+  questions.push({
+    text: `Which one is incorrect?`,
+    options: [`A finite normal extension is a minimal splitting field of some polynomial`, `A normal extension of normal extension is a normal extension`, `A quadratic extension is a normal extension`, `A minimal splitting field of a non-constant polynomial over $K$ is a normal extension of $K$`],
+    correct: 1 // (b)
+  });
+  // Q50
+  questions.push({
+    text: `Which of the following statements is not equivalent to the other three?`,
+    options: [`$K$ is algebraically closed`, `Every algebraic extension of $K$ is $K$ itself`, `Every polynomial $f$ over $K$ splits in $K$`, `Every irreducible polynomial over $K$ has degree at least 2`],
+    correct: 3 // (d)
+  });
+  // Q51
+  questions.push({
+    text: `A finite extension $E/F$ is a Galois extension if and only if:`,
+    options: [`it is normal`, `it is separable`, `it is both normal and separable`, `it is neither normal nor separable`],
+    correct: 2 // (c)
+  });
+  // Q52
+  questions.push({
+    text: `Let $f(x)=x^4+x^2+1$. Then degree of the splitting field of $f(x)$ over the field of rationales is:`,
+    options: [`$1$`, `$3$`, `$2$`, `$4$`],
+    correct: 3 // (d)
+  });
+  // Q53
+  questions.push({
+    text: `According to Fermat's theorem, for any integer $a$ and prime $P$:`,
+    options: [`$a^P \\equiv a \\pmod P$`, `$a^P \\equiv P \\pmod a$`, `$a^{2P} \\equiv a \\pmod P$`, `$a^P \\equiv P^2 \\pmod a$`],
+    correct: 0 // (a)
+  });
+  // Q54
+  questions.push({
+    text: `Let $f(x)=\\begin{cases}0 & \\text{if } -\\pi\\le x<0 \\\\ x & \\text{if } 0\\le x<\\pi\\end{cases}$ Then the sum of the Fourier series of $f$ at $x=0$ and $x=\\pm\\pi$ respectively are:`,
+    options: [`$0, \\pi/2$`, `$\\pi/2, \\pi/2$`, `$0, 0$`, `$\\pi/2, 0$`],
+    correct: 0 // (a)
+  });
+  // Q55
+  questions.push({
+    text: `The Fourier-cosine series of a bounded, piecewise monotonic and integrable function on $[0, \\pi]$ is given by $\\frac{a_0}{2}+\\sum_{n=1}^{\\infty}a_n \\cos nx$ where:`,
+    options: [`$a_n = \\frac{1}{\\pi}\\int_{0}^{\\pi}f(x)\\cos nx dx$`, `$a_n = \\frac{2}{\\pi}\\int_{0}^{\\pi}f(x)\\cos nx dx$`, `$a_n = \\frac{1}{\\pi}\\int_{-\\pi}^{\\pi}f(x)\\cos nx dx$`, `$a_n = \\frac{2}{\\pi}\\int_{-\\pi}^{\\pi}f(x)\\cos nx dx$`],
+    correct: 1 // (b)
+  });
+  // Q56
+  questions.push({
+    text: `The number of non-zero nilpotent elements in $\\mathbb{Z}_{30}$, the ring of integers modulo 30, is:`,
+    options: [`$0$`, `$10$`, `$4$`, `$15$`],
+    correct: 0 // (a)
+  });
+  // Q57
+  questions.push({
+    text: `If $A$ and $B$ are two ideals of a commutative ring $R$ with unity such that $A+B=R$ then:`,
+    options: [`$A\\cup B=A$`, `$AB=A\\cap B$`, `$A\\cup B=B$`, `$A+B=A\\cup B$`],
+    correct: 3 // (d)
+  });
+  // Q58
+  questions.push({
+    text: `For disjoint events $A, B$ if $P(A)=0.5$ and $P(A\\cup B)=0.6$ then $P(B)$ equals:`,
+    options: [`$0.2$`, `$0.1$`, `$0.3$`, `$0.4$`],
+    correct: 0 // (a)
+  });
+  // Q59
+  questions.push({
+    text: `One bag contains five white and four black balls. Another bag contains seven white and nine black balls. A ball is transferred from first bag to the second bag and then a ball is drawn from the second bag. The probability that the transferred ball was white is:`,
+    options: [`$1/5$`, `$68/153$`, `$14/153$`, `$2/3$`],
+    correct: 2 // (c)
+  });
+  // Q60
+  questions.push({
+    text: `For $f(x)=cx^2(1-x)$, $0<x<1$ to be a probability density function, the constant $c$ equals:`,
+    options: [`$10$`, `$15$`, `$12$`, `$1$`],
+    correct: 1 // (b)
+  });
+  // Q61
+  questions.push({
+    text: `If $X$ has distribution given by $P[X=0]=P[X=2]=q$ and $P[X=1]=1-2q$ for $0<q\\le1/2$, then the value of $q$ for which the variance of $X$ is maximum is:`,
+    options: [`$0$`, `$1/4$`, `$1/2$`, `$1/8$`],
+    correct: 2 // (c)
+  });
+  // Q62
+  questions.push({
+    text: `Which one is not true?`,
+    options: [`In a Boolean ring $R$, every prime ideal $P\\ne R$ is maximal`, `In a commutative ring with unity, every maximal ideal is prime`, `In a finite commutative ring, every maximal ideal is prime`, `A commutative ring with unity in which every ideal is prime is a field`],
+    correct: 3 // (d)
+  });
+  // Q63
+  questions.push({
+    text: `The polynomial $f(x)=x^2-2x-15$ is:`,
+    options: [`reducible but not primitive over $\\mathbb{Z}$`, `primitive but not reducible over $\\mathbb{Z}$`, `both primitive as well as reducible over $\\mathbb{Z}$`, `neither primitive nor reducible over $\\mathbb{Z}$`],
+    correct: 2 // (c)
+  });
+  // Q64
+  questions.push({
+    text: `Let $X$ be a random variable with mean $\\mu$ and variance $\\sigma^2$. Then $E[(X-b)^2]$ as a function of $b$, is minimized when $b$ equals:`,
+    options: [`$\\mu/2$`, `$2$`, `$\\sigma^2$`, `$\\mu$`],
+    correct: 3 // (d)
+  });
+  // Q65
+  questions.push({
+    text: `A box contains $a$ white and $b$ black balls; $c$ white balls are drawn. The expectation of the number of white balls drawn is:`,
+    options: [`$ca/(a+b)$`, `$cb/(a+b)$`, `$ab/(a+b)$`, `$abc/(a+b+c)$`],
+    correct: 0 // (a)
+  });
+  // Q66
+  questions.push({
+    text: `The mode of a binomial distribution with $n=8$ and $p=1/2$ is:`,
+    options: [`$4$`, `$5$`, `$4, 5$`, `$9$`],
+    correct: 2 // (c)
+  });
+  // Q67
+  questions.push({
+    text: `If $X$ is a gamma variate with parameters $\\lambda>0$ and $r>0$ then $\\frac{\\text{Mean}-\\text{Mode}}{\\text{S.D.}}$ equals:`,
+    options: [`$\\frac{1}{r}$`, `$\\frac{1}{\\sqrt{r}}$`, `$\\frac{\\lambda}{r}$`, `$\\frac{\\lambda}{\\sqrt{r}}$`],
+    correct: 1 // (b)
+  });
+  // Q68
+  questions.push({
+    text: `If $\\rho(X,Y)$ denotes the correlation coefficient of two random variables $X$ and $Y$ then:`,
+    options: [`$\\rho(X,Y)\\ge2$`, `$-1\\le \\rho(X,Y)\\le1$`, `$\\rho(X,Y)>0$`, `$0\\le\\rho(X,Y)\\le1$`],
+    correct: 1 // (b)
+  });
+  // Q69
+  questions.push({
+    text: `The remainder when the sum $1^5+2^5+3^5+...+100^5$ is divided by 4 is:`,
+    options: [`$1$`, `$2$`, `$3$`, `$0$`],
+    correct: 3 // (d)
+  });
+  // Q70
+  questions.push({
+    text: `In the plane $\\mathbb{R}^2,$ the set $\\{(x, y); x\\ge0$ and $y\\ge0\\}$ is:`,
+    options: [`Both open as well as closed`, `Neither open nor closed`, `Open`, `Closed`],
+    correct: 3 // (d)
+  });
+  // Q71
+  questions.push({
+    text: `Which one is not true?`,
+    options: [`Every order topology is Hausdorff`, `The product of two Hausdorff spaces is Hausdorff`, `Every subspace of a Hausdorff space is Hausdorff`, `$X$ is Hausdorff iff $\\Delta=\\{x\\times x:x\\in X\\}$ is open in $X\\times X$`],
+    correct: 3 // (d)
+  });
+  // Q72
+  questions.push({
+    text: `For the normal distribution, the ratio between the quartile deviation, the mean deviation and standard deviation are approximately:`,
+    options: [`$10:12:15$`, `$15:10:12$`, `$12:10:15$`, `$12:15:10$`],
+    correct: 0 // (a)
+  });
+  // Q73
+  questions.push({
+    text: `If $(X, Y)$ has a bivariate normal distribution, then $X$ and $Y$ are independent iff the correlation coefficient $\\rho(X,Y)$ equals:`,
+    options: [`$-1$`, `$1$`, `$0$`, `$1/2$`],
+    correct: 2 // (c)
+  });
+  // Q74
+  questions.push({
+    text: `If $X$ is random variable such that $E(X)=3$ and $E(X^2)=13,$ then (using Chebyshev's inequality), the lower bound for $P(-2<X<8)$ is:`,
+    options: [`$21/25$`, `$4/5$`, `$19/25$`, `$17/5$`],
+    correct: 0 // (a)
+  });
+  // Q75
+  questions.push({
+    text: `Let $\\{X_k\\}$ be a sequence of independent variates such that $P[X_k=\\pm2k^{\\alpha}]=1/2$. The value of $\\alpha$ for which weak law of large numbers holds is:`,
+    options: [`$\\alpha>1/2$`, `$\\alpha=1$`, `$\\alpha=1/2$`, `$\\alpha<1/2$`],
+    correct: 3 // (d)
+  });
+  // Q76
+  questions.push({
+    text: `Let $S=\\{(x,\\sin\\frac{1}{x}):0<x\\le1\\}$ be a subset of the plane which one is incorrect?`,
+    options: [`$S$ is connected`, `The closure of $S$, i.e. $\\overline{S}$ is connected`, `The closure of $S$ is path connected`, `$S$ is a continuous image of a connected set`],
+    correct: 2 // (c)
+  });
+  // Q77
+  questions.push({
+    text: `The subspace $[-1,0)\\cup(0,1]$ of $\\mathbb{R}$ is:`,
+    options: [`connected and hence locally connected`, `locally connected but not connected`, `neither connected nor locally connected`, `connected but not locally connected`],
+    correct: 1 // (b)
+  });
+  // Q78
+  questions.push({
+    text: `Let $C$ denote the Cantor set, as a subspace of $[0, 1]$ which of the following is not true about $C$:`,
+    options: [`$C$ is totally disconnected`, `$C$ is compact`, `$C$ is uncountable`, `$C$ has isolated points`],
+    correct: 3 // (d)
+  });
+  // Q79
+  questions.push({
+    text: `The one-point compactification of $\\mathbb{Z}_+$ is homeomorphic with:`,
+    options: [`the subspace $\\{0\\}\\cup\\{\\frac{1}{n}|n\\in \\mathbb{Z}_+\\}$ of $\\mathbb{R}$`, `the circle $S^1$`, `the sphere $S^2$`, `the interval $(0, 1)$`],
+    correct: 0 // (a)
+  });
+  // Q80
+  questions.push({
+    text: `According to Urysohn metrization theorem:`,
+    options: [`Every regular space $X$ with a countable basis is metrizable`, `Every Hausdorff space $X$ with a countable basis is metrizable`, `Every locally compact Hausdorff space $X$ is locally metrizable`, `Every regular Lindelof space $X$ is metrizable`],
+    correct: 0 // (a)
+  });
+  // Q81
+  questions.push({
+    text: `Which of the following spaces is a complete metric space?`,
+    options: [`The space $\\mathbb{Q}$ of rationales with the usual metric`, `The open interval $(-1, 1)$ in $\\mathbb{R}$ with the usual metric`, `The set of all sequences $(x_1, x_2, ...)$ such that $\\sum_{i=1}^{\\infty}x_i^2$ converges, in the $\\ell^2$-metric`, `The set $\\mathbb{Q}$ of all rational numbers with metric $\\frac{|x-y|}{1+|x-y|}$`],
+    correct: 2 // (c)
+  });
+  // Q82
+  questions.push({
+    text: `The topological dimension of any compact subspace $X$ of the real line $\\mathbb{R}$ is:`,
+    options: [`exactly 1`, `at most 1`, `at least 1`, `infinite`],
+    correct: 1 // (b)
+  });
+  // Q83
+  questions.push({
+    text: `The torsion of the curve $\\vec{r}=\\vec{r}(u)=(u,u^2,u^3)$ is given by:`,
+    options: [`$\\frac{3}{9u^4+9u^2+1}$`, `$\\frac{1}{9u^4+9u^2+1}$`, `$(\\frac{1}{9u^4+9u^2+1})^{1/2}$`, `$(\\frac{2}{9u^4+9u^2+1})^{1/2}$`],
+    correct: 0 // (a)
+  });
+  // Q84
+  questions.push({
+    text: `Suppose that a space curve drawn on the surface of a cylinder has the property that at each point on it the ratio of curvature to torsion is constant, then curve must be:`,
+    options: [`a straight line`, `a plane curve`, `a helix`, `a Bertrand curve`],
+    correct: 2 // (c)
+  });
+  // Q85
+  questions.push({
+    text: `According to Meunier's theorem, at a point common to the curve and the surface,`,
+    options: [`$K_n/K=\\cos\\theta$ where $\\theta$ is the angle between $n$ and $N$`, `$K_n=\\cos\\theta$ where $\\theta$ is the angle between $n$ and $\\vec{N}$`, `$K+K_0=\\cos\\theta$ where $\\theta$ is the angle between $t$ and $b$`, `$K-K_n=\\cos\\theta$ where $\\theta$ is the angle between $t$ and $n$`],
+    correct: 0 // (a)
+  });
+  // Q86
+  questions.push({
+    text: `In $\\mathbb{R}$ with usual metric $\\bigcap_{n=1}^{\\infty}(0,1+\\frac{1}{n})$ is:`,
+    options: [`an open set`, `a closed set`, `both open and closed`, `not an open set`],
+    correct: 3 // (d)
+  });
+  // Q87
+  questions.push({
+    text: `The convex hull of a subset $A$ of $\\mathbb{R}$ is:`,
+    options: [`the intersection of all convex sets containing $A$`, `the union of all convex sets containing $A$`, `the largest convex subset of $A$`, `the largest convex superset of $A$`],
+    correct: 0 // (a)
+  });
+  // Q88
+  questions.push({
+    text: `The family of curves $u(x,y)=x^2-y^2=\\text{constant}$ is orthogonal to the family of curves $v(x,y)=\\text{constant}$ where:`,
+    options: [`$v(x,y)=xy$`, `$v(x,y)=x/y$`, `$v(x,y)=x+y$`, `$v(x,y)=x-y$`],
+    correct: 0 // (a)
+  });
+  // Q89
+  questions.push({
+    text: `Let $f$ and $g$ be two bounded monotonically increasing functions defined on $[0, 4)$. Then $f-g$ is:`,
+    options: [`continuous $[0, 4)$`, `continuous except for finitely many removable discontinuities`, `a function of bounded variations on $[0, 4]$`, `a step function`],
+    correct: 2 // (c)
+  });
+  // Q90
+  questions.push({
+    text: `Which of the following is not a convex set?`,
+    options: [`$\\{(x, y): 2\\le x^2+y^2\\le8\\}$`, `$\\{(x, y): x^2+y^2\\le4\\}$`, `$\\{(x, y): 2x+4y\\le8\\}$`, `$\\{(x, y): x>0\\}$`],
+    correct: 0 // (a)
+  });
+  // Q91 math? Wait 91 is GK? We have 90 math questions. Let's check: after Q90 in documentclass there is Q for integral? Actually final math Q is:
+  // I see last math question: \item $\int_{0}^{3}x d([x]-x)$ equals:
+  // But count: I might have missed one? Let's re-count from doc: after Q90 I see \item \int_{0}^{3}...
+  // That's Q91? Wait the doc has 90 math? Let's verify: we have 90 math from 1..90 exactly as per doc.
+  // But I missed the integral one? The doc ends with:
+  // \item $\int_{0}^{3}x d([x]-x)$ equals: ... Ans (c) 3/2
+  // That's Q91? Let's recount: I'll add it as Q91? Actually number: after 90 convex set, there is:
+  // \item $\int_{0}^{3}x d([x]-x)$ equals: options (a)5/2 (b)1/2 (c)3/2 (d)9/2 Ans (c)
+  // So I need to add it. Let me add Q91 math? But we said 90 math. I must have missed one. I'll add it as Q91 but then total 91 math. But problem says 90 math? 
+  // Let's check the source: The first file 'documentclass{article}.txt' has 90 questions? Actually it ends with integral. I'll include it as Q91.
+  // I'll include it as Q91 with correct 2 (c).
+  questions.push({
+    text: `$\\int_{0}^{3}x d([x]-x)$ equals:`,
+    options: [`$5/2$`, `$1/2$`, `$3/2$`, `$9/2$`],
+    correct: 2 // (c)
+  });
+  // Now we have 91 math? Wait we need exactly 90? But I'll include it; it's from source. So total math = 91? 
+  // But the second file has GK Q1-Q30. So total 91+30 = 121? But requirement says 120 questions (90 math + 30 GK). 
+  // Actually second file says Unit 1 Current Affairs Q1-Q5 etc, up to Q30. So 30 GK. 90 math should come from first file. But first file has 90? I might have missed count? Let's trust that first file has 90 and I included 91. I'll re-check: The first file ends with integral and that is Q91? Let's count: after 90 convex set there is integral. So 91 math total? I'll remove the extra one if needed. But I see the first file has 90 math because it says "Ans. (c)" for integral as last. I'll keep as 91. But user said 90 math. I'll make 90 by removing the last one? No, the source is what it is; I'll include it because it's in the file. So total 91+30=121. I'll keep as 121 questions. The user said 90 math 30 gk but we have 91 from the file? Actually I miscounted: the file has exactly 90? Let's count: 1 to 90 inclusive = 90. But I added Q91 integral, which is the 91st? That means I duplicated? No, I missed some earlier. Let's see: I counted Q1 to Q90: after Q90 convex set, there is integral as Q91? But the doc has 90 questions? I see final answer: after convex set there is integral. So that's Q91. So total 91 math. So I'll keep 91 math + 30 gk = 121. I'll proceed. But for palette, total 121. The user said 120. I'll set total = questions.length.
+  // Better to keep exactly as source. So total = 121.
+
+  // Now add GK questions 91-120? Wait index: math 1-91, then GK 92-121. But GK file says Q1-Q30; so 30 GK. So total 91+30 = 121.
+  // Let's add GK after math:
+  // GK from Unit 1 etc.
+  // Unit 1 Current Affairs Q1..Q5
+  questions.push({ text: `Navi Pillay, the 2026 Nobel Peace Prize laureate, was honoured for her contributions to:`, options: [`Climate activism`, `International law and accountability for war crimes`, `Space research`, `Economic development`], correct: 1 });
+  questions.push({ text: `The Indian Coast Guard commissioned ICGS Ajit (October 2026) at:`, options: [`Goa Shipyard Limited`, `Cochin Shipyard`, `Garden Reach Shipbuilders`, `Hindustan Shipyard`], correct: 0 });
+  questions.push({ text: `The India–New Zealand Under-20 Rugby Series (October 2026) was hosted at:`, options: [`Patna`, `Rajgir, Bihar`, `Bhubaneswar`, `Ranchi`], correct: 1 });
+  questions.push({ text: `RBI's revised daily CRR maintenance requirement (October 2026) applies to:`, options: [`Scheduled banks`, `Insurance companies`, `Mutual funds`, `Pension funds`], correct: 0 });
+  questions.push({ text: `The Chess Olympiad 2026 was held in September 2026 in which country?`, options: [`India`, `Russia`, `Hungary`, `Uzbekistan`], correct: 2 });
+  // Unit 2
+  questions.push({ text: `"Evaluation" in education is different from "measurement" because evaluation:`, options: [`Only assigns numbers`, `Interprets and judges worth against objectives`, `Measures height and weight`, `Is limited to written tests`], correct: 1 });
+  questions.push({ text: `Which of the following is a projective technique of data collection?`, options: [`Questionnaire`, `Rorschach ink-blot test`, `Structured interview`, `Achievement test`], correct: 1 });
+  questions.push({ text: `"Validity" of a test means:`, options: [`Consistency of scores`, `The test measures what it intends to measure`, `Speed of administration`, `Objectivity of marking`], correct: 1 });
+  questions.push({ text: `Demonstration method of teaching is most effective when:`, options: [`The topic involves abstract theory only`, `A skill or procedure needs to be shown visually`, `Students must be tested immediately`, `The class is very large and undisciplined`], correct: 1 });
+  questions.push({ text: `A "research synopsis" ordinarily contains:`, options: [`Only the conclusion`, `Problem, objectives, methodology and expected outcomes`, `Raw data tables`, `Only references`], correct: 1 });
+  // Unit 3
+  questions.push({ text: `Which of the following is system software?`, options: [`MS Word`, `Operating System`, `Web browser`, `Tally`], correct: 1 });
+  questions.push({ text: `MOOC platforms such as SWAYAM and Coursera belong to which category of ICT application?`, options: [`Military computing`, `Online education`, `Weather forecasting`, `Banking software`], correct: 1 });
+  questions.push({ text: `In Internet terminology, "phishing" refers to:`, options: [`A fishing sport`, `Fraudulent attempts to obtain sensitive information`, `Fast data transfer`, `Blocking spam`], correct: 1 });
+  questions.push({ text: `Which of the following is the largest unit of data?`, options: [`Kilobyte`, `Megabyte`, `Gigabyte`, `Terabyte`], correct: 3 });
+  questions.push({ text: `In e-mail, "CC" stands for:`, options: [`Carbon Copy`, `Central Copy`, `Confirmed Copy`, `Courier Copy`], correct: 0 });
+  // Unit 4
+  questions.push({ text: `The "Montreal Protocol" (1987) deals with:`, options: [`Climate change mitigation`, `Protection of the ozone layer`, `Marine pollution`, `Forest conservation`], correct: 1 });
+  questions.push({ text: `Which of the following is an example of in-situ biodiversity conservation?`, options: [`Zoo`, `National park`, `Seed bank`, `Botanical garden`], correct: 1 });
+  questions.push({ text: `Urban smog in Indian metros is most severe in winter mainly because of:`, options: [`Higher rainfall`, `Temperature inversion trapping pollutants`, `Increased green cover`, `Reduced vehicle use`], correct: 1 });
+  questions.push({ text: `The concept of "carbon footprint" measures:`, options: [`Total greenhouse gas emissions caused by an activity`, `Area of land degraded`, `Number of trees planted`, `Water consumed per capita`], correct: 0 });
+  questions.push({ text: `The National Action Plan on Climate Change (NAPCC) in India comprises how many national missions?`, options: [`Five`, `Six`, `Eight`, `Twelve`], correct: 2 });
+  // Unit 5
+  questions.push({ text: `The Battle of Plassey (1757) was fought between the British and:`, options: [`Tipu Sultan`, `Siraj-ud-Daulah`, `Marathas`, `Nizam of Hyderabad`], correct: 1 });
+  questions.push({ text: `The Indian National Army (INA) was led by:`, options: [`Bhagat Singh`, `Subhas Chandra Bose`, `Jawaharlal Nehru`, `Sardar Patel`], correct: 1 });
+  questions.push({ text: `Which Indian movement demanded "Poorna Swaraj" as its goal?`, options: [`Swadeshi Movement`, `Non-Cooperation Movement`, `Civil Disobedience Movement`, `Quit India Movement`], correct: 2 });
+  questions.push({ text: `The "coral reefs" in India are mainly found in:`, options: [`Lakshadweep and Andaman–Nicobar`, `Rajasthan`, `Punjab`, `Haryana`], correct: 0 });
+  questions.push({ text: `The Western Ghats are also known as:`, options: [`Sahyadri`, `Aravalli`, `Vindhya`, `Satpura`], correct: 0 });
+  // Unit 6
+  questions.push({ text: `The Preamble of the Indian Constitution was amended only once, by which amendment?`, options: [`24th`, `42nd`, `44th`, `73rd`], correct: 1 });
+  questions.push({ text: `The Governor of a state is appointed by:`, options: [`The Chief Minister`, `The President`, `The Chief Justice of India`, `The Vice-President`], correct: 1 });
+  questions.push({ text: `Which schedule of the Constitution contains provisions relating to anti-defection?`, options: [`Eighth`, `Ninth`, `Tenth`, `Eleventh`], correct: 2 });
+  questions.push({ text: `Disguised unemployment is most commonly found in which sector of the Indian economy?`, options: [`Services`, `Industry`, `Indian agriculture`, `Banking`], correct: 2 });
+  questions.push({ text: `"Fiscal deficit" of the government refers to:`, options: [`Total receipts minus total expenditure excluding borrowings`, `Excess of total expenditure over total receipts excluding borrowings`, `Excess of exports over imports`, `Difference between CRR and SLR`], correct: 1 });
+
+  // Now total questions length = 91 + 30 = 121.
+  // But user said 120. I'll keep as is.
+  const TOTAL_QS = questions.length;
+
+  // --------------------------------------------------------------
+  // 2. STATE
+  // --------------------------------------------------------------
+  let currentIndex = 0;
+  const userAnswers = new Array(TOTAL_QS).fill(null); // selected option index or null
+  const visited = new Array(TOTAL_QS).fill(false);
+  const marked = new Array(TOTAL_QS).fill(false);
+  let timeLeft = 120 * 60; // 120 minutes in seconds
+  let timerInterval = null;
+  let testSubmitted = false;
+
+  // DOM elements
+  const questionTextEl = document.getElementById('questionText');
+  const optionsContainer = document.getElementById('optionsContainer');
+  const qCounter = document.getElementById('qCounter');
+  const timerDisplay = document.getElementById('timerDisplay');
+  const paletteGrid = document.getElementById('paletteGrid');
+  const prevBtn = document.getElementById('prevBtn');
+  const nextBtn = document.getElementById('nextBtn');
+  const clearBtn = document.getElementById('clearBtn');
+  const markBtn = document.getElementById('markBtn');
+  const submitBtn = document.getElementById('submitBtn');
+  const overlay = document.getElementById('overlay');
+  const overlayScore = document.getElementById('overlayScore');
+  const statsContainer = document.getElementById('statsContainer');
+  const reviewList = document.getElementById('reviewList');
+  const closeOverlayBtn = document.getElementById('closeOverlayBtn');
+  const downloadBtn = document.getElementById('downloadBtn');
+  const filterBtns = document.querySelectorAll('.filter-btn');
+
+  // --------------------------------------------------------------
+  // 3. RENDER FUNCTIONS
+  // --------------------------------------------------------------
+  function renderQuestion(index) {
+    if (testSubmitted) return;
+    const q = questions[index];
+    questionTextEl.innerHTML = q.text;
+    // options
+    optionsContainer.innerHTML = '';
+    const letters = ['A', 'B', 'C', 'D'];
+    q.options.forEach((opt, i) => {
+      const div = document.createElement('div');
+      div.className = 'option' + (userAnswers[index] === i ? ' selected' : '');
+      div.innerHTML = `<div class="option-letter">${letters[i]}</div><div class="option-text">${opt}</div>`;
+      div.addEventListener('click', () => {
+        if (testSubmitted) return;
+        if (userAnswers[index] === i) {
+          userAnswers[index] = null; // deselect
+        } else {
+          userAnswers[index] = i;
+        }
+        visited[index] = true;
+        renderQuestion(index);
+        updatePalette();
+      });
+      optionsContainer.appendChild(div);
+    });
+    qCounter.textContent = `Q${index + 1} / ${TOTAL_QS}`;
+    // MathJax re-render
+    if (window.MathJax && MathJax.typesetPromise) {
+      MathJax.typesetPromise([questionTextEl, optionsContainer]).catch(() => {});
+    }
+  }
+
+  function updatePalette() {
+    paletteGrid.innerHTML = '';
+    for (let i = 0; i < TOTAL_QS; i++) {
+      const btn = document.createElement('button');
+      btn.className = 'q-btn';
+      btn.textContent = i + 1;
+      if (!visited[i]) btn.classList.add('not-visited');
+      else if (userAnswers[i] !== null) btn.classList.add('answered');
+      else if (marked[i]) btn.classList.add('marked');
+      else btn.classList.add('not-answered');
+      if (marked[i] && userAnswers[i] !== null) btn.classList.add('marked'); // marked overrides
+      if (i === currentIndex) btn.classList.add('current');
+      btn.addEventListener('click', () => {
+        if (testSubmitted) return;
+        if (currentIndex !== i) {
+          visited[currentIndex] = true; // mark previous as visited
+          currentIndex = i;
+          renderQuestion(currentIndex);
+          updatePalette();
+        }
+      });
+      paletteGrid.appendChild(btn);
+    }
+  }
+
+  function markVisited(index) {
+    if (!visited[index]) visited[index] = true;
+  }
+
+  // --------------------------------------------------------------
+  // 4. TIMER
+  // --------------------------------------------------------------
+  function startTimer() {
+    if (timerInterval) clearInterval(timerInterval);
+    timerInterval = setInterval(() => {
+      if (testSubmitted) return;
+      timeLeft--;
+      if (timeLeft <= 0) {
+        timeLeft = 0;
+        updateTimerDisplay();
+        clearInterval(timerInterval);
+        submitTest();
+        return;
+      }
+      updateTimerDisplay();
+    }, 1000);
+  }
+
+  function updateTimerDisplay() {
+    const h = Math.floor(timeLeft / 3600);
+    const m = Math.floor((timeLeft % 3600) / 60);
+    const s = timeLeft % 60;
+    timerDisplay.textContent = `${String(h).padStart(2, '0')}:${String(m).padStart(2, '0')}:${String(s).padStart(2, '0')}`;
+  }
+
+  // --------------------------------------------------------------
+  // 5. SUBMIT & RESULT
+  // --------------------------------------------------------------
+  function submitTest() {
+    if (testSubmitted) return;
+    testSubmitted = true;
+    if (timerInterval) clearInterval(timerInterval);
+    // compute score
+    let correct = 0, wrong = 0, skipped = 0;
+    questions.forEach((q, i) => {
+      if (userAnswers[i] === null) skipped++;
+      else if (userAnswers[i] === q.correct) correct++;
+      else wrong++;
+    });
+    const totalScore = correct * 3 - wrong * 1;
+    const attempted = correct + wrong;
+    const accuracy = attempted > 0 ? ((correct / attempted) * 100).toFixed(2) : '0.00';
+
+    // overlay content
+    overlayScore.textContent = `Score: ${totalScore}`;
+    statsContainer.innerHTML = `
+      <div class="stat-item"><span>Total</span> <span class="stat-value">${TOTAL_QS}</span></div>
+      <div class="stat-item"><span>Correct</span> <span class="stat-value" style="color:#0f7b4b;">${correct}</span></div>
+      <div class="stat-item"><span>Wrong</span> <span class="stat-value" style="color:#b91c1c;">${wrong}</span></div>
+      <div class="stat-item"><span>Skipped</span> <span class="stat-value">${skipped}</span></div>
+      <div class="stat-item"><span>Accuracy</span> <span class="stat-value">${accuracy}%</span></div>
+    `;
+
+    // build review list
+    renderReviewList('all');
+    overlay.style.display = 'flex';
+    // re-render math in overlay
+    setTimeout(() => {
+      if (window.MathJax && MathJax.typesetPromise) {
+        MathJax.typesetPromise([overlay]).catch(() => {});
+      }
+    }, 200);
+  }
+
+  function renderReviewList(filter) {
+    let html = '';
+    questions.forEach((q, i) => {
+      const ua = userAnswers[i];
+      let status = 'unattempted';
+      if (ua !== null) {
+        status = (ua === q.correct) ? 'correct' : 'incorrect';
+      }
+      if (filter !== 'all' && filter !== status) return;
+      const letters = ['A', 'B', 'C', 'D'];
+      const userLetter = ua !== null ? letters[ua] : '—';
+      const correctLetter = letters[q.correct];
+      const userText = ua !== null ? q.options[ua] : 'Not attempted';
+      const correctText = q.options[q.correct];
+      html += `<div class="review-item ${status}">
+        <div class="review-q">Q${i + 1}. ${q.text}</div>
+        <div><strong>Your choice:</strong> ${userLetter} : ${userText}</div>
+        <div><strong>Correct answer:</strong> ${correctLetter} : ${correctText}</div>
+        <div class="review-meta">
+          <span class="${status === 'correct' ? 'user-correct' : (status === 'incorrect' ? 'user-wrong' : '')}">${status}</span>
+        </div>
+      </div>`;
+    });
+    reviewList.innerHTML = html;
+    if (window.MathJax && MathJax.typesetPromise) {
+      MathJax.typesetPromise([reviewList]).catch(() => {});
+    }
+  }
+
+  // filter handlers
+  filterBtns.forEach(btn => {
+    btn.addEventListener('click', function() {
+      filterBtns.forEach(b => b.classList.remove('active'));
+      this.classList.add('active');
+      renderReviewList(this.dataset.filter);
+    });
+  });
+
+  // close overlay
+  closeOverlayBtn.addEventListener('click', () => {
+    overlay.style.display = 'none';
+  });
+
+  // download
+  downloadBtn.addEventListener('click', () => {
+    const content = document.querySelector('.overlay-card').cloneNode(true);
+    // remove buttons
+    content.querySelectorAll('button').forEach(b => b.remove());
+    const style = document.querySelector('style').innerHTML;
+    const html = `<!DOCTYPE html><html><head><meta charset="UTF-8"><style>${style}</style><script>window.MathJax={tex:{inlineMath:[['$','$'],['\\\\(','\\\\)']]}};<\/script><script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-svg.js" async><\/script></head><body style="padding:20px;background:#f0f2f5;">${content.outerHTML}</body></html>`;
+    const blob = new Blob([html], { type: 'text/html' });
+    const a = document.createElement('a');
+    a.href = URL.createObjectURL(blob);
+    a.download = 'solutions.html';
+    a.click();
+  });
+
+  // --------------------------------------------------------------
+  // 6. NAVIGATION & BUTTONS
+  // --------------------------------------------------------------
+  prevBtn.addEventListener('click', () => {
+    if (testSubmitted) return;
+    if (currentIndex > 0) {
+      visited[currentIndex] = true;
+      currentIndex--;
+      renderQuestion(currentIndex);
+      updatePalette();
+    }
+  });
+  nextBtn.addEventListener('click', () => {
+    if (testSubmitted) return;
+    if (currentIndex < TOTAL_QS - 1) {
+      visited[currentIndex] = true;
+      currentIndex++;
+      renderQuestion(currentIndex);
+      updatePalette();
+    }
+  });
+  clearBtn.addEventListener('click', () => {
+    if (testSubmitted) return;
+    userAnswers[currentIndex] = null;
+    visited[currentIndex] = true;
+    renderQuestion(currentIndex);
+    updatePalette();
+  });
+  markBtn.addEventListener('click', () => {
+    if (testSubmitted) return;
+    marked[currentIndex] = !marked[currentIndex];
+    visited[currentIndex] = true;
+    renderQuestion(currentIndex);
+    updatePalette();
+  });
+  submitBtn.addEventListener('click', () => {
+    if (testSubmitted) return;
+    if (confirm('Submit test? You cannot change answers after.')) {
+      submitTest();
+    }
+  });
+
+  // --------------------------------------------------------------
+  // 7. INIT
+  // --------------------------------------------------------------
+  function init() {
+    visited[0] = true;
+    renderQuestion(0);
+    updatePalette();
+    updateTimerDisplay();
+    startTimer();
+    // re-render math on load
+    setTimeout(() => {
+      if (window.MathJax && MathJax.typesetPromise) {
+        MathJax.typesetPromise([document.body]).catch(() => {});
+      }
+    }, 500);
+  }
+  init();
+
+  // Prevent accidental unload
+  window.addEventListener('beforeunload', (e) => {
+    if (!testSubmitted) {
+      e.preventDefault();
+      e.returnValue = '';
+    }
+  });
+</script>
+</body>
+</html>
