@@ -1,0 +1,1087 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MCQ Test – UP Assistant Professor 2021</title>
+    <!-- MathJax for LaTeX rendering -->
+    <script>
+        MathJax = {
+            tex: { inlineMath: [['\\(', '\\)'], ['$', '$']], displayMath: [['$$', '$$'], ['\\[', '\\]']] },
+            svg: { fontCache: 'global' }
+        };
+    </script>
+    <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js"></script>
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+        body {
+            font-family: 'Segoe UI', Roboto, system-ui, sans-serif;
+            background: #f0f2f5;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            padding: 10px;
+        }
+        .app-container {
+            width: 1400px;
+            max-width: 100%;
+            height: 90vh;
+            background: #ffffff;
+            border-radius: 20px;
+            box-shadow: 0 12px 30px rgba(0, 0, 0, 0.15);
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+            position: relative;
+        }
+
+        /* Header */
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px 25px;
+            background: #1e293b;
+            color: white;
+            flex-shrink: 0;
+        }
+        .header h1 {
+            font-size: 1.2rem;
+            font-weight: 500;
+            letter-spacing: 0.3px;
+        }
+        .timer {
+            background: #334155;
+            padding: 8px 18px;
+            border-radius: 30px;
+            font-weight: 600;
+            font-size: 1.1rem;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-variant-numeric: tabular-nums;
+        }
+        .timer i {
+            font-style: normal;
+            font-size: 1.2rem;
+        }
+
+        /* Main content */
+        .main-content {
+            display: flex;
+            flex: 1;
+            overflow: hidden;
+            padding: 15px;
+            gap: 15px;
+            background: #f8fafc;
+        }
+
+        /* Left: question area */
+        .question-area {
+            flex: 3;
+            display: flex;
+            flex-direction: column;
+            overflow-y: auto;
+            background: #ffffff;
+            border-radius: 16px;
+            padding: 25px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+            border: 1px solid #e2e8f0;
+            min-width: 0;
+        }
+
+        .question-number {
+            font-size: 0.9rem;
+            color: #64748b;
+            margin-bottom: 12px;
+            font-weight: 500;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        .question-text {
+            font-size: 1.25rem;
+            line-height: 1.5;
+            color: #0f172a;
+            margin-bottom: 30px;
+            font-weight: 500;
+        }
+
+        .options {
+            display: flex;
+            flex-direction: column;
+            gap: 14px;
+            margin-bottom: 30px;
+        }
+        .option {
+            display: flex;
+            align-items: flex-start;
+            gap: 14px;
+            padding: 14px 18px;
+            background: #f8fafc;
+            border: 2px solid #e2e8f0;
+            border-radius: 12px;
+            cursor: pointer;
+            transition: all 0.15s ease;
+        }
+        .option:hover {
+            background: #f1f5f9;
+            border-color: #cbd5e1;
+        }
+        .option.selected {
+            background: #e0f2fe;
+            border-color: #0284c7;
+            box-shadow: 0 0 0 2px rgba(2, 132, 199, 0.15);
+        }
+        .option-letter {
+            background: #e2e8f0;
+            color: #1e293b;
+            font-weight: 700;
+            width: 28px;
+            height: 28px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+            font-size: 0.9rem;
+        }
+        .option.selected .option-letter {
+            background: #0284c7;
+            color: white;
+        }
+        .option-text {
+            flex: 1;
+            color: #1e293b;
+            font-size: 1.05rem;
+            line-height: 1.4;
+            word-break: break-word;
+        }
+        .option-text .MathJax {
+            font-size: 1.1em;
+        }
+
+        /* Navigation buttons */
+        .nav-buttons {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-top: auto;
+            padding-top: 15px;
+            border-top: 1px solid #e2e8f0;
+        }
+        .btn {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 8px;
+            font-weight: 600;
+            font-size: 0.9rem;
+            cursor: pointer;
+            transition: all 0.15s;
+            background: #f1f5f9;
+            color: #1e293b;
+            border: 1px solid #cbd5e1;
+        }
+        .btn:hover {
+            background: #e2e8f0;
+        }
+        .btn.primary {
+            background: #1e293b;
+            color: white;
+            border-color: #1e293b;
+        }
+        .btn.primary:hover {
+            background: #0f172a;
+        }
+        .btn.warning {
+            background: #f59e0b;
+            color: white;
+            border-color: #f59e0b;
+        }
+        .btn.warning:hover {
+            background: #d97706;
+        }
+        .btn.danger {
+            background: #dc2626;
+            color: white;
+            border-color: #dc2626;
+        }
+        .btn.danger:hover {
+            background: #b91c1c;
+        }
+        .btn:disabled {
+            opacity: 0.4;
+            cursor: not-allowed;
+        }
+
+        /* Right: Palette */
+        .palette-area {
+            flex: 1;
+            min-width: 260px;
+            max-width: 320px;
+            background: #ffffff;
+            border-radius: 16px;
+            padding: 20px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+            border: 1px solid #e2e8f0;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+        }
+        .palette-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 16px;
+            flex-shrink: 0;
+        }
+        .palette-header h3 {
+            font-size: 1rem;
+            color: #0f172a;
+            font-weight: 600;
+        }
+        .palette-stats {
+            font-size: 0.8rem;
+            color: #64748b;
+        }
+        .palette-grid {
+            display: grid;
+            grid-template-columns: repeat(5, 1fr);
+            gap: 8px;
+            overflow-y: auto;
+            padding-right: 4px;
+            flex: 1;
+        }
+        .palette-btn {
+            aspect-ratio: 1 / 1;
+            border-radius: 8px;
+            border: 2px solid transparent;
+            font-weight: 600;
+            font-size: 0.85rem;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.1s;
+            color: #1e293b;
+            background: #f1f5f9;
+            border-color: #e2e8f0;
+        }
+        .palette-btn:hover {
+            transform: scale(1.05);
+        }
+        .palette-btn.answered {
+            background: #22c55e;
+            color: white;
+            border-color: #16a34a;
+        }
+        .palette-btn.not-answered {
+            background: #f87171;
+            color: white;
+            border-color: #ef4444;
+        }
+        .palette-btn.marked {
+            background: #a855f7;
+            color: white;
+            border-color: #9333ea;
+        }
+        .palette-btn.not-visited {
+            background: #e2e8f0;
+            color: #64748b;
+            border-color: #cbd5e1;
+        }
+        .palette-btn.current {
+            box-shadow: 0 0 0 3px #0ea5e9;
+            border-color: #0ea5e9;
+        }
+
+        /* Legend */
+        .legend {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            margin-top: 15px;
+            padding-top: 12px;
+            border-top: 1px solid #e2e8f0;
+            font-size: 0.7rem;
+            flex-shrink: 0;
+        }
+        .legend-item {
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+        .legend-color {
+            width: 12px;
+            height: 12px;
+            border-radius: 3px;
+        }
+        .legend-color.answered { background: #22c55e; }
+        .legend-color.not-answered { background: #f87171; }
+        .legend-color.marked { background: #a855f7; }
+        .legend-color.not-visited { background: #e2e8f0; }
+
+        /* Overlay / Results */
+        .overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(15, 23, 42, 0.75);
+            backdrop-filter: blur(4px);
+            display: none;
+            justify-content: center;
+            align-items: center;
+            z-index: 100;
+            padding: 20px;
+        }
+        .overlay.show {
+            display: flex;
+        }
+        .result-card {
+            background: white;
+            border-radius: 20px;
+            width: 900px;
+            max-width: 100%;
+            max-height: 90vh;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+        }
+        .result-header {
+            padding: 20px 25px;
+            background: #1e293b;
+            color: white;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 15px;
+            flex-shrink: 0;
+        }
+        .result-header h2 {
+            font-size: 1.4rem;
+            font-weight: 600;
+        }
+        .result-stats {
+            display: flex;
+            gap: 20px;
+            font-size: 0.95rem;
+        }
+        .result-stats span {
+            background: #334155;
+            padding: 6px 14px;
+            border-radius: 30px;
+            font-weight: 500;
+        }
+
+        .filter-bar {
+            display: flex;
+            gap: 8px;
+            padding: 12px 25px;
+            background: #f8fafc;
+            border-bottom: 1px solid #e2e8f0;
+            flex-wrap: wrap;
+            flex-shrink: 0;
+        }
+        .filter-btn {
+            padding: 6px 16px;
+            border-radius: 30px;
+            border: 1px solid #cbd5e1;
+            background: white;
+            font-size: 0.85rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.15s;
+        }
+        .filter-btn.active {
+            background: #1e293b;
+            color: white;
+            border-color: #1e293b;
+        }
+        .filter-btn:hover:not(.active) {
+            background: #f1f5f9;
+        }
+
+        .review-list {
+            overflow-y: auto;
+            padding: 20px 25px;
+            flex: 1;
+        }
+        .review-item {
+            border-bottom: 1px solid #e2e8f0;
+            padding: 16px 0;
+        }
+        .review-item:last-child {
+            border-bottom: none;
+        }
+        .review-question {
+            font-weight: 600;
+            margin-bottom: 8px;
+            color: #0f172a;
+            line-height: 1.4;
+        }
+        .review-options {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 6px 20px;
+            font-size: 0.92rem;
+            margin-bottom: 6px;
+        }
+        .review-opt {
+            padding: 4px 8px;
+            border-radius: 6px;
+        }
+        .review-opt.correct {
+            background: #dcfce7;
+            color: #166534;
+            font-weight: 500;
+        }
+        .review-opt.wrong {
+            background: #fee2e2;
+            color: #991b1b;
+        }
+        .review-opt.selected {
+            border: 2px solid #0ea5e9;
+        }
+        .review-meta {
+            font-size: 0.85rem;
+            color: #475569;
+            display: flex;
+            gap: 20px;
+            margin-top: 4px;
+        }
+        .review-meta span {
+            font-weight: 500;
+        }
+        .badge-correct { color: #16a34a; font-weight: 700; }
+        .badge-wrong { color: #dc2626; font-weight: 700; }
+        .badge-skipped { color: #d97706; font-weight: 700; }
+
+        .result-footer {
+            padding: 15px 25px;
+            background: #f8fafc;
+            border-top: 1px solid #e2e8f0;
+            display: flex;
+            justify-content: flex-end;
+            gap: 10px;
+            flex-shrink: 0;
+        }
+
+        .hidden {
+            display: none !important;
+        }
+
+        /* Scrollbar styling */
+        ::-webkit-scrollbar {
+            width: 6px;
+            height: 6px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #f1f5f9;
+            border-radius: 10px;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #cbd5e1;
+            border-radius: 10px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #94a3b8;
+        }
+
+        @media (max-width: 900px) {
+            .main-content {
+                flex-direction: column;
+            }
+            .palette-area {
+                max-width: 100%;
+                min-width: 100%;
+                max-height: 250px;
+            }
+            .review-options {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="app-container" id="app">
+        <!-- Header -->
+        <div class="header">
+            <h1>📝 UP Assistant Professor 2021 – Solved Paper</h1>
+            <div class="timer" id="timerDisplay">⏳ 70:00</div>
+        </div>
+
+        <!-- Main content -->
+        <div class="main-content">
+            <!-- Question area (left) -->
+            <div class="question-area" id="questionArea">
+                <div class="question-number" id="qNumber">Question 1 of 70</div>
+                <div class="question-text" id="qText"></div>
+                <div class="options" id="optionsContainer"></div>
+                <div class="nav-buttons">
+                    <button class="btn" id="prevBtn" disabled>◀ Previous</button>
+                    <button class="btn" id="nextBtn">Next ▶</button>
+                    <button class="btn" id="clearBtn">🗑 Clear Response</button>
+                    <button class="btn warning" id="markBtn">🔖 Mark for Review</button>
+                    <button class="btn danger" id="submitBtn">✅ Submit Test</button>
+                </div>
+            </div>
+
+            <!-- Palette (right) -->
+            <div class="palette-area">
+                <div class="palette-header">
+                    <h3>Question Palette</h3>
+                    <span class="palette-stats" id="paletteStats"></span>
+                </div>
+                <div class="palette-grid" id="paletteGrid"></div>
+                <div class="legend">
+                    <div class="legend-item"><span class="legend-color answered"></span> Answered</div>
+                    <div class="legend-item"><span class="legend-color not-answered"></span> Not Answered</div>
+                    <div class="legend-item"><span class="legend-color marked"></span> Marked</div>
+                    <div class="legend-item"><span class="legend-color not-visited"></span> Not Visited</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Results overlay -->
+        <div class="overlay" id="resultOverlay">
+            <div class="result-card">
+                <div class="result-header">
+                    <h2>📊 Performance & Solutions</h2>
+                    <div class="result-stats">
+                        <span id="scoreDisplay">Score: 0</span>
+                        <span id="accuracyDisplay">Accuracy: 0%</span>
+                    </div>
+                </div>
+                <div class="filter-bar">
+                    <button class="filter-btn active" data-filter="all">All</button>
+                    <button class="filter-btn" data-filter="correct">✅ Correct</button>
+                    <button class="filter-btn" data-filter="incorrect">❌ Incorrect</button>
+                    <button class="filter-btn" data-filter="unattempted">⬜ Unattempted</button>
+                </div>
+                <div class="review-list" id="reviewList"></div>
+                <div class="result-footer">
+                    <button class="btn primary" id="downloadBtn">⬇ Download Report</button>
+                    <button class="btn" id="closeOverlayBtn">Close</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // ============================================================
+        // 1. DATA – exactly as provided in the question paper
+        // ============================================================
+        const questions = [
+            { id: 1, text: "Solution of partial differential equation \\(\\frac{\\partial u}{\\partial x} = 2\\frac{\\partial u}{\\partial y} + u\\), where \\(u(x,0) = 6e^{-3x}\\) is", options: ["\\(6e^{-(2x+3t)}\\)", "\\(6e^{-(3x+4t)}\\)", "\\(6e^{3x+4t}\\)", "\\(6e^{-(3x+2t)}\\)"], correct: 3 },
+            { id: 2, text: "Transformation equation of Laplace differential \\(\\left(\\frac{\\partial^2 v}{\\partial x^2}\\right) + \\left(\\frac{\\partial^2 v}{\\partial y^2}\\right) = 0\\) into polar form \\(r, \\theta\\) in \\(\\mathbb{R}^2\\), where \\(v \\equiv v(x,y)\\), is", options: ["\\(\\frac{\\partial^2 v}{\\partial r^2} + \\frac{1}{r}\\frac{\\partial v}{\\partial r} + \\frac{1}{r^2}\\frac{\\partial^2 v}{\\partial \\theta^2} = 0\\)", "\\(\\frac{\\partial^2 v}{\\partial r^2} - \\frac{1}{r}\\frac{\\partial v}{\\partial r} + \\frac{1}{r^2}\\frac{\\partial^2 v}{\\partial \\theta^2} = 0\\)", "\\(\\frac{\\partial^2 v}{\\partial r^2} - \\frac{1}{r}\\frac{\\partial v}{\\partial r} - \\frac{1}{r^2}\\frac{\\partial^2 v}{\\partial \\theta^2} = 0\\)", "\\(\\frac{\\partial^2 v}{\\partial r^2} + \\frac{1}{r}\\frac{\\partial v}{\\partial r} - \\frac{1}{r^2}\\frac{\\partial^2 v}{\\partial \\theta^2} = 0\\)"], correct: 0 },
+            { id: 3, text: "The solution of the Volterra integral equation \\(y(x) = 1 + \\int_0^x (x-t)y(t)dt\\), when \\(y_0(x) = 0\\), is", options: ["\\(y(x) = \\sinh x\\)", "\\(y(x) = \\cos x\\)", "\\(y(x) = \\sin x\\)", "\\(y(x) = \\cosh x\\)"], correct: 3 },
+            { id: 4, text: "Laplace transform of Bessel function \\(J_1(x)\\) is", options: ["\\(1 + \\frac{s}{(s^2+1)^{1/2}}\\)", "\\(1 + \\frac{s}{(s^2+1)^{3/2}}\\)", "\\(1 + \\frac{1}{\\sqrt{s^2+1}}\\)", "\\(1 - \\frac{s}{\\sqrt{s^2+1}}\\)"], correct: 3 },
+            { id: 5, text: "Inverse Laplace transform of \\(\\frac{e^{-4s}}{(s+2)^2}\\) is", options: ["\\((x-4)e^{-2(x-4)}H(x-4)\\)", "\\((x-4)e^{x-4}H(x+4)\\)", "\\((x-4)e^{-(x-4)}\\)", "\\((x-4)e^{-2(x-4)}\\)"], correct: 0 },
+            { id: 6, text: "The solution of the Fredholm linear integral equation \\(u(x) + \\int_0^1 x(e^t - 1)u(t)dt = e^{-x}\\) is", options: ["\\(u(x) = 1\\)", "\\(u(x) = e^x - x\\)", "\\(u(x) = 3\\)", "\\(u(x) = e^{-x}\\)"], correct: 0 },
+            { id: 7, text: "The Homogeneous integral equation \\(\\phi(x) - \\lambda\\int_0^1 (3x-2)t\\phi(t)dt = 0\\) has", options: ["One characteristic number.", "Two characteristic number.", "Three characteristic number.", "No characteristic number."], correct: 3 },
+            { id: 8, text: "The Resolvent Kernel \\(R(x,t;\\lambda)\\) of the Volterra integral equation \\(y(x) = 1 + \\int_0^x e^{x-t}y(t)dt\\) shall be,", options: ["\\(e^{(1-\\lambda)(x-t)}\\)", "\\(e^{(\\lambda-2)(x-t)}\\)", "\\(e^{(\\lambda-1)(x-t)}\\)", "\\(e^{(1+\\lambda)(x-t)}\\)"], correct: 3 },
+            { id: 9, text: "Which is not the Euler-Lagrange equation for variational problems", options: ["\\(\\frac{\\partial f}{\\partial y} - \\frac{d}{dx}\\left(\\frac{\\partial f}{\\partial y'}\\right) = 0\\)", "\\(\\frac{\\partial f}{\\partial y} - y'\\frac{\\partial f}{\\partial x} - y''\\frac{\\partial f}{\\partial y'} = 0\\)", "\\(\\frac{\\partial f}{\\partial x} - \\frac{d}{dx}\\left(f - y'\\frac{\\partial f}{\\partial y'}\\right) = 0\\)", "\\(\\frac{\\partial f}{\\partial y} - \\frac{\\partial^2 f}{\\partial x\\partial y'} - y'\\frac{\\partial^2 f}{\\partial y\\partial y'} - y''\\frac{\\partial^2 f}{\\partial y^2} = 0\\)"], correct: 1 },
+            { id: 10, text: "A surface that is everywhere tangent to both flow velocity and vorticity is called", options: ["a steady tube", "an angular tube", "a vortex tube", "None of these"], correct: 2 },
+            { id: 11, text: "Solution of the initial value problem \\(u' = -2tu^2\\), \\(u(0) = 1\\) with \\(h = 0.2\\) on the interval \\([0,1]\\) is", options: ["\\(u(0.2) \\approx u_1 = 0.8615241\\)", "\\(u(0.2) \\approx u_1 = 0.7615241\\)", "\\(u(0.2) \\approx u_1 = 0.9615241\\)", "\\(u(0.2) \\approx u_1 = 0.5615241\\)"], correct: 2 },
+            { id: 12, text: "Solution of the difference equation \\(\\Delta^2 y_j + 3\\Delta y_j - 4y_j = j\\) with initial conditions \\(y_0 = 0, y_2 = 2\\), is", options: ["\\(y_j = \\frac{1}{160}[63(-3)^j + 32(2)^j - 40j^2 - 60j - 95]\\)", "\\(y_j = \\frac{1}{160}[32(2)^j - 40j^2 + 60j - 95]\\)", "\\(y_j = \\frac{1}{160}[63(-3)^j - 40j^2 - 60j - 95]\\)", "\\(y_j = \\frac{1}{160}[63(-3)^j - 32(2)^j - 40j^2 - 60j - 95]\\)"], correct: 0 },
+            { id: 13, text: "Turbulence problem particularly depend on the term of the Navier Stokes equations which is the", options: ["rate of change term", "convection term", "source term", "diffusion term"], correct: 3 },
+            { id: 14, text: "The Lagrangian for a charged particle in an electromagnetic field is", options: ["\\(L = T - q\\phi + q(\\mathbf{v}\\cdot\\mathbf{A})\\)", "\\(L = T + q\\phi + q(\\mathbf{v}\\cdot\\mathbf{A})\\)", "\\(L = T - q\\phi - q(\\mathbf{v}\\cdot\\mathbf{A})\\)", "\\(L = T + q\\phi - q(\\mathbf{v}\\cdot\\mathbf{A})\\)"], correct: 0 },
+            { id: 15, text: "The constraints on bead on a uniformly rotating wire in a force free space is", options: ["Rheonomous", "Scleronomous", "No Constraints", "None of these"], correct: 0 },
+            { id: 16, text: "Except at origin where \\(r = 0\\), the vortex flow is,", options: ["rotational", "laminar", "irrotational", "turbulent"], correct: 2 },
+            { id: 17, text: "Using Runge-Kutta method of order 4 for the following initial value problem \\(\\frac{dy}{dx} = x^2 + y^2, y(1) = 0\\) the value of \\(y(1.1)\\) shall be", options: ["0.110", "0.117", "0.119", "0.101"], correct: 1 },
+            { id: 18, text: "Using Euler's modified method, the value of \\(y(0.02)\\) for the differential equation \\(\\frac{dy}{dx} = x^2 + y, y(0) = 1\\) and taking \\(h = 0.01\\) is,", options: ["\\(y(0.02) \\approx 1.2020\\)", "\\(y(0.02) \\approx 1.0250\\)", "\\(y(0.02) \\approx 1.0201\\)", "\\(y(0.02) \\approx 1.0203\\)"], correct: 3 },
+            { id: 19, text: "The number of basic variables in \\(m \\times n\\) transportation problem are at the most", options: ["\\(m + n - 1\\)", "\\(m - n + 1\\)", "\\(m + n + 1\\)", "\\(m - n - 1\\)"], correct: 0 },
+            { id: 20, text: "Solution of the following game problem.", options: ["\\(\\left(\\frac{9}{14}, \\frac{0.5}{14}\\right), \\left(\\frac{3}{14}, \\frac{11}{14}\\right), v = \\frac{73}{14}\\)", "\\(\\left(\\frac{9}{14}, 0, \\frac{5}{14}\\right), \\left(\\frac{3}{14}, \\frac{11}{14}\\right), v = \\frac{73}{14}\\)", "\\(\\left(0, \\frac{9}{14}, \\frac{5}{14}\\right), \\left(\\frac{3}{14}, \\frac{11}{14}\\right), v = \\frac{73}{14}\\)", "None of these"], correct: 1 },
+            { id: 21, text: "If either the primal or the dual problem has a finite optimal solution then the other problem also has", options: ["a finite optimal solution.", "an infinite optimal solution.", "no optimal solution.", "None of these"], correct: 0 },
+            { id: 22, text: "If corresponding to any negative \\(\\Delta_j = (z_j - c_j)\\) all elements of the column \\(X_j\\) are negative or zero \\((\\leq 0)\\), then the solution under test will be", options: ["Bounded", "Unbounded", "Suboptimal", "No solution"], correct: 1 },
+            { id: 23, text: "For an LPP, Maximum \\(Z = 6x_1 - 4x_2\\) Subject to \\(x_1 + x_2 \\leq 2, x_1 + x_2 \\geq 4, x_1, x_2 \\geq 0\\). It has", options: ["No solution due to inconsistent system of constraints.", "No solution due to consistent system of constraints.", "Infinite many solution", "LPP is unbounded."], correct: 0 },
+            { id: 24, text: "If the prime \\(p \\geq 7\\), then how many consecutive quadratic residues (mod \\(p\\)) will be", options: ["Two", "Three", "Four", "None of these"], correct: 0 },
+            { id: 25, text: "If \\(p\\) is an odd prime and if \\(g\\) is a primitive root (mod \\(p\\)), then \\(\\left(\\frac{g}{p}\\right) =\\)", options: ["-1", "1", "\\(\\pm 1\\)", "None of these"], correct: 0 },
+            { id: 26, text: "If \\(p\\) is prime, then \\((a + b)^p \\equiv\\)", options: ["\\(a^p + b^p\\) (mod \\(p\\))", "\\(a^p + b^p\\) (mod \\(N\\))", "\\(a - b\\) (mod \\(p\\))", "\\(a - b^p\\) (mod \\(N\\))"], correct: 0 },
+            { id: 27, text: "Let \\(a\\) and \\(b\\) belong to set \\(S\\), Let \\(R\\) be an equivalence relation on \\(S\\). Then \\(aRb\\) if and only if", options: ["\\([a]_R = [b]_R\\)", "\\([a]_R \\subset [b]_R\\)", "\\([a] \\cap [b]_R\\)", "\\([a]_R = [b]_R\\)"], correct: 3 },
+            { id: 28, text: "A positive integer which has more divisors than any smaller positive integer is called", options: ["Highly Composite Number", "Ramanujan Composite Number", "Harshad Composite Number", "Hardy Composite Number"], correct: 0 },
+            { id: 29, text: "If a positive integer on a given base is divisible by the sum of its digits on the same base called as", options: ["A Ramanujan Number", "A Harshad Number", "A Hardy Number", "None of these"], correct: 1 },
+            { id: 30, text: "If \\(2^n - 15 = x^2\\) then", options: ["\\(n = 2\\) or \\(n = 4\\)", "\\(n = 4\\) or \\(n = 6\\)", "\\(n = 2\\) or \\(n = 8\\)", "\\(n = 4\\) or \\(n = 8\\)"], correct: 1 },
+            { id: 31, text: "Suppose that \\(H, K\\) are cyclic groups of order \\(m, n\\) respectively. Then \\(H \\times K\\) will be cyclic if", options: ["\\(m, n\\) are even integers.", "\\(m, n\\) are odd integers.", "\\(m, n\\) are odd prime numbers.", "\\(m, n\\) are relatively prime numbers."], correct: 3 },
+            { id: 32, text: "If \\(G\\) is an abelian group and the action of \\(G\\) on itself by conjugation is the trivial action \\(g \\cdot a = a\\) for all \\(g, a \\in G\\) then for each \\(a \\in G\\) the conjugacy class of \\(a\\) is,", options: ["\\(\\{a\\}\\)", "\\(\\{G\\}\\)", "\\(a\\{G\\}\\)", "None of these"], correct: 0 },
+            { id: 33, text: "Suppose there exist 5 groups of order \\(p^2q = 12\\) then", options: ["One of which is non-abelian.", "Two of which are non-abelian.", "Three of which are non-abelian.", "All five are non-abelian."], correct: 2 },
+            { id: 34, text: "Let the sets of rationals and reals numbers be denoted by \\(\\mathbb{Q}\\) and \\(\\mathbb{R}\\) respectively. Choose the correct answer.", options: ["\\(\\mathbb{Q}\\) is both a subring and an ideal of \\(\\mathbb{R}\\)", "\\(\\mathbb{Q}\\) is a subring but not an ideal of \\(\\mathbb{R}\\)", "\\(\\mathbb{Q}\\) is an ideal but not a subring of \\(\\mathbb{R}\\)", "\\(\\mathbb{Q}\\) is neither a subring nor an ideal of \\(\\mathbb{R}\\)"], correct: 1 },
+            { id: 35, text: "Let \\(F\\) be a field of integers modulo 11, then the polynomial \\(x^2 + x + 4\\)", options: ["is reducible over \\(F\\)", "is irreducible over \\(F\\)", "has prime factor over \\(F\\)", "None of these"], correct: 1 },
+            { id: 36, text: "Every Homomorphic image of a group is isomorphic to", options: ["cyclic group", "quotient group", "normal subgroup", "none of these"], correct: 1 },
+            { id: 37, text: "If \\(G\\) is a finite group and \\(O(G) = p^n\\), where \\(p\\) is a prime number and \\(n\\) is positive integers, then", options: ["\\(Z(G) \\neq \\{e\\}\\)", "\\(Z(G) = \\{e\\}\\)", "\\(Z(G) = G\\)", "None of these"], correct: 0 },
+            { id: 38, text: "If \\(V(F)\\) and \\(W(F)\\) are finite dimensional vector spaces of dimensions \\(n\\) and \\(m\\) respectively, Then the space \\(L(V,W)\\) is finite dimensional of the dimension", options: ["\\(m + n\\)", "\\(m \\times n\\)", "\\(m - n\\)", "\\(\\frac{m}{n}\\)"], correct: 1 },
+            { id: 39, text: "The system of linear equations \\(x - y + z = 2, x + y - z = 0, 6x - 4y + 4z = 11\\)", options: ["has trivial solution", "has unique solution", "is consistent", "is inconsistent"], correct: 3 },
+            { id: 40, text: "If \\(C([a,b])\\) is the space of continuous real valued function defined on the closed interval \\([a,b]\\) of real line then \\(L(x) = \\int_a^b f(x)dx\\) defines the", options: ["function \\(L\\) on \\(C([a,b])\\)", "linear function \\(L\\) on \\(C([a,b])\\)", "linear functional \\(L\\) on \\(C([a,b])\\)", "transformation \\(L\\) on \\(C([a,b])\\)"], correct: 2 },
+            { id: 41, text: "The matrix \\(\\begin{pmatrix} a - ic & b - id \\\\ -(b + id) & a + ic \\end{pmatrix}\\) will be unitary if and only if", options: ["\\(a^2 - b^2 + c^2 - d^2 = 1\\)", "\\(-a^2 + b^2 - c^2 + d^2 = 1\\)", "\\(a^2 + b^2 + c^2 + d^2 = 1\\)", "\\(a^2 + b^2 + c^2 - d^2 = 1\\)"], correct: 2 },
+            { id: 42, text: "Orthonormal set of vectors in an inner product space is", options: ["Linearly dependent", "Linearly independent", "Neither dependent nor independent", "None of these"], correct: 1 },
+            { id: 43, text: "If \\((\\alpha, \\beta)\\) is an orthonormal set in an inner product space then distance between \\(\\alpha\\) and \\(\\beta\\) is", options: ["0", "1", "2", "\\(\\sqrt{2}\\)"], correct: 3 },
+            { id: 44, text: "The rank, index and signature of a cannonical form polynomial \\(x_1^2 - 4x_2^2 + 6x_3^2 + 2x_1x_2 - 4x_1x_3 + 2x_2x_3 - 6x_3x_4\\) is", options: ["4, 1, -2", "3, 2, 1", "3, 3, 3", "2, 2, 2"], correct: 0 },
+            { id: 45, text: "Let the function \\(g(t) > 0\\) be integrable on \\(I = [a,\\infty)\\) and for each fixed \\(x \\in I\\) the function \\(h(x,t)\\) is integrable. If \\(|h(x,t)| \\leq g(t)\\) then the integral \\(f(x) = \\int_a^\\infty h(x,t)dt, x \\in I\\) is", options: ["convergent on \\(I\\)", "not convergent on \\(I\\)", "uniformly convergent on \\(I\\)", "not uniformly convergent on \\(I\\)"], correct: 0 },
+            { id: 46, text: "If the integral \\(\\int_{-\\infty}^\\infty f(x)dx\\) exists as an improper Riemann integral for a non negative function \\(f(x)\\) which increases in \\((-\\infty,0)\\) and decreases in \\([0,\\infty)\\), then \\(\\int_{-\\infty}^\\infty f(x)dx\\) equals to", options: ["\\(\\sum_{-\\infty}^\\infty \\frac{f(n^2) + f(n^2)}{2}\\)", "\\(\\sum_{-\\infty}^\\infty \\frac{f(n^2) - f(n^2)}{2}\\)", "\\(\\sum_{-\\infty}^\\infty \\frac{f(n + 0) + f(n - 0)}{2}\\)", "\\(\\sum_{-\\infty}^\\infty \\frac{f(n) - f(n)}{2}\\)"], correct: 2 },
+            { id: 47, text: "For the function \\(f(x,y)\\) defined as \\(f(x,y) = \\begin{cases} \\frac{xy}{\\sqrt{x^2+y^2}} & \\text{if } (x,y) \\neq (0,0) \\\\ 0 & \\text{if } (x,y) = (0,0) \\end{cases}\\) at the origin directional derivative", options: ["exists and \\(f(x)\\) is continuous.", "exists and \\(f(x)\\) is not continuous.", "dose not exists and \\(f(x)\\) is continuous.", "dose not exists and \\(f(x)\\) is not continuous."], correct: 1 },
+            { id: 48, text: "If \\(T\\) is a continuous linear transformation of Banach space \\(B\\) onto Banach space \\(B'\\) then,", options: ["\\(T\\) is an open mapping", "\\(T\\) is a closed mapping", "\\(T\\) is open as well as closed mapping", "None of these"], correct: 2 },
+            { id: 49, text: "If \\(A\\) and \\(B\\) are disjoint sets, then", options: ["\\(m^*(A \\cup B) \\leq m^*(A) + m^*(B)\\)", "\\(m^*(A \\cup B) \\geq m^*(A) + m^*(B)\\)", "\\(m^*(A \\cup B) = m^*(A) + m^*(B)\\)", "None of these"], correct: 2 },
+            { id: 50, text: "Metric \\(d\\) is known as pseudo metric if", options: ["\\(d(x,y) = 0 \\Rightarrow x = y\\)", "\\(d(x,y) = 0 \\Leftrightarrow x = y\\)", "\\(x \\neq y \\Rightarrow d(x,y) = 0\\)", "None of these"], correct: 2 },
+            { id: 51, text: "Value of \\(\\lim_{n \\to \\infty} \\left(\\frac{1}{n+1} + \\frac{1}{n+2} + \\dots + \\frac{1}{n+n}\\right)\\) is", options: ["\\(\\log \\frac{1}{2}\\)", "\\(\\log 1\\)", "\\(\\log 2\\)", "\\(\\log 4\\)"], correct: 2 },
+            { id: 52, text: "Every single valued differentiable function \\(f(z)\\) of complex variable \\(z\\), in a domain \\(D\\), satisfy", options: ["Laplace's equation", "Legendre's equation", "Laguerre's equation", "Liouville's equation"], correct: 0 },
+            { id: 53, text: "Zeros of an analytic function \\(f(z)\\) are", options: ["Simple zeros", "Isolated singularities", "non-isolated singularities", "isolated"], correct: 3 },
+            { id: 54, text: "A function \\(f(z)\\) has no singularity in the finite part of the plane but has a pole of order \\(m\\) at infinity, then,", options: ["\\(f(z)\\) is a polynomial of degree \\(m\\).", "\\(f(z)\\) has zero of order \\(m\\).", "\\(f(z)\\) has singularity.", "None of these"], correct: 0 },
+            { id: 55, text: "Value of integral \\(\\int_C \\frac{z dz}{(9 - z^2)(z + i)}\\), where \\(C\\) is the circle \\(|z| = 2\\) (Using Cauchy's integral formula) equals to", options: ["\\(\\pi/2\\)", "\\(\\pi/3\\)", "\\(\\pi/5\\)", "\\(\\pi/7\\)"], correct: 2 },
+            { id: 56, text: "Contour integration \\(\\int_0^\\pi \\frac{\\log(1 + x)}{1 + x^2} dx\\) value equals to", options: ["\\(\\pi \\log 2\\)", "\\(-\\pi \\log 2\\)", "\\(\\frac{\\pi}{8}\\log 2\\)", "\\(-\\frac{\\pi}{8}\\log 2\\)"], correct: 0 },
+            { id: 57, text: "Value of integration \\(\\int_0^{2\\pi} e^{\\cos \\theta} \\cos(\\sin \\theta - n\\theta)d\\theta =\\)", options: ["\\(2\\pi i / n!\\)", "\\(2\\pi / n!\\)", "\\(2\\pi i a / n!\\)", "\\(2\\pi m i / n!\\)"], correct: 1 },
+            { id: 58, text: "If an entire function is bounded then it is", options: ["\\(f(z) \\geq M\\)", "Constant", "Analytic", "None of these"], correct: 1 },
+            { id: 59, text: "If \\((X,\\tau)\\) is a topological space, then which one is not true?", options: ["A complete regular space is regular", "Every subspace of a \\(T_1\\) space is a \\(T_1\\) space.", "Every metric space is a \\(T_1\\) space", "Every metric space is a Hausdorff space."], correct: 0 },
+            { id: 60, text: "Any infinite subset \\(A\\) of a discrete topological space \\(X\\) is,", options: ["not compact", "compact", "compact and connected", "connected only"], correct: 0 },
+            { id: 61, text: "The radius of curvature for the curve \\(x = 3t, y = 3t^2, z = 2t^3\\) is", options: ["\\(\\frac{3}{2}(1 + 2t^2)^2\\)", "\\(\\frac{3}{2}(1 + 2t^2)\\)", "\\(\\frac{3}{2}(1 + 3t^2)^2\\)", "\\(\\frac{3}{2}(1 + 2t^2)^{1/2}\\)"], correct: 0 },
+            { id: 62, text: "The principal radii at the origin of the surface \\(2z = 5x^2 + 4xy + 2y^2\\) is", options: ["1, \\(\\frac{1}{6}\\)", "3, 5", "2, \\(\\frac{1}{6}\\)", "1, \\(\\frac{1}{2}\\)"], correct: 0 },
+            { id: 63, text: "The geodesic on a right circular cylinder is:", options: ["Circle", "Helix", "Line", "Ellipse"], correct: 1 },
+            { id: 64, text: "The length of the curve given as the intersection of the surfaces \\(\\frac{x^2}{a^2} - \\frac{y^2}{b^2} = 1, x = a\\cosh\\frac{z}{a}\\) from the point \\((a,0,0)\\) to the point \\((x,y,z)\\) is", options: ["\\(\\frac{y\\sqrt{a^2+b^2}}{b}\\)", "\\(\\frac{x\\sqrt{a^2+b^2}}{b}\\)", "\\(\\frac{y\\sqrt{a^2+b^2}}{a}\\)", "\\(\\frac{x\\sqrt{a^2+b^2}}{a}\\)"], correct: 0 },
+            { id: 65, text: "A subset \\(Y\\) of a topological space \\((X,\\tau)\\) is nowhere dense if", options: ["\\(Y\\) has empty interior", "\\(\\bar{Y}\\) has empty interior", "Closure of interior \\(Y\\) is non empty", "None of these"], correct: 1 },
+            { id: 66, text: "How many linearly independent solution may exist, of a linear homogeneous equation of order \\(n\\)?", options: ["More than \\(n\\)", "\\(n + 1\\) only", "\\(n - 1\\) only", "less than or equals to \\(n\\)"], correct: 3 },
+            { id: 67, text: "Singular solution of the differential equation \\((8p^3 - 27)x = 12p^2y\\) is", options: ["\\(4y + x = 0\\)", "\\(4y^3 + 27x = 0\\)", "\\(4y^3 - 27x = 0\\)", "\\(4y - x = 0\\)"], correct: 1 },
+            { id: 68, text: "The general solution of the Partial Differential Equation \\((y + zx)p - (x + yz)q = x^2 - y^2\\) is", options: ["\\(\\phi(x^2 + y^2 + z^2, xy + z) = 0\\)", "\\(\\phi(x^2 + y^2 - z^2, xy + z) = 0\\)", "\\(\\phi(x^2 + y^2 + z^2, xyz) = 0\\)", "\\(\\phi(xy + yz + zx, xyz) = 0\\)"], correct: 1 },
+            { id: 69, text: "The complete integral of \\(q = (z + px)^2\\) is", options: ["\\(xy = 2\\sqrt{a}\\sqrt{x} + ax + b\\)", "\\(xy = 2\\sqrt{a}\\sqrt{x} + ay + b\\)", "\\(yz = 2\\sqrt{a}\\sqrt{y} + ay + b\\)", "\\(xz = 2\\sqrt{a}\\sqrt{x} + ay + b\\)"], correct: 3 },
+            { id: 70, text: "The singular solution of the differential equation \\(p^3 - 4xyp + 8y^2 = 0\\) is", options: ["\\(4y^3 = 27x\\)", "\\(27y^3 = 4x\\)", "\\(27y = 4x^3\\)", "\\(4y = 27x^3\\)"], correct: 2 }
+        ];
+
+        // ============================================================
+        // 2. STATE
+        // ============================================================
+        const TOTAL_QUESTIONS = questions.length;
+        const TIME_LIMIT_SECONDS = 70 * 60; // 70 minutes
+
+        let state = {
+            currentIndex: 0,
+            answers: new Array(TOTAL_QUESTIONS).fill(null), // selected option index or null
+            marked: new Array(TOTAL_QUESTIONS).fill(false),
+            visited: new Array(TOTAL_QUESTIONS).fill(false),
+            timer: TIME_LIMIT_SECONDS,
+            timerInterval: null,
+            submitted: false,
+            filter: 'all' // 'all', 'correct', 'incorrect', 'unattempted'
+        };
+
+        // ============================================================
+        // 3. DOM refs
+        // ============================================================
+        const el = {
+            timerDisplay: document.getElementById('timerDisplay'),
+            qNumber: document.getElementById('qNumber'),
+            qText: document.getElementById('qText'),
+            optionsContainer: document.getElementById('optionsContainer'),
+            prevBtn: document.getElementById('prevBtn'),
+            nextBtn: document.getElementById('nextBtn'),
+            clearBtn: document.getElementById('clearBtn'),
+            markBtn: document.getElementById('markBtn'),
+            submitBtn: document.getElementById('submitBtn'),
+            paletteGrid: document.getElementById('paletteGrid'),
+            paletteStats: document.getElementById('paletteStats'),
+            resultOverlay: document.getElementById('resultOverlay'),
+            scoreDisplay: document.getElementById('scoreDisplay'),
+            accuracyDisplay: document.getElementById('accuracyDisplay'),
+            reviewList: document.getElementById('reviewList'),
+            closeOverlayBtn: document.getElementById('closeOverlayBtn'),
+            downloadBtn: document.getElementById('downloadBtn')
+        };
+
+        // ============================================================
+        // 4. RENDER FUNCTIONS
+        // ============================================================
+        function renderQuestion() {
+            const idx = state.currentIndex;
+            const q = questions[idx];
+            state.visited[idx] = true;
+
+            el.qNumber.textContent = `Question ${idx + 1} of ${TOTAL_QUESTIONS}`;
+            el.qText.innerHTML = q.text;
+
+            // Render options
+            el.optionsContainer.innerHTML = '';
+            const letters = ['A', 'B', 'C', 'D'];
+            q.options.forEach((opt, i) => {
+                const div = document.createElement('div');
+                div.className = 'option' + (state.answers[idx] === i ? ' selected' : '');
+                div.dataset.optionIndex = i;
+                div.innerHTML = `
+                    <div class="option-letter">${letters[i]}</div>
+                    <div class="option-text">${opt}</div>
+                `;
+                div.addEventListener('click', () => selectOption(i));
+                el.optionsContainer.appendChild(div);
+            });
+
+            // Update nav buttons
+            el.prevBtn.disabled = idx === 0;
+            el.nextBtn.disabled = idx === TOTAL_QUESTIONS - 1;
+
+            // Update palette
+            renderPalette();
+            updatePaletteStats();
+
+            // Mark button state
+            if (state.marked[idx]) {
+                el.markBtn.textContent = '🔖 Unmark Review';
+                el.markBtn.classList.add('danger');
+                el.markBtn.classList.remove('warning');
+            } else {
+                el.markBtn.textContent = '🔖 Mark for Review';
+                el.markBtn.classList.add('warning');
+                el.markBtn.classList.remove('danger');
+            }
+
+            // Re-render MathJax
+            if (window.MathJax && MathJax.typesetPromise) {
+                MathJax.typesetPromise([el.qText, el.optionsContainer]).catch(err => console.warn(err));
+            }
+        }
+
+        function renderPalette() {
+            el.paletteGrid.innerHTML = '';
+            for (let i = 0; i < TOTAL_QUESTIONS; i++) {
+                const btn = document.createElement('button');
+                btn.className = 'palette-btn';
+                btn.textContent = i + 1;
+                btn.dataset.index = i;
+
+                // Determine state class
+                if (state.answers[i] !== null) {
+                    btn.classList.add('answered');
+                } else if (state.visited[i]) {
+                    btn.classList.add('not-answered');
+                } else {
+                    btn.classList.add('not-visited');
+                }
+
+                if (state.marked[i]) {
+                    btn.classList.add('marked');
+                }
+
+                if (i === state.currentIndex) {
+                    btn.classList.add('current');
+                }
+
+                btn.addEventListener('click', () => {
+                    state.currentIndex = i;
+                    renderQuestion();
+                });
+
+                el.paletteGrid.appendChild(btn);
+            }
+        }
+
+        function updatePaletteStats() {
+            const answered = state.answers.filter(a => a !== null).length;
+            const marked = state.marked.filter(m => m).length;
+            el.paletteStats.textContent = `${answered} / ${TOTAL_QUESTIONS} answered`;
+        }
+
+        // ============================================================
+        // 5. INTERACTIONS
+        // ============================================================
+        function selectOption(optionIndex) {
+            const idx = state.currentIndex;
+            if (state.answers[idx] === optionIndex) {
+                // Deselect
+                state.answers[idx] = null;
+            } else {
+                state.answers[idx] = optionIndex;
+            }
+            // Re-render just options and palette
+            const q = questions[idx];
+            el.optionsContainer.innerHTML = '';
+            const letters = ['A', 'B', 'C', 'D'];
+            q.options.forEach((opt, i) => {
+                const div = document.createElement('div');
+                div.className = 'option' + (state.answers[idx] === i ? ' selected' : '');
+                div.dataset.optionIndex = i;
+                div.innerHTML = `
+                    <div class="option-letter">${letters[i]}</div>
+                    <div class="option-text">${opt}</div>
+                `;
+                div.addEventListener('click', () => selectOption(i));
+                el.optionsContainer.appendChild(div);
+            });
+            renderPalette();
+            updatePaletteStats();
+            if (window.MathJax && MathJax.typesetPromise) {
+                MathJax.typesetPromise([el.optionsContainer]).catch(err => console.warn(err));
+            }
+        }
+
+        // ============================================================
+        // 6. TIMER
+        // ============================================================
+        function startTimer() {
+            if (state.timerInterval) clearInterval(state.timerInterval);
+            state.timerInterval = setInterval(() => {
+                state.timer--;
+                if (state.timer <= 0) {
+                    state.timer = 0;
+                    updateTimerDisplay();
+                    clearInterval(state.timerInterval);
+                    submitTest(true);
+                    return;
+                }
+                updateTimerDisplay();
+            }, 1000);
+        }
+
+        function updateTimerDisplay() {
+            const m = Math.floor(state.timer / 60);
+            const s = state.timer % 60;
+            el.timerDisplay.textContent = `⏳ ${String(m).padStart(2, '0')}:${String(s).padStart(2, '0')}`;
+        }
+
+        // ============================================================
+        // 7. SUBMISSION & RESULTS
+        // ============================================================
+        function submitTest(auto = false) {
+            if (state.submitted) return;
+            state.submitted = true;
+            clearInterval(state.timerInterval);
+
+            // Calculate score
+            let score = 0;
+            let correctCount = 0;
+            let wrongCount = 0;
+            let skippedCount = 0;
+
+            for (let i = 0; i < TOTAL_QUESTIONS; i++) {
+                const ans = state.answers[i];
+                if (ans === null) {
+                    skippedCount++;
+                } else if (ans === questions[i].correct) {
+                    score += 3;
+                    correctCount++;
+                } else {
+                    score -= 1;
+                    wrongCount++;
+                }
+            }
+
+            const totalAttempted = correctCount + wrongCount;
+            const accuracy = totalAttempted > 0 ? ((correctCount / totalAttempted) * 100).toFixed(2) : '0.00';
+
+            el.scoreDisplay.textContent = `Score: ${score}`;
+            el.accuracyDisplay.textContent = `Accuracy: ${accuracy}%`;
+
+            // Build review list
+            renderReviewList();
+
+            // Show overlay
+            el.resultOverlay.classList.add('show');
+
+            // Re-render MathJax
+            if (window.MathJax && MathJax.typesetPromise) {
+                MathJax.typesetPromise([el.reviewList]).catch(err => console.warn(err));
+            }
+        }
+
+        function renderReviewList() {
+            const filter = state.filter;
+            el.reviewList.innerHTML = '';
+
+            for (let i = 0; i < TOTAL_QUESTIONS; i++) {
+                const q = questions[i];
+                const userAns = state.answers[i];
+                const isCorrect = userAns === q.correct;
+                const isSkipped = userAns === null;
+
+                // Apply filter
+                if (filter === 'correct' && !isCorrect) continue;
+                if (filter === 'incorrect' && (isCorrect || isSkipped)) continue;
+                if (filter === 'unattempted' && !isSkipped) continue;
+
+                const div = document.createElement('div');
+                div.className = 'review-item';
+
+                let badgeClass = '';
+                let badgeText = '';
+                if (isSkipped) {
+                    badgeClass = 'badge-skipped';
+                    badgeText = '⬜ Skipped';
+                } else if (isCorrect) {
+                    badgeClass = 'badge-correct';
+                    badgeText = '✅ Correct';
+                } else {
+                    badgeClass = 'badge-wrong';
+                    badgeText = '❌ Incorrect';
+                }
+
+                const letters = ['A', 'B', 'C', 'D'];
+                let optionsHtml = '<div class="review-options">';
+                q.options.forEach((opt, j) => {
+                    let cls = '';
+                    if (j === q.correct) cls = 'correct';
+                    else if (j === userAns) cls = 'wrong';
+                    if (j === userAns && j === q.correct) cls = 'correct';
+                    if (j === userAns && j !== q.correct) cls = 'wrong selected';
+                    const isSelected = j === userAns;
+                    optionsHtml += `<div class="review-opt ${cls}" style="${isSelected ? 'border:2px solid #0ea5e9;' : ''}">${letters[j]}. ${opt}</div>`;
+                });
+                optionsHtml += '</div>';
+
+                div.innerHTML = `
+                    <div class="review-question">Q${i+1}. ${q.text}</div>
+                    ${optionsHtml}
+                    <div class="review-meta">
+                        <span>Your answer: ${userAns !== null ? letters[userAns] : 'Not attempted'}</span>
+                        <span>Correct answer: ${letters[q.correct]}</span>
+                        <span class="${badgeClass}">${badgeText}</span>
+                    </div>
+                `;
+                el.reviewList.appendChild(div);
+            }
+
+            // Re-render MathJax
+            if (window.MathJax && MathJax.typesetPromise) {
+                MathJax.typesetPromise([el.reviewList]).catch(err => console.warn(err));
+            }
+        }
+
+        // ============================================================
+        // 8. DOWNLOAD REPORT
+        // ============================================================
+        function downloadReport() {
+            let content = '';
+            content += '============================================\n';
+            content += '   UP Assistant Professor 2021 – Solved Paper\n';
+            content += '   Performance & Solutions Report\n';
+            content += '============================================\n\n';
+
+            let correctCount = 0, wrongCount = 0, skippedCount = 0, score = 0;
+            for (let i = 0; i < TOTAL_QUESTIONS; i++) {
+                const ans = state.answers[i];
+                if (ans === null) skippedCount++;
+                else if (ans === questions[i].correct) { correctCount++; score += 3; }
+                else { wrongCount++; score -= 1; }
+            }
+            const attempted = correctCount + wrongCount;
+            const accuracy = attempted > 0 ? ((correctCount / attempted) * 100).toFixed(2) : '0.00';
+
+            content += `Score: ${score}   |   Accuracy: ${accuracy}%   |   Correct: ${correctCount}   |   Wrong: ${wrongCount}   |   Skipped: ${skippedCount}\n\n`;
+            content += '--------------------------------------------\n\n';
+
+            for (let i = 0; i < TOTAL_QUESTIONS; i++) {
+                const q = questions[i];
+                const userAns = state.answers[i];
+                const isCorrect = userAns === q.correct;
+                const isSkipped = userAns === null;
+                const letters = ['A', 'B', 'C', 'D'];
+
+                content += `Q${i+1}. ${q.text.replace(/\\\(/g, '(').replace(/\\\)/g, ')').replace(/\\\[/g, '[').replace(/\\\]/g, ']')}\n`;
+                q.options.forEach((opt, j) => {
+                    let marker = '   ';
+                    if (j === q.correct) marker = ' * ';
+                    else if (j === userAns) marker = ' - ';
+                    content += `  ${marker}${letters[j]}. ${opt.replace(/\\\(/g, '(').replace(/\\\)/g, ')').replace(/\\\[/g, '[').replace(/\\\]/g, ']')}\n`;
+                });
+                content += `  Your answer: ${userAns !== null ? letters[userAns] : 'Not attempted'}\n`;
+                content += `  Correct answer: ${letters[q.correct]}\n`;
+                if (isSkipped) content += `  Status: Skipped\n`;
+                else if (isCorrect) content += `  Status: Correct ✅\n`;
+                else content += `  Status: Incorrect ❌\n`;
+                content += '\n';
+            }
+
+            const blob = new Blob([content], { type: 'text/plain' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = 'UP_Assistant_Professor_2021_Report.txt';
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            URL.revokeObjectURL(url);
+        }
+
+        // ============================================================
+        // 9. EVENT LISTENERS
+        // ============================================================
+        el.prevBtn.addEventListener('click', () => {
+            if (state.currentIndex > 0) {
+                state.currentIndex--;
+                renderQuestion();
+            }
+        });
+
+        el.nextBtn.addEventListener('click', () => {
+            if (state.currentIndex < TOTAL_QUESTIONS - 1) {
+                state.currentIndex++;
+                renderQuestion();
+            }
+        });
+
+        el.clearBtn.addEventListener('click', () => {
+            const idx = state.currentIndex;
+            state.answers[idx] = null;
+            renderQuestion();
+            updatePaletteStats();
+        });
+
+        el.markBtn.addEventListener('click', () => {
+            const idx = state.currentIndex;
+            state.marked[idx] = !state.marked[idx];
+            renderQuestion();
+        });
+
+        el.submitBtn.addEventListener('click', () => {
+            if (!state.submitted) {
+                if (confirm('Are you sure you want to submit the test?')) {
+                    submitTest();
+                }
+            }
+        });
+
+        el.closeOverlayBtn.addEventListener('click', () => {
+            el.resultOverlay.classList.remove('show');
+        });
+
+        el.downloadBtn.addEventListener('click', downloadReport);
+
+        // Filter buttons
+        document.querySelectorAll('.filter-btn').forEach(btn => {
+            btn.addEventListener('click', () => {
+                document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+                btn.classList.add('active');
+                state.filter = btn.dataset.filter;
+                renderReviewList();
+            });
+        });
+
+        // ============================================================
+        // 10. INIT
+        // ============================================================
+        function init() {
+            renderQuestion();
+            updateTimerDisplay();
+            startTimer();
+
+            // Re-render MathJax on initial load
+            if (window.MathJax && MathJax.typesetPromise) {
+                MathJax.typesetPromise([el.qText, el.optionsContainer, el.reviewList]).catch(err => console.warn(err));
+            }
+        }
+
+        // Wait for MathJax to be ready
+        if (window.MathJax && MathJax.startup) {
+            MathJax.startup.promise.then(() => {
+                init();
+            });
+        } else {
+            // Fallback
+            window.addEventListener('load', () => {
+                setTimeout(init, 500);
+            });
+        }
+    </script>
+</body>
+</html>
